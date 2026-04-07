@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<configuration>
+  <configSections>
+  </configSections>
+  <connectionStrings>
+    <add name="supershop.Properties.Settings.APOSSQLConnectionString"
+      connectionString="Data Source=(local); Initial Catalog=APOSDB; User ID=sa;Password=sapass123!;"
+      providerName="Sql.Data.MySqlClient" />
+    <add name="supershop.Properties.Settings.psodbConnectionString"
+      connectionString="data source=E:\Data_laptop_1\D_drive\G_Drive\Files_1\dotproject\supershop\up_to_date\POS_4_1_3_1_Resource\CodeC_File_advance_pos\Adv_POS_6_1\POS_Adv_Project_8_1\POS_Source_Code\POS__SQLite\supershop\bin\x86\Debug\psodb.db;version=3;new=False;compress=True"
+      providerName="System.Data.SQLite" />
+    <add name="supershop.Properties.Settings.psodbConnectionString1"
+      connectionString="Data Source=psodb.db;Version=3;New=False;Compress=True"
+      providerName="System.Data.SQLite" />
+    <add name="supershop.Properties.Settings.psodbConnectionString2"
+      connectionString="data source=E:\Data_laptop_1\D_drive\G_Drive\Files_1\dotproject\supershop\up_to_date\POS_4_1_3_1_Resource\CodeC_File_advance_pos\Adv_POS_6_1\POS_Adv_Project_8_1\POS_Source_Code\POS__SQLite\supershop\bin\x86\Debug\psodb.db"
+      providerName="System.Data.SQLite" />
+    <add name="supershop.Properties.Settings.AposMysqlConnectionString"
+      connectionString="server=localhost; database=aposmysqldb; uid=root; PASSWORD=1234" />
+  </connectionStrings>
+  <startup useLegacyV2RuntimeActivationPolicy="true">
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0"/>
+  </startup>
+
+</configuration>

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="sellomat_Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="tbl_userlicense">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="LicenseKey1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="LicenseKey2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="LicenseKey3" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="LicenseKey4" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="LicenseKey5" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="RegistrationDate" Type="DateTime" Precision="3" />
+    <Property Name="FromDate" Type="DateTime" Precision="3" />
+    <Property Name="ToDate" Type="DateTime" Precision="3" />
+    <Property Name="User_Id" Type="Int64" />
+    <Property Name="Status" Type="Boolean" />
+  </EntityType>
+  <EntityContainer Name="sellomat_Entities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="tbl_userlicense" EntityType="Self.tbl_userlicense" />
+    <EntitySet Name="tbl_customerdetails" EntityType="sellomat_Model.tbl_customerdetails" />
+  </EntityContainer>
+  <EntityType Name="tbl_customerdetails">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CustomerName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Contact" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="EmailAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="StoreName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="PermanentAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Price" Type="Int64" />
+    <Property Name="LicenseCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+</Schema>

@@ -1,0 +1,12 @@
+ALTER TABLE [dbo].[tbl_duepayment]
+ADD Shopid varchar(50);
+
+ALTER TABLE [dbo].[tbl_duepayment]
+ADD emp_id varchar(50);
+
+ALTER TABLE [dbo].[return_item]
+ADD Shopid varchar(50);
+
+update [dbo].[return_item] set Shopid = 'MTQC02'
+update [dbo].[tbl_duepayment] set Shopid = 'MTQC02',emp_id = 'admin'
+update [dbo].[sales_payment] set [SaleType] = 'CashSale'

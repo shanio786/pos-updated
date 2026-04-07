@@ -1,0 +1,340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="Adv_POS.exe" version="8.3.2.5" publicKeyToken="6478d22d89ad34b2" language="neutral" processorArchitecture="x86" type="win32" />
+  <description asmv2:iconFile="POS.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="Adv_POS" version="8.5.0.0" language="neutral" processorArchitecture="x86" />
+    <commandLine file="Adv_POS.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet version="1" class="System.Security.NamedPermissionSet" Name="LocalIntranet" Description="Default rights given to applications on the local intranet" Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!-- UAC Manifest Options
+            If you want to change the Windows User Account Control level replace the 
+            requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+            Specifying requestedExecutionLevel node will disable file and registry virtualization.
+            If you want to utilize File and Registry Virtualization for backward 
+            compatibility then delete the requestedExecutionLevel node.
+        -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Adv_POS.exe" size="4979136">
+      <assemblyIdentity name="Adv_POS" version="8.5.0.0" language="neutral" processorArchitecture="x86" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>E1zrPpgEmJLNr+Cqg5wWGQk38pk=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="itextsharp.dll" size="3485696">
+      <assemblyIdentity name="itextsharp" version="5.0.5.0" publicKeyToken="8354AE6D2174DDCA" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>ylSkMQxjxYtZFkN6RaREmdWMFXE=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Microsoft.ReportViewer.Common.dll" size="6391672">
+      <assemblyIdentity name="Microsoft.ReportViewer.Common" version="10.0.0.0" publicKeyToken="B03F5F7F11D50A3A" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>JkA25Av6n+2C1n0smnudC+VwzTo=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Microsoft.ReportViewer.WinForms.dll" size="548224">
+      <assemblyIdentity name="Microsoft.ReportViewer.WinForms" version="10.0.0.0" publicKeyToken="B03F5F7F11D50A3A" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>5F6aT03ed2E6iC5r7BkGwIRlbfI=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MyBarcode.dll" size="20480">
+      <assemblyIdentity name="MyBarcode" version="1.0.6275.28483" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>bEokZFFvXiQMij941NgBqN14MD4=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Spire.Barcode.dll" size="2240512">
+      <assemblyIdentity name="Spire.Barcode" version="1.2.5.21040" publicKeyToken="663F351905198CB3" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>10u47lUNBlSlZnA9ZxFWrm/Wo70=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SQLite.NET.dll" size="65536">
+      <assemblyIdentity name="SQLite.NET" version="0.21.1869.3794" publicKeyToken="C273BD375E695F9C" language="neutral" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>3PmLgHIrkZq4ovxk6m7S8mUfzWM=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="System.Data.SQLite.dll" size="904704">
+      <assemblyIdentity name="System.Data.SQLite" version="1.0.66.0" publicKeyToken="DB937BC2D44FF139" language="neutral" processorArchitecture="x86" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>EFF0T2VKbSBZCXD5M14e8kbw+mc=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="System.Data.SqlServerCe.dll" size="296816">
+      <assemblyIdentity name="System.Data.SqlServerCe" version="3.5.0.0" publicKeyToken="89845DCD8080CC91" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>8kngd/QtQFM/cvaBBR2U0mI9jKE=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="Adv_POS.exe.config" size="1628">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>i5lmDZdWBocJmq7NgKzxlbM+TNU=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="bin\Debug\itextsharp.dll" size="3485696">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>ylSkMQxjxYtZFkN6RaREmdWMFXE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="bin\x86\Debug\ITEMIMAGE\8940000000002.png" size="20987">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>L8cwYs+Cfj7YyqgCIT5+yp6yIWM=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="bin\x86\Debug\ITEMIMAGE\8940000000003.png" size="11876">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>3ey/9ujARZECCMvdh+XCksq+Paw=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="bin\x86\Debug\ITEMIMAGE\8940000000004.png" size="21237">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>Droz7wpPZIXFP6dY/l9ATIaU4dQ=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="bin\x86\Debug\ITEMIMAGE\8940000000005.png" size="6481">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>w0M0Tz3JvTwadG3My8lWECeCLbw=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="bin\x86\Debug\ITEMIMAGE\8940000000007.png" size="12505">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>mEyz+TH1Vw0FE+0nGT3HrnqE0ls=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="bin\x86\Debug\ITEMIMAGE\8940000000008.png" size="18657">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>Bm9DaMuhKrxsfpfPoosoySDwzjA=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="bin\x86\Debug\ITEMIMAGE\8940000000009.png" size="15281">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>Yyu67ZXUWOcMWNJV4fry6CWKgQA=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="bin\x86\Debug\ITEMIMAGE\8940000000010.png" size="8392">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>YuVRhJDG/5Dr6ZlW8jqfJG8kSlQ=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="POS.ico" size="171042">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>1S+sx8Eq8IP2OEyiTUXFBbFu2V0=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="res\Dsoft_ProfileFont.png" size="50004">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>0rfiRvUtpMIXQAcdfZL5R9IK4Zo=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="res\e-commerce-icon-icon.png" size="7626">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>HmQB9+MQjpU5viRsAoafcmkfrTE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="res\ico\ico-32-24\appbar.clear.reflect.horizontal.png" size="611">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>6zS6vujGjCmJTs2pfzFQdnrcPT8=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="res\ico\ico-32-24\arrow-back-icon.png" size="1797">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>qd9AukowS2uvukg7YMfDJEEEKRo=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="res\ico\ico-32-24\Misc-Printer-Floppy-Default-icon.png" size="4334">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>gLFI9WDOel5PQpuXBaF3s8EXM2A=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="res\ico\ico-32-24\Pot-icon.png" size="2131">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>yMvdLkSjfXU4aAwmrhjaeoYfIaU=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="res\ico\ico-32-24\save-icon.png" size="1733">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>9TTVc+Il+E4nrmlKvFDoS4ZC+kY=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="res\Login.jpg" size="67871">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>vagwKndQ23Q/r6fJx3MvCM9F9Sg=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Rockettheme-Ecommerce-Sale.ico" size="239745">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>ajyIluv4oHIfoJMwguv2CD6dQSc=</dsig:DigestValue>
+    </hash>
+  </file>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- A list of all Windows versions that this application is designed to work with. Windows will automatically select the most compatible environment.-->
+      <!-- If your application is designed to work with Windows 7, uncomment the following supportedOS node-->
+      <!--<supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>-->
+    </application>
+  </compatibility>
+<publisherIdentity name="CN=DESKTOP-BI19G1K\Shees" issuerKeyHash="050ae8649971d498f91b328334de16b35c375061" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>19z41mKTpX/2TZvLlEQvb+8KUng=</DigestValue></Reference></SignedInfo><SignatureValue>iTm5tjdeirRZdcrd4g+Hnwwy2w96rMyrjlMnTFZNSlqEk6JgNXL0MQ5vBIdR13W0OzzT8J0OSHEMvwhEkSwIwzULkK2kn37bnNiHN3kU07qsniNuyigx6J3beeWlCZS4DX0iGobpWr1uO6l9wDOiSEUEcnl0DhXVMb/Hq0OTEi4=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>m0++lMsTAcqS687Ww5RnKv4S5HjTVDwDAJaFE8tBuFh2yxzO1aE9IrHUS7U2yAXccmE1xXH7te0+1WiiLgIYTssSIcHF3rcj9POoGEwdKHBoZ0xmyJK/OuTj1fKIleXYk9TtYrLgMB9sZbK/lguMFVcQufnc16bqzSwo7TNtxvU=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="78520aef6f2f4494cb9b4df67fa59362d6f8dcd7" Description="" Url=""><as:assemblyIdentity name="Adv_POS.exe" version="8.3.2.5" publicKeyToken="6478d22d89ad34b2" language="neutral" processorArchitecture="x86" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=DESKTOP-BI19G1K\Shees</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>a/+piGbW3B+Ry6yRQm4lmglabnk=</DigestValue></Reference></SignedInfo><SignatureValue>WDq73acEzYkHwcVDu8FDuynKhQvgMvWDjBgmxG6oRsDWpoTKLxpcOqm6XG5afze+HvDq1lITIVbI6HnuelsesNmO90skUavT7VNu5SEw1+gXoaHP+gIitRF0gL1iyCwjYQJ62aqJc6EgfCdtnCCaVrCHeZjntFC4aNzJmf5NiK8=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>m0++lMsTAcqS687Ww5RnKv4S5HjTVDwDAJaFE8tBuFh2yxzO1aE9IrHUS7U2yAXccmE1xXH7te0+1WiiLgIYTssSIcHF3rcj9POoGEwdKHBoZ0xmyJK/OuTj1fKIleXYk9TtYrLgMB9sZbK/lguMFVcQufnc16bqzSwo7TNtxvU=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB7TCCAVagAwIBAgIQZ76u8YXFvqZOTi2paCfVbzANBgkqhkiG9w0BAQUFADA1MTMwMQYDVQQDHioARABFAFMASwBUAE8AUAAtAEIASQAxADkARwAxAEsAXABTAGgAZQBlAHMwHhcNMjAxMTI2MTA1MTMyWhcNMjExMTI2MTY1MTMyWjA1MTMwMQYDVQQDHioARABFAFMASwBUAE8AUAAtAEIASQAxADkARwAxAEsAXABTAGgAZQBlAHMwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJtPvpTLEwHKkuvO1sOUZyr+EuR401Q8AwCWhRPLQbhYdsscztWhPSKx1Eu1NsgF3HJhNcVx+7XtPtVooi4CGE7LEiHBxd63I/TzqBhMHShwaGdMZsiSvzrk49XyiJXl2JPU7WKy4DAfbGWyv5YLjBVXELn53Nem6s0sKO0zbcb1AgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAEH7jf06jy4vLoVG3YEvrhXVwDf3ysvOSRovYtJoKmsztBL5cJ/AxWrZBJo1HX8nxE+vL70erPfqyQ6XlziqtbkFQYkLZ+ktCKRXjW4fcOASQrSr4OVKtms1BoLDcXb9lFOAICj45kdnOx1r0X5avS0XhxsWA7s+uSlTo76+9i6M=</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

@@ -1,0 +1,17 @@
+Check this video 
+https://www.youtube.com/watch?v=g91NRvQBRms&t=1439s
+
+Find database file
+"\POS__SQLite\supershop\bin\x86\Debug\" --> psodb.db
+
+How to Open Sqlite file (.db)
+=============================
+To open SQlite (.db) file you need to install SQLite browser 
+http://sqlitebrowser.org/
+
+Open Software
+Drag and Drop psodb.db file 
+Or File -> Open database -> Select psodb.db file
+
+Details How to work video
+https://www.youtube.com/watch?v=-gC4TxVfGqg

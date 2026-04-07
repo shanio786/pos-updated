@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="sellomat_Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="tbl_userlicense">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="LicenseKey1" Type="nvarchar" MaxLength="50" />
+    <Property Name="LicenseKey2" Type="nvarchar" MaxLength="50" />
+    <Property Name="LicenseKey3" Type="nvarchar" MaxLength="50" />
+    <Property Name="LicenseKey4" Type="nvarchar" MaxLength="50" />
+    <Property Name="LicenseKey5" Type="nvarchar" MaxLength="50" />
+    <Property Name="RegistrationDate" Type="datetime" />
+    <Property Name="FromDate" Type="datetime" />
+    <Property Name="ToDate" Type="datetime" />
+    <Property Name="User_Id" Type="bigint" />
+    <Property Name="Status" Type="bit" />
+  </EntityType>
+  <EntityType Name="tbl_customerdetails">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CustomerName" Type="nvarchar" MaxLength="50" />
+    <Property Name="Contact" Type="nvarchar" MaxLength="50" />
+    <Property Name="EmailAddress" Type="nvarchar" MaxLength="50" />
+    <Property Name="StoreName" Type="nvarchar" MaxLength="50" />
+    <Property Name="PermanentAddress" Type="nvarchar" MaxLength="50" />
+    <Property Name="Price" Type="bigint" />
+    <Property Name="LicenseCode" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityContainer Name="sellomat_ModelStoreContainer">
+    <EntitySet Name="tbl_userlicense" EntityType="Self.tbl_userlicense" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tbl_customerdetails" EntityType="Self.tbl_customerdetails" Schema="shees" store:Type="Tables" />
+  </EntityContainer>
+</Schema>

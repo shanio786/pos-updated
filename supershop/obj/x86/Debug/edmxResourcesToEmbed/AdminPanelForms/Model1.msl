@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="sellomat_ModelStoreContainer" CdmEntityContainer="sellomat_Entities">
+    <EntitySetMapping Name="tbl_userlicense">
+      <EntityTypeMapping TypeName="sellomat_Model.tbl_userlicense">
+        <MappingFragment StoreEntitySet="tbl_userlicense">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="LicenseKey1" ColumnName="LicenseKey1" />
+          <ScalarProperty Name="LicenseKey2" ColumnName="LicenseKey2" />
+          <ScalarProperty Name="LicenseKey3" ColumnName="LicenseKey3" />
+          <ScalarProperty Name="LicenseKey4" ColumnName="LicenseKey4" />
+          <ScalarProperty Name="LicenseKey5" ColumnName="LicenseKey5" />
+          <ScalarProperty Name="RegistrationDate" ColumnName="RegistrationDate" />
+          <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+          <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+          <ScalarProperty Name="User_Id" ColumnName="User_Id" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tbl_customerdetails">
+      <EntityTypeMapping TypeName="sellomat_Model.tbl_customerdetails">
+        <MappingFragment StoreEntitySet="tbl_customerdetails">
+          <ScalarProperty Name="LicenseCode" ColumnName="LicenseCode" />
+          <ScalarProperty Name="Price" ColumnName="Price" />
+          <ScalarProperty Name="PermanentAddress" ColumnName="PermanentAddress" />
+          <ScalarProperty Name="StoreName" ColumnName="StoreName" />
+          <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+          <ScalarProperty Name="Contact" ColumnName="Contact" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
