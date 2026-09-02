@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>supershop</RootNamespace>
     <AssemblyName>Adv_POS</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <FileUpgradeFlags>
@@ -121,67 +121,32 @@
     <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Windows.Forms, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net40\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="FlashControlV71, Version=1.0.3187.32366, Culture=neutral, PublicKeyToken=692fbea5521e1304" />
     <Reference Include="itextsharp, Version=5.5.8.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\x86\Debug\itextsharp.dll</HintPath>
+      <HintPath>lib\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1404.0\lib\net40\Microsoft.ReportViewer.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ReportViewer.DataVisualization, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1404.0\lib\net40\Microsoft.ReportViewer.DataVisualization.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.Design, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1404.0\lib\net40\Microsoft.ReportViewer.Design.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Cquential.Microsoft.ReportViewer.ProcessingObjectModel.10.0.40219.1\lib\net35\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.WebDesign, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1404.0\lib\net40\Microsoft.ReportViewer.WebDesign.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.WebForms, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1404.0\lib\net40\Microsoft.ReportViewer.WebForms.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SqlServer.Types.14.0.314.76\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
-    </Reference>
     <Reference Include="MyBarcode, Version=1.0.6275.28483, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\x86\Debug\MyBarcode.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data">
-      <HintPath>..\..\..\..\..\..\..\..\..\Mysql C#\ConnectCsharpToMysql_Source\MySql.Data.dll</HintPath>
+      <HintPath>lib\MyBarcode.dll</HintPath>
     </Reference>
     <Reference Include="Spire.Barcode, Version=1.2.5.21040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\x86\Debug\Spire.Barcode.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLite.NET, Version=0.21.1869.3794, Culture=neutral, PublicKeyToken=c273bd375e695f9c">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\x86\Debug\SQLite.NET.dll</HintPath>
+      <HintPath>lib\Spire.Barcode.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data.SqlServerCe, Version=3.5.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
@@ -207,47 +172,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdminPanel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AdminPanel.Designer.cs">
-      <DependentUpon>AdminPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AdminPanelForms\AdminLoginForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AdminPanelForms\AdminLoginForm.Designer.cs">
-      <DependentUpon>AdminLoginForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AdminPanelForms\GenerateLicenseForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AdminPanelForms\GenerateLicenseForm.Designer.cs">
-      <DependentUpon>GenerateLicenseForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AdminPanelForms\LicenseKeyModule.cs" />
-    <Compile Include="AdminPanelForms\Model1.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Model1.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="AdminPanelForms\Model1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="AdminPanelForms\Model1.Designer.cs" />
-    <Compile Include="AdminPanelForms\Model11.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Model1.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="AdminPanelForms\tbl_customerdetails.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="AdminPanelForms\tbl_userlicense.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="AutoClosingMessageBox.cs" />
     <Compile Include="BarCode\BarcodeCreator.cs">
       <SubType>Form</SubType>
@@ -302,12 +226,6 @@
     <Compile Include="Config.designer.cs">
       <DependentUpon>Config.cs</DependentUpon>
     </Compile>
-    <Compile Include="AdminPanelForms\CustomerForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AdminPanelForms\CustomerForm.Designer.cs">
-      <DependentUpon>CustomerForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Customer\CustomerLedger.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -323,17 +241,6 @@
     <Compile Include="DataAccess_MSSQLServer.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="PasswordHasher.cs" />
-    <Compile Include="db_licenseDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>db_licenseDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="LicenseForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LicenseForm.designer.cs">
-      <DependentUpon>LicenseForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Report\DS_SaleReport.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -438,12 +345,6 @@
       <DependentUpon>RewardsManagerReport.cs</DependentUpon>
     </Compile>
     <Compile Include="DataGridViewColumnSelector.cs" />
-    <Compile Include="Data_Manage\Database_import.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Data_Manage\Database_import.Designer.cs">
-      <DependentUpon>Database_import.cs</DependentUpon>
-    </Compile>
     <Compile Include="DataGridViewPrinter.cs" />
     <Compile Include="Data_Manage\DataReset.cs">
       <SubType>Form</SubType>
@@ -523,7 +424,6 @@
     <Compile Include="Inventory\View_Sales_invoice.designer.cs">
       <DependentUpon>View_Sales_invoice.cs</DependentUpon>
     </Compile>
-    <Compile Include="LicenseModel.cs" />
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -555,11 +455,6 @@
       <DependentUpon>Manager_Home.cs</DependentUpon>
     </Compile>
     <Compile Include="MoveForm.cs" />
-    <Compile Include="psodbDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>psodbDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="ReportViwer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -664,11 +559,6 @@
     <Compile Include="SalesRagister\POSPrintRpt.designer.cs">
       <DependentUpon>POSPrintRpt.cs</DependentUpon>
     </Compile>
-    <Compile Include="SalesRagister\psodbDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>psodbDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="SalesRagister\SalesRegister.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -687,7 +577,6 @@
     <Compile Include="SalesRagister\SalesRegisterQC.designer.cs">
       <DependentUpon>SalesRegisterQC.cs</DependentUpon>
     </Compile>
-    <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="UserInfo.cs" />
     <Compile Include="User_mgt\DSAttendence.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -718,23 +607,11 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="User_mgt\PWDGenerator.cs" />
-    <Compile Include="User_mgt\TestUsers.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="User_mgt\TestUsers.Designer.cs">
-      <DependentUpon>TestUsers.cs</DependentUpon>
-    </Compile>
     <Compile Include="User_mgt\UserProfile.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="User_mgt\UserProfile.Designer.cs">
       <DependentUpon>UserProfile.cs</DependentUpon>
-    </Compile>
-    <Compile Include="User_mgt\UserRole.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="User_mgt\UserRole.designer.cs">
-      <DependentUpon>UserRole.cs</DependentUpon>
     </Compile>
     <Compile Include="User_mgt\User_attendence.cs">
       <SubType>Form</SubType>
@@ -760,18 +637,6 @@
     <Compile Include="User_mgt\WorkSheet.Designer.cs">
       <DependentUpon>WorkSheet.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AdminPanel.resx">
-      <DependentUpon>AdminPanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AdminPanelForms\AdminLoginForm.resx">
-      <DependentUpon>AdminLoginForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AdminPanelForms\CustomerForm.resx">
-      <DependentUpon>CustomerForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AdminPanelForms\GenerateLicenseForm.resx">
-      <DependentUpon>GenerateLicenseForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="BarCode\BarcodeCreator.resx">
       <DependentUpon>BarcodeCreator.cs</DependentUpon>
     </EmbeddedResource>
@@ -800,9 +665,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Customer\Due_payment_History.resx">
       <DependentUpon>Due_payment_History.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LicenseForm.resx">
-      <DependentUpon>LicenseForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\SaleReport.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
@@ -854,9 +716,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Customer\RewardsManagerReport.resx">
       <DependentUpon>RewardsManagerReport.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data_Manage\Database_import.resx">
-      <DependentUpon>Database_import.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Data_Manage\DataReset.resx">
       <DependentUpon>DataReset.cs</DependentUpon>
@@ -999,14 +858,8 @@
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>PayRollReport.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="User_mgt\TestUsers.resx">
-      <DependentUpon>TestUsers.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="User_mgt\UserProfile.resx">
       <DependentUpon>UserProfile.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="User_mgt\UserRole.resx">
-      <DependentUpon>UserRole.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="User_mgt\User_attendence.resx">
       <DependentUpon>User_attendence.cs</DependentUpon>
@@ -1020,11 +873,6 @@
     <EmbeddedResource Include="User_mgt\WorkSheet.resx">
       <DependentUpon>WorkSheet.cs</DependentUpon>
     </EmbeddedResource>
-    <EntityDeploy Include="AdminPanelForms\Model1.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Model11.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="AdminPanelForms\Model1.edmx.diagram" />
     <None Include="Adv_POS_TemporaryKey.pfx" />
     <None Include="app.config">
       <SubType>Designer</SubType>
@@ -1041,17 +889,6 @@
       <DependentUpon>BarDS.xsd</DependentUpon>
     </None>
     <None Include="bin\x86\Debug\ExpenseAttachment\Nofile.pdf" />
-    <None Include="db_licenseDataSet.xsc">
-      <DependentUpon>db_licenseDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="db_licenseDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>db_licenseDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="db_licenseDataSet.xss">
-      <DependentUpon>db_licenseDataSet.xsd</DependentUpon>
-    </None>
     <None Include="Expenses\DSExpense.xsc">
       <DependentUpon>DSExpense.xsd</DependentUpon>
     </None>
@@ -1086,17 +923,6 @@
     <Compile Include="Report\salesreport.Designer.cs">
       <DependentUpon>salesreport.cs</DependentUpon>
     </Compile>
-    <None Include="psodbDataSet.xsc">
-      <DependentUpon>psodbDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="psodbDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>psodbDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="psodbDataSet.xss">
-      <DependentUpon>psodbDataSet.xsd</DependentUpon>
-    </None>
     <None Include="Report\DS_SaleReport.xsc">
       <DependentUpon>DS_SaleReport.xsd</DependentUpon>
     </None>
@@ -1107,17 +933,6 @@
     </None>
     <None Include="Report\DS_SaleReport.xss">
       <DependentUpon>DS_SaleReport.xsd</DependentUpon>
-    </None>
-    <None Include="SalesRagister\psodbDataSet.xsc">
-      <DependentUpon>psodbDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="SalesRagister\psodbDataSet.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>psodbDataSet.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="SalesRagister\psodbDataSet.xss">
-      <DependentUpon>psodbDataSet.xsd</DependentUpon>
     </None>
     <None Include="User_mgt\DSAttendence.xsc">
       <DependentUpon>DSAttendence.xsd</DependentUpon>
@@ -1143,9 +958,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.8 (x86 and x64)</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -1185,14 +1000,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AdminPanelForms\Model1.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Model1.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="AdminPanelForms\Model1.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Model1.cs</LastGenOutput>
-    </Content>
     <Content Include="bin\Debug\itextsharp.dll" />
     <Content Include="bin\x86\Debug\ITEMIMAGE\8940000000002.png" />
     <Content Include="bin\x86\Debug\ITEMIMAGE\8940000000003.png" />
@@ -1211,19 +1018,6 @@
     <Content Include="res\ico\ico-32-24\save-icon.png" />
     <Content Include="res\Login.jpg" />
     <Content Include="Rockettheme-Ecommerce-Sale.ico" />
-    <Content Include="SqlServerTypes\readme.htm" />
-    <Content Include="SqlServerTypes\x64\msvcr120.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SqlServerTypes\x64\SqlServerSpatial140.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SqlServerTypes\x86\msvcr120.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SqlServerTypes\x86\SqlServerSpatial140.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

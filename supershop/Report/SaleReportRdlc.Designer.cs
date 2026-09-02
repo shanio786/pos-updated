@@ -31,22 +31,15 @@
             this.components = new System.ComponentModel.Container();
             Microsoft.Reporting.WinForms.ReportDataSource reportDataSource1 = new Microsoft.Reporting.WinForms.ReportDataSource();
             this.salespaymentBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.psodbDataSet = new supershop.SalesRagister.psodbDataSet();
             this.reportViewer1 = new Microsoft.Reporting.WinForms.ReportViewer();
-            this.sales_paymentTableAdapter = new supershop.SalesRagister.psodbDataSetTableAdapters.sales_paymentTableAdapter();
             ((System.ComponentModel.ISupportInitialize)(this.salespaymentBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.psodbDataSet)).BeginInit();
             this.SuspendLayout();
             // 
             // salespaymentBindingSource
             // 
             this.salespaymentBindingSource.DataMember = "sales_payment";
-            this.salespaymentBindingSource.DataSource = this.psodbDataSet;
             // 
-            // psodbDataSet
             // 
-            this.psodbDataSet.DataSetName = "psodbDataSet";
-            this.psodbDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
             // reportViewer1
             // 
@@ -60,9 +53,7 @@
             this.reportViewer1.Size = new System.Drawing.Size(961, 741);
             this.reportViewer1.TabIndex = 0;
             // 
-            // sales_paymentTableAdapter
             // 
-            this.sales_paymentTableAdapter.ClearBeforeFill = true;
             // 
             // SaleReportRdlc
             // 
@@ -78,7 +69,6 @@
             this.Text = "Sales Report ";
             this.Load += new System.EventHandler(this.SaleReportRdlc_Load);
             ((System.ComponentModel.ISupportInitialize)(this.salespaymentBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.psodbDataSet)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -86,8 +76,6 @@
         #endregion
 
         private Microsoft.Reporting.WinForms.ReportViewer reportViewer1;
-        private SalesRagister.psodbDataSet psodbDataSet;
         private System.Windows.Forms.BindingSource salespaymentBindingSource;
-        private SalesRagister.psodbDataSetTableAdapters.sales_paymentTableAdapter sales_paymentTableAdapter;
     }
 }

@@ -26,62 +26,6 @@ namespace supershop.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("data source=E:\\Data_laptop_1\\D_drive\\G_Drive\\Files_1\\dotproject\\supershop\\up_to_d" +
-            "ate\\POS_4_1_3_1_Resource\\CodeC_File_advance_pos\\Adv_POS_6_1\\POS_Adv_Project_8_1\\" +
-            "POS_Source_Code\\POS__SQLite\\supershop\\bin\\x86\\Debug\\psodb.db;version=3;new=False" +
-            ";compress=True")]
-        public string psodbConnectionString {
-            get {
-                return ((string)(this["psodbConnectionString"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=psodb.db;Version=3;New=False;Compress=True")]
-        public string psodbConnectionString1 {
-            get {
-                return ((string)(this["psodbConnectionString1"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("data source=E:\\Data_laptop_1\\D_drive\\G_Drive\\Files_1\\dotproject\\supershop\\up_to_d" +
-            "ate\\POS_4_1_3_1_Resource\\CodeC_File_advance_pos\\Adv_POS_6_1\\POS_Adv_Project_8_1\\" +
-            "POS_Source_Code\\POS__SQLite\\supershop\\bin\\x86\\Debug\\psodb.db")]
-        public string psodbConnectionString2 {
-            get {
-                return ((string)(this["psodbConnectionString2"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("server=localhost; database=aposmysqldb; uid=root; PASSWORD=1234")]
-        public string AposMysqlConnectionString {
-            get {
-                return ((string)(this["AposMysqlConnectionString"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=DESKTOP-BI19G1K;Initial Catalog=db_license;Persist Security Info=True" +
-            ";User ID=sa;Password=abc123")]
-        public string db_licenseConnectionString {
-            get {
-                return ((string)(this["db_licenseConnectionString"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=.\\SQLEXPRESS;Initial Catalog=APOSDB;Integrated Security=True;")]
         public string APOSSQLConnectionString {
             get {

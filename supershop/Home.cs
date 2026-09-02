@@ -99,16 +99,20 @@ namespace supershop
             }          
         }
 
+        // Logs the sign-out time (tbl_workrecords) so worked hours can be reported.
         public void workRecords()
         {
-            string logdate = DateTime.Now.ToString("yyyy-MM-dd");
-            string logtime = DateTime.Now.ToString("HH:mm:ss");
-            string logdatetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-            string sqlLogIn = " insert into tbl_workrecords (Username, datatype, logdate, logtime, logdatetime) " +
-                                 " values ('" + UserInfo.UserName + "' , 'OUT' , '" + logdate + "' , " +
-                                  " '" + logtime + "' , '" + logdatetime + "'  )";
-            DataAccess.ExecuteSQL(sqlLogIn);
+            try
+            {
+                DateTime now = DateTime.Now;
+                DataAccess.ExecuteSQL(
+                    " insert into tbl_workrecords (Username, datatype, logdate, logtime, logdatetime) values (@u, 'OUT', @d, @t, @dt)",
+                    DataAccess.P("@u", UserInfo.UserName),
+                    DataAccess.P("@d", now.ToString("yyyy-MM-dd")),
+                    DataAccess.P("@t", now.ToString("HH:mm:ss")),
+                    DataAccess.P("@dt", now.ToString("yyyy-MM-dd HH:mm:ss")));
+            }
+            catch (Exception exLog) { Logger.Error(exLog); } // sign-out must not be blocked by a logging failure
         }
 
         private void salesReportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -298,13 +302,28 @@ namespace supershop
             go.Show();
         }
 
-        private void importDBBackupToolStripMenuItem_Click(object sender, EventArgs e)   // import and delete 
-        {           
-            Database_import go = new Database_import();
-            go.MdiParent = this;
-            go.Show();          
+        private void importDBBackupToolStripMenuItem_Click(object sender, EventArgs e)   // Backup database (.bak)
+        {
+            try
+            {
+                using (SaveFileDialog dlg = new SaveFileDialog())
+                {
+                    dlg.Title = "Backup database";
+                    dlg.Filter = "SQL Server backup (*.bak)|*.bak";
+                    dlg.FileName = "APOSDB_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm") + ".bak";
+                    if (dlg.ShowDialog() != DialogResult.OK) return;
 
-        }    
+                    // The path is written by the SQL Server service, so it must be reachable from the server machine.
+                    DataAccess.ExecuteSQL("BACKUP DATABASE [APOSDB] TO DISK = @path WITH INIT, NAME = 'Adv_POS backup'",
+                        DataAccess.P("@path", dlg.FileName));
+                    MessageBox.Show("Backup saved to\n" + dlg.FileName, "Backup", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Show(ex, "Backup failed. The SQL Server service must be able to write to the chosen folder.");
+            }
+        }
 
         private void returnProductToolStripMenuItem_Click(object sender, EventArgs e)
         {

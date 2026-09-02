@@ -13,6 +13,7 @@
      sales / invoice no  (sales_id) ...  bigint
      customer id (c_id, custid, custno)  bigint
      sold line id (sales_item.item_id)   bigint
+     returned product (return_item.item_id) varchar(50) = purchase.product_id
      product / barcode id .............  varchar(50)
      shop / branch id (Shopid) ........  varchar(50)
      user reference (emp_id, emp, ...)   varchar(100)  (stores usermgt.Username)
@@ -42,7 +43,7 @@ CREATE TABLE dbo.usermgt (
     Contact       varchar(100)  NULL,
     DOB           varchar(100)  NULL,
     Username      varchar(100)  NOT NULL,
-    password      varchar(100)  NULL,
+    password      varchar(255)  NULL,          -- PBKDF2 hash (legacy plain text is upgraded on first login)
     usertype      varchar(10)   NULL,          -- 0=blocked 1=admin 2=manager 3=salesman
     position      varchar(100)  NULL,
     imagename     varchar(100)  NULL,
@@ -116,18 +117,6 @@ CREATE TABLE dbo.tbl_workrecords (
     logdatetime  smalldatetime  NULL,
     status       int            NULL CONSTRAINT DF_tbl_workrecords_status DEFAULT ((1)),
     CONSTRAINT PK_tbl_workrecords PRIMARY KEY CLUSTERED (id)
-);
-GO
-
-/* User -> form permission matrix (UserRole.cs).  Form is not wired to any
-   menu yet, table kept so the code compiles/runs if it is enabled later. */
-IF OBJECT_ID(N'dbo.MNU_USERROLE', N'U') IS NULL
-CREATE TABLE dbo.MNU_USERROLE (
-    id        bigint IDENTITY(1,1) NOT NULL,
-    UID       varchar(100) NOT NULL,             -- usermgt.Username
-    FRM_CODE  varchar(50)  NOT NULL,
-    status    int          NOT NULL CONSTRAINT DF_MNU_USERROLE_status DEFAULT ((1)),
-    CONSTRAINT PK_MNU_USERROLE PRIMARY KEY CLUSTERED (id)
 );
 GO
 
@@ -339,7 +328,7 @@ GO
 IF OBJECT_ID(N'dbo.return_item', N'U') IS NULL
 CREATE TABLE dbo.return_item (
     return_id      bigint IDENTITY(1,1) NOT NULL,
-    item_id        bigint        NULL,           -- sales_item.item_id       (was varchar)
+    item_id        varchar(50)   NULL,           -- purchase.product_id (product/barcode code of the returned item)
     itemName       nvarchar(250) NULL,
     Qty            decimal(18,2) NULL,
     RetailsPrice   decimal(18,2) NULL,
@@ -429,11 +418,18 @@ IF OBJECT_ID(N'dbo.vw_General_Ledger', N'V') IS NOT NULL DROP VIEW dbo.vw_Genera
 GO
 CREATE VIEW dbo.vw_General_Ledger
 AS
-    SELECT  sp.sales_time                                                   AS [Date],
-            SUM(sp.payment_amount)                                          AS Sales,
-            ISNULL((SUM(ri.Total) - SUM(ri.disamt)) + SUM(ri.vatamt), 0)    AS [Return]
+    /* Sales and returns per day.  Returns are aggregated per invoice first so a
+       payment row is never counted more than once. */
+    SELECT  sp.sales_time                                   AS [Date],
+            SUM(sp.payment_amount)                          AS Sales,
+            ISNULL(SUM(r.ReturnAmount), 0)                  AS [Return]
     FROM    dbo.sales_payment AS sp
-            LEFT OUTER JOIN dbo.return_item AS ri ON sp.sales_id = ri.SoldInvoiceNo
+            LEFT OUTER JOIN (
+                SELECT SoldInvoiceNo,
+                       SUM(ISNULL(Total,0)) - SUM(ISNULL(disamt,0)) + SUM(ISNULL(vatamt,0)) AS ReturnAmount
+                FROM   dbo.return_item
+                GROUP BY SoldInvoiceNo
+            ) AS r ON r.SoldInvoiceNo = sp.sales_id
     GROUP BY sp.sales_time;
 GO
 

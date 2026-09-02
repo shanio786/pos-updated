@@ -27,6 +27,13 @@ namespace supershop
                 Logger.Error("Unhandled", e.ExceptionObject as Exception);
             };
 
+            // folders the application writes into (item / user images, expense attachments, invoice PDFs)
+            foreach (string folder in new string[] { "IMAGE", "ITEMIMAGE", "FinalImage", "ExpenseAttachment", "InvoicePdf" })
+            {
+                try { System.IO.Directory.CreateDirectory(System.IO.Path.Combine(Application.StartupPath, folder)); }
+                catch (Exception ex) { Logger.Error("create folder " + folder, ex); }
+            }
+
             string dbError;
             if (!DataAccess.TestConnection(out dbError))
             {

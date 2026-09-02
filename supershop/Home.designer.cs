@@ -661,7 +661,7 @@
             // 
             this.restoreDataToolStripMenuItem.Name = "restoreDataToolStripMenuItem";
             this.restoreDataToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.restoreDataToolStripMenuItem.Text = "Restore Data";
+            this.restoreDataToolStripMenuItem.Text = "Backup Database (.bak)";
             this.restoreDataToolStripMenuItem.Click += new System.EventHandler(this.importDBBackupToolStripMenuItem_Click);
             // 
             // dataResetToolStripMenuItem

@@ -1,0 +1,16 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+publish/
+*.user
+*.suo
+.vs/
+UpgradeLog*.htm
+_UpgradeReport_Files/
+*.log
+# NuGet packages are restored at build time
+packages/*/
+!packages/repositories.config
+# Visual Studio temp
+*.cache
+*.tmp

@@ -33,11 +33,6 @@ CREATE TABLE dbo.tbl_adv_sal (
     adv_date varchar(50) NULL, adv_amount decimal(18,2) NULL, bal_amnt decimal(18,2) NULL,
     CONSTRAINT PK_tbl_adv_sal PRIMARY KEY CLUSTERED (id));
 
-IF OBJECT_ID(N'dbo.MNU_USERROLE', N'U') IS NULL
-CREATE TABLE dbo.MNU_USERROLE (
-    id bigint IDENTITY(1,1) NOT NULL, UID varchar(100) NOT NULL, FRM_CODE varchar(50) NOT NULL,
-    status int NOT NULL CONSTRAINT DF_MNU_USERROLE_status DEFAULT ((1)),
-    CONSTRAINT PK_MNU_USERROLE PRIMARY KEY CLUSTERED (id));
 GO
 
 /* ---------------------------------------------------------------------
@@ -48,6 +43,7 @@ IF COL_LENGTH('dbo.usermgt','joning_date')  IS NULL ALTER TABLE dbo.usermgt ADD 
 IF COL_LENGTH('dbo.usermgt','in_time')      IS NULL ALTER TABLE dbo.usermgt ADD in_time      varchar(50) NULL;
 IF COL_LENGTH('dbo.usermgt','out_time')     IS NULL ALTER TABLE dbo.usermgt ADD out_time     varchar(50) NULL;
 IF COL_LENGTH('dbo.usermgt','shopname')     IS NULL ALTER TABLE dbo.usermgt ADD shopname     varchar(100) NULL;
+IF COL_LENGTH('dbo.usermgt','password') < 255 ALTER TABLE dbo.usermgt ALTER COLUMN password varchar(255) NULL;   -- room for PBKDF2 hashes
 
 IF COL_LENGTH('dbo.sales_payment','SaleType') IS NULL
     ALTER TABLE dbo.sales_payment ADD SaleType varchar(50) NULL CONSTRAINT DF_sales_payment_SaleType DEFAULT ('CashSale');
@@ -104,13 +100,7 @@ BEGIN
     EXEC('ALTER TABLE dbo.tbl_duepayment ALTER COLUMN custid bigint NULL');
 END
 
--- return_item.item_id / custno / SoldInvoiceNo  varchar(150) -> bigint
-IF EXISTS (SELECT 1 FROM sys.columns c JOIN sys.types t ON c.user_type_id = t.user_type_id
-           WHERE c.object_id = OBJECT_ID('dbo.return_item') AND c.name = 'item_id' AND t.name <> 'bigint')
-BEGIN
-    EXEC('UPDATE dbo.return_item SET item_id = NULL WHERE item_id = '''' OR item_id LIKE ''%[^0-9]%''');
-    EXEC('ALTER TABLE dbo.return_item ALTER COLUMN item_id bigint NULL');
-END
+-- return_item.item_id stays varchar (it holds the product code); custno / SoldInvoiceNo  varchar(150) -> bigint
 IF EXISTS (SELECT 1 FROM sys.columns c JOIN sys.types t ON c.user_type_id = t.user_type_id
            WHERE c.object_id = OBJECT_ID('dbo.return_item') AND c.name = 'custno' AND t.name <> 'bigint')
 BEGIN
@@ -216,7 +206,22 @@ GO
 /* ---------------------------------------------------------------------
    8. Refresh views so they pick up the new column types
    --------------------------------------------------------------------- */
-IF OBJECT_ID('dbo.vw_General_Ledger','V')  IS NOT NULL EXEC sp_refreshview 'dbo.vw_General_Ledger';
+IF OBJECT_ID('dbo.vw_General_Ledger','V') IS NOT NULL DROP VIEW dbo.vw_General_Ledger;
+GO
+CREATE VIEW dbo.vw_General_Ledger
+AS
+    SELECT  sp.sales_time                                   AS [Date],
+            SUM(sp.payment_amount)                          AS Sales,
+            ISNULL(SUM(r.ReturnAmount), 0)                  AS [Return]
+    FROM    dbo.sales_payment AS sp
+            LEFT OUTER JOIN (
+                SELECT SoldInvoiceNo,
+                       SUM(ISNULL(Total,0)) - SUM(ISNULL(disamt,0)) + SUM(ISNULL(vatamt,0)) AS ReturnAmount
+                FROM   dbo.return_item
+                GROUP BY SoldInvoiceNo
+            ) AS r ON r.SoldInvoiceNo = sp.sales_id
+    GROUP BY sp.sales_time;
+GO
 IF OBJECT_ID('dbo.vw_CustCreditReport','V') IS NOT NULL EXEC sp_refreshview 'dbo.vw_CustCreditReport';
 IF OBJECT_ID('dbo.CustomerCredit','V')     IS NOT NULL EXEC sp_refreshview 'dbo.CustomerCredit';
 IF OBJECT_ID('dbo.vw_workrecords','V')     IS NOT NULL EXEC sp_refreshview 'dbo.vw_workrecords';

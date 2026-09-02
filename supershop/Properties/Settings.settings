@@ -2,45 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="supershop.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="psodbConnectionString" Type="(Connection string)" Scope="Application">
-      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;data source=E:\Data_laptop_1\D_drive\G_Drive\Files_1\dotproject\supershop\up_to_date\POS_4_1_3_1_Resource\CodeC_File_advance_pos\Adv_POS_6_1\POS_Adv_Project_8_1\POS_Source_Code\POS__SQLite\supershop\bin\x86\Debug\psodb.db;version=3;new=False;compress=True&lt;/ConnectionString&gt;
-  &lt;ProviderName&gt;System.Data.SQLite&lt;/ProviderName&gt;
-&lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">data source=E:\Data_laptop_1\D_drive\G_Drive\Files_1\dotproject\supershop\up_to_date\POS_4_1_3_1_Resource\CodeC_File_advance_pos\Adv_POS_6_1\POS_Adv_Project_8_1\POS_Source_Code\POS__SQLite\supershop\bin\x86\Debug\psodb.db;version=3;new=False;compress=True</Value>
-    </Setting>
-    <Setting Name="psodbConnectionString1" Type="(Connection string)" Scope="Application">
-      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;Data Source=psodb.db;Version=3;New=False;Compress=True&lt;/ConnectionString&gt;
-  &lt;ProviderName&gt;System.Data.SQLite&lt;/ProviderName&gt;
-&lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">Data Source=psodb.db;Version=3;New=False;Compress=True</Value>
-    </Setting>
-    <Setting Name="psodbConnectionString2" Type="(Connection string)" Scope="Application">
-      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;data source=E:\Data_laptop_1\D_drive\G_Drive\Files_1\dotproject\supershop\up_to_date\POS_4_1_3_1_Resource\CodeC_File_advance_pos\Adv_POS_6_1\POS_Adv_Project_8_1\POS_Source_Code\POS__SQLite\supershop\bin\x86\Debug\psodb.db&lt;/ConnectionString&gt;
-  &lt;ProviderName&gt;System.Data.SQLite&lt;/ProviderName&gt;
-&lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">data source=E:\Data_laptop_1\D_drive\G_Drive\Files_1\dotproject\supershop\up_to_date\POS_4_1_3_1_Resource\CodeC_File_advance_pos\Adv_POS_6_1\POS_Adv_Project_8_1\POS_Source_Code\POS__SQLite\supershop\bin\x86\Debug\psodb.db</Value>
-    </Setting>
-    <Setting Name="AposMysqlConnectionString" Type="(Connection string)" Scope="Application">
-      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;server=localhost; database=aposmysqldb; uid=root; PASSWORD=1234&lt;/ConnectionString&gt;
-&lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">server=localhost; database=aposmysqldb; uid=root; PASSWORD=1234</Value>
-    </Setting>
-    <Setting Name="db_licenseConnectionString" Type="(Connection string)" Scope="Application">
-      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;Data Source=DESKTOP-BI19G1K;Initial Catalog=db_license;Persist Security Info=True;User ID=sa;Password=abc123&lt;/ConnectionString&gt;
-  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
-&lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">Data Source=DESKTOP-BI19G1K;Initial Catalog=db_license;Persist Security Info=True;User ID=sa;Password=abc123</Value>
-    </Setting>
     <Setting Name="APOSSQLConnectionString" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;

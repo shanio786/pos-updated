@@ -31,30 +31,23 @@
             this.components = new System.ComponentModel.Container();
             Microsoft.Reporting.WinForms.ReportDataSource reportDataSource2 = new Microsoft.Reporting.WinForms.ReportDataSource();
             this.pOSPrintPageBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.psodbDataSet1 = new supershop.SalesRagister.psodbDataSet();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolsaleno = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.toolstrpProgressCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnPrintDialog = new System.Windows.Forms.Button();
             this.reportViewer1 = new Microsoft.Reporting.WinForms.ReportViewer();
-            this.pOSPrintPageTableAdapter1 = new supershop.SalesRagister.psodbDataSetTableAdapters.POSPrintPageTableAdapter();
             this.timerpregress = new System.Windows.Forms.Timer(this.components);
             this.btnstopPrint = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pOSPrintPageBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.psodbDataSet1)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // pOSPrintPageBindingSource
             // 
             this.pOSPrintPageBindingSource.DataMember = "POSPrintPage";
-            this.pOSPrintPageBindingSource.DataSource = this.psodbDataSet1;
             // 
-            // psodbDataSet1
             // 
-            this.psodbDataSet1.DataSetName = "psodbDataSet";
-            this.psodbDataSet1.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
             // statusStrip1
             // 
@@ -110,9 +103,7 @@
             this.reportViewer1.Size = new System.Drawing.Size(487, 662);
             this.reportViewer1.TabIndex = 3;
             // 
-            // pOSPrintPageTableAdapter1
             // 
-            this.pOSPrintPageTableAdapter1.ClearBeforeFill = true;
             // 
             // timerpregress
             // 
@@ -149,7 +140,6 @@
             this.Text = "Receipt Print";
             this.Load += new System.EventHandler(this.POSPrintRpt_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pOSPrintPageBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.psodbDataSet1)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -161,13 +151,9 @@
 
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolsaleno;
-    //    private psodbDataSet psodbDataSet;
-      //  private psodbDataSetTableAdapters.POSPrintPageTableAdapter pOSPrintPageTableAdapter;
         private System.Windows.Forms.Button btnPrintDialog;
         private Microsoft.Reporting.WinForms.ReportViewer reportViewer1;
-        private SalesRagister.psodbDataSet psodbDataSet1;
         private System.Windows.Forms.BindingSource pOSPrintPageBindingSource;
-        private SalesRagister.psodbDataSetTableAdapters.POSPrintPageTableAdapter pOSPrintPageTableAdapter1;
         private System.Windows.Forms.Timer timerpregress;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.Button btnstopPrint;

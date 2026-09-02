@@ -35,7 +35,8 @@ The old SQLite (`psodb.db`) and MySQL editions are not supported by the code any
 | Row id (surrogate key) | `bigint IDENTITY` | `usermgt.id`, `sales_item.item_id`, `tbl_customer.ID`, `tbl_expense.ID`, … |
 | Invoice / sale number | `bigint` | `sales_payment.sales_id` (PK), `sales_item.sales_id`, `tbl_duepayment.sales_id`, `return_item.SoldInvoiceNo` |
 | Customer id | `bigint` | `tbl_customer.ID`, `sales_payment.c_id`, `tbl_duepayment.custid`, `return_item.custno`, `tbl_CustCredit.CustID` |
-| Sold-line id | `bigint` | `sales_item.item_id`, `return_item.item_id` |
+| Sold-line id | `bigint` | `sales_item.item_id` |
+| Returned product code | `varchar(50)` | `return_item.item_id` (= `purchase.product_id`) |
 | Product / barcode | `varchar(50)` | `purchase.product_id` (PK), `tbl_purchase_history.product_id`, `sales_item.itemcode` |
 | Shop / branch | `varchar(50)` | `Shopid` in every table |
 | User reference | `varchar(100)` | `usermgt.Username`, `sales_payment.emp_id`, `tbl_duepayment.emp_id`, `return_item.emp`, `tbl_payroll.user_name`, … |
@@ -50,7 +51,6 @@ which forces implicit conversions on every join and lets bad values in.
 * `tbl_duepayment.Shopid`, `tbl_duepayment.emp_id`, `return_item.Shopid` (from `DB New Change.txt`)
 * `tbl_adv_sal.bal_amnt` (used by PayRoll) and a primary key for `tbl_adv_sal`
 * `userattendence`, `tbl_payroll`, `tbl_adv_sal` (not in the 2017 backup)
-* `MNU_USERROLE` (used by `UserRole.cs`)
 * Primary keys on `usermgt`, `tbl_customer`, `tbl_CustCredit`, `tbl_category`, `tbl_saleInfo`, `storeconfig`
 * Unique `usermgt.Username` and unique `tbl_terminalLocation.Shopid`
 * Indexes on the columns the app joins and filters on
@@ -63,4 +63,4 @@ which forces implicit conversions on every join and lets bad values in.
   needs every query that builds date strings to be changed at the same time.
 * No foreign keys yet. The application inserts `''`/`0` customer ids in some paths; add FKs only
   after the data is cleaned.
-* Passwords in `usermgt.password` are stored as plain text by the application.
+* Passwords are stored as PBKDF2 hashes (`usermgt.password` is `varchar(255)`); an old plain-text password is upgraded automatically the first time that user logs in.

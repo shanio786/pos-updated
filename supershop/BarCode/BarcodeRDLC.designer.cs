@@ -32,8 +32,6 @@
             Microsoft.Reporting.WinForms.ReportDataSource reportDataSource1 = new Microsoft.Reporting.WinForms.ReportDataSource();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BarcodeRDLC));
             this.purchaseBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.psodbDataSet1 = new supershop.SalesRagister.psodbDataSet();
-            this.purchaseTableAdapter1 = new supershop.SalesRagister.psodbDataSetTableAdapters.purchaseTableAdapter();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.btnlink = new System.Windows.Forms.Button();
             this.btnSql = new System.Windows.Forms.Button();
@@ -45,7 +43,6 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.reportViewer1 = new Microsoft.Reporting.WinForms.ReportViewer();
             ((System.ComponentModel.ISupportInitialize)(this.purchaseBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.psodbDataSet1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -55,16 +52,10 @@
             // purchaseBindingSource
             // 
             this.purchaseBindingSource.DataMember = "purchase";
-            this.purchaseBindingSource.DataSource = this.psodbDataSet1;
             // 
-            // psodbDataSet1
             // 
-            this.psodbDataSet1.DataSetName = "psodbDataSet";
-            this.psodbDataSet1.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
-            // purchaseTableAdapter1
             // 
-            this.purchaseTableAdapter1.ClearBeforeFill = true;
             // 
             // splitContainer1
             // 
@@ -190,7 +181,6 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.BarcodeRDLC_Load);
             ((System.ComponentModel.ISupportInitialize)(this.purchaseBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.psodbDataSet1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -201,11 +191,7 @@
         }
 
         #endregion
-      //  private psodbDataSet psodbDataSet;
-       // private psodbDataSetTableAdapters.purchaseTableAdapter purchaseTableAdapter;
-        private SalesRagister.psodbDataSet psodbDataSet1;
         private System.Windows.Forms.BindingSource purchaseBindingSource;
-        private SalesRagister.psodbDataSetTableAdapters.purchaseTableAdapter purchaseTableAdapter1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ComboBox cmbitems;
         private System.Windows.Forms.Button bntSearch;
