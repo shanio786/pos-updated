@@ -933,10 +933,10 @@ namespace supershop
         /// terminals sell at the same time).  Returns the new invoice number.
         /// Payment type comes from CombPayby and customer from lblCustID (as before).
         /// </summary>
-        public long SaveSale(string payamount, string changeamount, string dueamount, string salesdate, string Comment)
+        public long SaveSale(string payamount, string changeamount, string dueamount, string salesdate, string Comment, System.Collections.Generic.List<SalesRagister.Tender> tenders)
         {
             saleType = "CashSale";
-            string payby          = CombPayby.Text;
+            string payby          = (tenders != null && tenders.Count > 0) ? (tenders.Count > 1 ? "Split" : tenders[0].Method) : CombPayby.Text;
             string vat            = lblTotalVAT.Text;
             string DiscountTotal  = lbloveralldiscount.Text; // Total discount = item wise discount + counter discount
             string custId         = lblCustID.Text;
@@ -1035,7 +1035,7 @@ namespace supershop
                 try
                 {
                     // Save payment + items + stock in one transaction
-                    long newId = SaveSale(lblTotalPayable.Text, "0", "0", DateTime.Now.ToString("yyyy-MM-dd"), "Guest");
+                    long newId = SaveSale(lblTotalPayable.Text, "0", "0", DateTime.Now.ToString("yyyy-MM-dd"), "Guest", null);
                     txtInvoice.Text = newId.ToString();
 
                     ///// // Open Print Invoice
@@ -1370,7 +1370,7 @@ namespace supershop
                 try
                 {
                     // Save payment + items + stock in one transaction
-                    long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, txtCustName.Text);
+                    long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, txtCustName.Text, null);
                     txtInvoice.Text = newId.ToString();
                     MessageBox.Show("Successfully has been saved ");
 
@@ -1389,6 +1389,38 @@ namespace supershop
         }
 
         //3. Complete sale and Print Preview
+        private void btnSplit_Click(object sender, EventArgs e)
+        {
+            decimal payable;
+            if (!decimal.TryParse(lblTotalPayable.Text, out payable) || payable <= 0)
+            {
+                MessageBox.Show("Add items to the cart first.");
+                return;
+            }
+            try
+            {
+                using (SalesRagister.SplitPaymentForm f = new SalesRagister.SplitPaymentForm(payable))
+                {
+                    if (f.ShowDialog() != DialogResult.OK) return;
+                    long newId = SaveSale(lblTotalPayable.Text, f.ChangeAmount.ToString("0.00"), "0",
+                                          dtSalesDate.Text, txtCustName.Text, f.Tenders);
+                    txtInvoice.Text = newId.ToString();
+                    parameter.autoprintid = "1";
+                    POSPrintRpt go = new POSPrintRpt(txtInvoice.Text);
+                    go.ShowDialog();
+                    dgrvSalesItemList.Rows.Clear();
+                    DiscountCalculation();
+                    vatcal();
+                    this.tabPageSR_Payment.Parent = null;
+                    tabSRcontrol.SelectedTab = tabPageSR_Counter;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Show(ex, "Could not complete the split payment.");
+            }
+        }
+
         private void btnCompleteSalesAndPrint_Click(object sender, EventArgs e)
         {
             if (txtPaidAmount.Text == "00" || txtPaidAmount.Text == "0" || txtPaidAmount.Text == string.Empty)
@@ -1400,7 +1432,7 @@ namespace supershop
                 try
                 {
                     // Save payment + items + stock in one transaction
-                    long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, txtCustName.Text);
+                    long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, txtCustName.Text, null);
                     txtInvoice.Text = newId.ToString();
 
                     ///// // Open Print Invoice
@@ -1435,7 +1467,7 @@ namespace supershop
                 try
                 {
                     // Save payment + items + stock in one transaction
-                    long newId = SaveSale(lblTotalPayable.Text, "0", "0", DateTime.Now.ToString("yyyy-MM-dd"), "Guest");
+                    long newId = SaveSale(lblTotalPayable.Text, "0", "0", DateTime.Now.ToString("yyyy-MM-dd"), "Guest", null);
                     txtInvoice.Text = newId.ToString();
 
                     ///// // Open Print Invoice

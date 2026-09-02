@@ -77,6 +77,7 @@
             this.txtChangeAmount = new System.Windows.Forms.TextBox();
             this.CombPayby = new System.Windows.Forms.ComboBox();
             this.btnSaveOnly = new System.Windows.Forms.Button();
+            this.btnSplit = new System.Windows.Forms.Button();
             this.btnCompleteSalesAndPrint = new System.Windows.Forms.Button();
             this.btnPrintDirect = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -796,7 +797,21 @@
             this.tabPageSR_Counter.Controls.Add(this.lst_items);
             this.tabPageSR_Counter.Controls.Add(this.listView1);
             this.tabPageSR_Counter.Controls.Add(this.btnPrintDirect);
+            // btnSplit
+            this.btnSplit.BackColor = System.Drawing.Color.MediumPurple;
+            this.btnSplit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSplit.FlatAppearance.BorderSize = 0;
+            this.btnSplit.Font = new System.Drawing.Font("Trebuchet MS", 10F, System.Drawing.FontStyle.Bold);
+            this.btnSplit.ForeColor = System.Drawing.Color.White;
+            this.btnSplit.Location = new System.Drawing.Point(756, 522);
+            this.btnSplit.Name = "btnSplit";
+            this.btnSplit.Size = new System.Drawing.Size(95, 56);
+            this.btnSplit.TabIndex = 202;
+            this.btnSplit.Text = "Split Pay";
+            this.btnSplit.UseVisualStyleBackColor = false;
+            this.btnSplit.Click += new System.EventHandler(this.btnSplit_Click);
             this.tabPageSR_Counter.Controls.Add(this.btnSaveOnly);
+            this.tabPageSR_Counter.Controls.Add(this.btnSplit);
             this.tabPageSR_Counter.Controls.Add(this.btnCompleteSalesAndPrint);
             this.tabPageSR_Counter.Controls.Add(this.lblCustID);
             this.tabPageSR_Counter.Controls.Add(this.ComboCustID);
@@ -1115,6 +1130,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.DateTimePicker dtSalesDate;
         private System.Windows.Forms.Button btnSaveOnly;
+        private System.Windows.Forms.Button btnSplit;
         private System.Windows.Forms.Button btnCompleteSalesAndPrint;
         private System.Windows.Forms.ToolTip toolTip2;
         private System.Windows.Forms.Button btnPrintDirect;

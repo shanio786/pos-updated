@@ -64,3 +64,16 @@ which forces implicit conversions on every join and lets bad values in.
 * No foreign keys yet. The application inserts `''`/`0` customer ids in some paths; add FKs only
   after the data is cleaned.
 * Passwords are stored as PBKDF2 hashes (`usermgt.password` is `varchar(255)`); an old plain-text password is upgraded automatically the first time that user logs in.
+
+
+## Optional features (Day Close, Hold sale, Split payment)
+
+`Feature_Tables.sql` (also inside `APOSDB_MSSQL.sql`) adds:
+
+| Table | Feature |
+|-------|---------|
+| `tbl_dayclose` | End-of-day cash reconciliation / Z-Report (Reports menu). |
+| `tbl_held_sale`, `tbl_held_item` | Hold a cart and Resume it later (Hold / Resume buttons on the sales screens). |
+| `tbl_sale_tender` | One row per payment tender; lets a sale be paid part cash + part card (Split Payment button). Normal sales record a single tender too. |
+
+On an existing database run `Feature_Tables.sql` once; it is safe to re-run.

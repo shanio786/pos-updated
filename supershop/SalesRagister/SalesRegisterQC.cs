@@ -1046,10 +1046,10 @@ namespace supershop
         /// The invoice number is taken inside the transaction (safe when several
         /// terminals sell at the same time).  Returns the new invoice number.
         /// </summary>
-        public long SaveSale(string payamount, string changeamount, string dueamount, string salesdate, string Comment)
+        public long SaveSale(string payamount, string changeamount, string dueamount, string salesdate, string Comment, System.Collections.Generic.List<SalesRagister.Tender> tenders)
         {
             saleType = (txtDueAmount.Text == "0") ? "CashSale" : "CreditSale";
-            string payby          = CombPayby.Text;
+            string payby          = (tenders != null && tenders.Count > 0) ? (tenders.Count > 1 ? "Split" : tenders[0].Method) : CombPayby.Text;
             string vat            = lblTotalVAT.Text;
             string DiscountTotal  = lbloveralldiscount.Text; // item discount + counter discount
             string custId         = lblCustID.Text;
@@ -1112,6 +1112,18 @@ namespace supershop
                     tx.Execute("update purchase set product_quantity = product_quantity - @qty where product_id = @id",
                         DataAccess.P("@qty", qty),
                         DataAccess.P("@id", itemid));
+                }
+                // payment tenders (split payment, or a single tender for a normal sale)
+                if (tenders != null && tenders.Count > 0)
+                {
+                    foreach (SalesRagister.Tender t in tenders)
+                        tx.Execute("insert into tbl_sale_tender (sales_id, method, amount) values (@id, @m, @a)",
+                            DataAccess.P("@id", salesId), DataAccess.P("@m", t.Method), DataAccess.P("@a", t.Amount));
+                }
+                else
+                {
+                    tx.Execute("insert into tbl_sale_tender (sales_id, method, amount) values (@id, @m, @a)",
+                        DataAccess.P("@id", salesId), DataAccess.P("@m", payby), DataAccess.P("@a", payamount));
                 }
                 newId = salesId;
             });
@@ -1215,7 +1227,7 @@ namespace supershop
             try
             {
                 //Save payment info into sales_payment table
-                long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, ComboCustID.Text);
+                long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, ComboCustID.Text, null);
                         txtInvoice.Text = newId.ToString();
 
                 ///// // Open Print Invoice
@@ -1269,7 +1281,7 @@ namespace supershop
             try
             {
                     //Save payment info into sales_payment table
-                    long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, ComboCustID.Text);
+                    long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, ComboCustID.Text, null);
                         txtInvoice.Text = newId.ToString();
                     MessageBox.Show("Successfully has been saved ");
                     //btnCompleteSalesAndPrint.Enabled = false;
@@ -1294,6 +1306,41 @@ namespace supershop
         }
 
         //3. Complete print preview
+        private void btnSplit_Click(object sender, EventArgs e)
+        {
+            decimal payable;
+            if (!decimal.TryParse(lblTotalPayable.Text, out payable) || payable <= 0)
+            {
+                MessageBox.Show("Add items to the cart first.");
+                return;
+            }
+            try
+            {
+                using (SalesRagister.SplitPaymentForm f = new SalesRagister.SplitPaymentForm(payable))
+                {
+                    if (f.ShowDialog() != DialogResult.OK) return;
+                    long newId = SaveSale(lblTotalPayable.Text, f.ChangeAmount.ToString("0.00"), "0",
+                                          dtSalesDate.Text, txtCustName.Text, f.Tenders);
+                    txtInvoice.Text = newId.ToString();
+                    parameter.autoprintid = "1";
+                    POSPrintRpt go = new POSPrintRpt(txtInvoice.Text);
+                    go.ShowDialog();
+                    dgrvSalesItemList.Rows.Clear();
+                    DiscountCalculation();
+                    vatcal();
+                    tabSRcontrol.SelectedTab = tabPageSR_Counter;
+                    btnCompleteSalesAndPrint.Enabled = false;
+                    btnPayment.Enabled = false;
+                    txtPaidAmount.Text = "00";
+                    txtDueAmount.Text = "";
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Show(ex, "Could not complete the split payment.");
+            }
+        }
+
         private void btnCompleteSalesAndPrint_Click(object sender, EventArgs e)
         {
             //var tpa = txtPaidAmount.Text;
@@ -1321,7 +1368,7 @@ namespace supershop
                     try
                     {
                         //Save payment info into sales_payment table
-                        long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, ComboCustID.Text);
+                        long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, ComboCustID.Text, null);
                         txtInvoice.Text = newId.ToString();
 
                         ///// // Open Print Invoice
@@ -1403,7 +1450,7 @@ namespace supershop
             try
             {
                 //Save payment info into sales_payment table
-                long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, ComboCustID.Text);
+                long newId = SaveSale(lblTotalPayable.Text, txtChangeAmount.Text, txtDueAmount.Text, dtSalesDate.Text, ComboCustID.Text, null);
                         txtInvoice.Text = newId.ToString();
 
                 ///// // Open Print Invoice

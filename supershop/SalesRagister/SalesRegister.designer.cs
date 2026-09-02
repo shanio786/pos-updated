@@ -87,6 +87,7 @@
             this.btnCompleteSalesAndPrint = new System.Windows.Forms.Button();
             this.btnback = new System.Windows.Forms.Button();
             this.btnSaveOnly = new System.Windows.Forms.Button();
+            this.btnSplit = new System.Windows.Forms.Button();
             this.btnPrintDirect = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.label4 = new System.Windows.Forms.Label();
@@ -923,7 +924,23 @@
             this.tabPageSR_Payment.Controls.Add(this.label14);
             this.tabPageSR_Payment.Controls.Add(this.label8);
             this.tabPageSR_Payment.Controls.Add(this.btnback);
+            // 
+            // btnSplit
+            // 
+            this.btnSplit.BackColor = System.Drawing.Color.MediumPurple;
+            this.btnSplit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSplit.FlatAppearance.BorderSize = 0;
+            this.btnSplit.Font = new System.Drawing.Font("Trebuchet MS", 11F, System.Drawing.FontStyle.Bold);
+            this.btnSplit.ForeColor = System.Drawing.Color.White;
+            this.btnSplit.Location = new System.Drawing.Point(97, 395);
+            this.btnSplit.Name = "btnSplit";
+            this.btnSplit.Size = new System.Drawing.Size(246, 40);
+            this.btnSplit.TabIndex = 210;
+            this.btnSplit.Text = "Split Payment (Cash + Card)";
+            this.btnSplit.UseVisualStyleBackColor = false;
+            this.btnSplit.Click += new System.EventHandler(this.btnSplit_Click);
             this.tabPageSR_Payment.Controls.Add(this.btnSaveOnly);
+            this.tabPageSR_Payment.Controls.Add(this.btnSplit);
             this.tabPageSR_Payment.Controls.Add(this.btnCompleteSalesAndPrint);
             this.tabPageSR_Payment.Controls.Add(this.lblCustID);
             this.tabPageSR_Payment.Controls.Add(this.ComboCustID);
@@ -1232,6 +1249,7 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.ComboBox CombPayby;
         private System.Windows.Forms.Button btnSaveOnly;
+        private System.Windows.Forms.Button btnSplit;
         private System.Windows.Forms.Button btnCompleteSalesAndPrint;
         private System.Windows.Forms.Button btnback;
         private SalesRagister.Currency_Shortcuts currency_Shortcuts1;

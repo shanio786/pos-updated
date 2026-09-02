@@ -537,6 +537,14 @@
       <DependentUpon>TopSales.cs</DependentUpon>
     </Compile>
     <Compile Include="SalesRagister\HeldSaleStore.cs" />
+    <Compile Include="SalesRagister\Tender.cs" />
+    <Compile Include="SalesRagister\SplitPaymentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SalesRagister\SplitPaymentForm.Designer.cs">
+      <DependentUpon>SplitPaymentForm.cs</DependentUpon>
+    </Compile>
+
     <Compile Include="SalesRagister\HeldSalesForm.cs">
       <SubType>Form</SubType>
     </Compile>
