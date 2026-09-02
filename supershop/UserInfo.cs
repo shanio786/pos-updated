@@ -42,49 +42,25 @@ namespace supershop
         public static string autoprintid { get; set; }
         
     }
-        public static class  vatdisvalue
+        /// <summary>VAT / discount rate of the current shop (tbl_terminallocation).</summary>
+        public static class vatdisvalue
         {
             public static string vat
             {
-                set
-                {
-                     //   //Load Vat and Discount rate
-                     //   string sqlVat= "select * from storeconfig";
-                     //   DataAccess.ExecuteSQL(sqlVat);
-                     //   DataTable dtVat = DataAccess.GetDataTable(sqlVat);
-                     ////   txtVATRate.Text = dtVatdis.Rows[0].ItemArray[6].ToString();
-                     //  // txtDiscountRate.Text = dtVatdis.Rows[0].ItemArray[7].ToString();
-                     //   string vl =  dtVat.Rows[0].ItemArray[6].ToString();
-                     //   vl = value;              
-                }
                 get
                 {
-                    string sqlVat = " select VAT from tbl_terminallocation where Shopid = '" + UserInfo.Shopid + "' "; // 
-                    DataTable dtVat = DataAccess.GetDataTable(sqlVat);                  
-                    string vl = dtVat.Rows[0].ItemArray[0].ToString();                                      
-                    return vl;                    
+                    return DataAccess.ExecuteSQLScaler("select VAT from tbl_terminallocation where Shopid = @s",
+                        DataAccess.P("@s", UserInfo.Shopid));
                 }
             }
 
             public static string dis
             {
-                set
-                {
-                    //string sqldis = "select * from storeconfig";
-                    //DataAccess.ExecuteSQL(sqldis);
-                    //DataTable dtdis = DataAccess.GetDataTable(sqldis);
-                    //string vl = dtdis.Rows[0].ItemArray[7].ToString();
-                    //vl = value;
-                }
                 get
                 {
-                    string sqldis = "select Dis from tbl_terminallocation   where Shopid = '" + UserInfo.Shopid + "' ";
-                    DataTable dtdis = DataAccess.GetDataTable(sqldis);
-                    string vl = dtdis.Rows[0].ItemArray[0].ToString();
-                    return vl;
+                    return DataAccess.ExecuteSQLScaler("select Dis from tbl_terminallocation where Shopid = @s",
+                        DataAccess.P("@s", UserInfo.Shopid));
                 }
             }
         }
-    
-  
 }

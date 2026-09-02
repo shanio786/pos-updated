@@ -31,9 +31,8 @@ namespace supershop.Customer
             try
             {
                 string sql = "  select  sales_id as 'Invo No' , receivedate as Date , receiveamt as 'Receive Amount'  " +
-                            "  from tbl_duepayment where custid = '" + lblcustid.Text + "' and sales_id = '" + lblinvoNo.Text + "'  order by  id desc ";
-                             
-                DataTable dt1 = DataAccess.GetDataTable(sql);
+                            "  from tbl_duepayment where custid = @custid and sales_id = @id  order by  id desc ";
+                DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@custid", lblcustid.Text), DataAccess.P("@id", lblinvoNo.Text));
                 dtgviewCustDueHistory.DataSource = dt1;
             }
             catch (Exception exLog) { Logger.Error(exLog); }

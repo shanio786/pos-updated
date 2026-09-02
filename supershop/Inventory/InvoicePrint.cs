@@ -24,27 +24,18 @@ namespace supershop.Inventory
         DataGridViewPrinter MyDataGridViewPrinter;
         private bool SetupThePrinting()
         {
-            string sql3 = "select * from tbl_terminalLocation where Shopid = '" + UserInfo.Shopid + "'";
-            DataTable dt1 = DataAccess.GetDataTable(sql3);
+            DataTable dt1 = DataAccess.GetDataTable("select * from tbl_terminalLocation where Shopid = @shopid", DataAccess.P("@shopid", UserInfo.Shopid));
 
             DateTime dt = DateTime.Now;
             string printdate = dt.ToString("MMMM dd, yyyy    hh:mm:ss tt");
             string Companyname = dt1.Rows[0].ItemArray[1].ToString();
-            string branchname = dt1.Rows[0].ItemArray[2].ToString();
             string Location = dt1.Rows[0].ItemArray[3].ToString();
-            string phone = dt1.Rows[0].ItemArray[4].ToString();
             string email = dt1.Rows[0].ItemArray[5].ToString();
-            string web = dt1.Rows[0].ItemArray[6].ToString();
-
-            
 
             // // Biller Info
-            string sqlCmd = "select * from tbl_saleInfo where InvoiceNo = '" + lblInvoiceNo.Text + "' ";
-            DataTable dtSP = DataAccess.GetDataTable(sqlCmd);            
+            DataTable dtSP = DataAccess.GetDataTable("select * from tbl_saleInfo where InvoiceNo = @id", DataAccess.P("@id", lblInvoiceNo.Text));
             string Bnam = "Bill To \n" + dtSP.Rows[0].ItemArray[3].ToString();
 
-          //  string Header = Companyname + "\n" + Location + "." + "\n" + email + "\n" + branchname + " ph: " + phone + "\n" + printdate + "\n";
-            //cname.Font = new System.Drawing.Font("Tahoma", 12.0F);
             string TitleText = Companyname + "\n" + Location + "." + "\n" + email + "\n" + printdate + "\n\n" + Bnam + "\n\n" + "Invoice No: " + lblInvoiceNo.Text + "\n\n";
            
             PrintDialog MyPrintDialog = new PrintDialog();
@@ -65,17 +56,7 @@ namespace supershop.Inventory
             printDocument1.DefaultPageSettings = MyPrintDialog.PrinterSettings.DefaultPageSettings;
             printDocument1.DefaultPageSettings.Margins = new Margins(40, 40, 40, 40);
 
-
-            //if (MessageBox.Show("Do you want the report to be centered on the page",
-            //    "InvoiceManager - Center on Page", MessageBoxButtons.YesNo,
-            //    MessageBoxIcon.Question) == DialogResult.Yes)
-            //    MyDataGridViewPrinter = new DataGridViewPrinter(datagrdSalesInvoice,
-            //    printDocument1, true, true, TitleText, new Font("Tahoma", 10,
-            //    FontStyle.Regular, GraphicsUnit.Point), Color.Black, true);
-
-            //else
-
-                MyDataGridViewPrinter = new DataGridViewPrinter(datagrdSalesInvoice,
+            MyDataGridViewPrinter = new DataGridViewPrinter(datagrdSalesInvoice,
                  printDocument1, false, true, TitleText, new Font("Times New Roman", 13, FontStyle.Regular, GraphicsUnit.Point), Color.Black, true);
             return true;
         }
@@ -101,11 +82,8 @@ namespace supershop.Inventory
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
             bool more = MyDataGridViewPrinter.DrawDataGridView(e.Graphics);
-            //bool more2 = MyDataGridViewPrinter2.DrawDataGridView(e.Graphics);
             if (more == true)
                 e.HasMorePages = true;
-            //else  if (more2 == true)
-            //    e.HasMorePages = false;
         }
 
         #region Invoice DataBind
@@ -120,53 +98,48 @@ namespace supershop.Inventory
                 try
                 {
                     string InvoiceNo = lblInvoiceNo.Text;
-                    string sql = "select itemName as Items ,  RetailsPrice as Price , Qty  , Total   from sales_item where (sales_id = '" + InvoiceNo + "')";
-                    DataTable dt1 = DataAccess.GetDataTable(sql);
+                    DataTable dt1 = DataAccess.GetDataTable("select itemName as Items ,  RetailsPrice as Price , Qty  , Total   from sales_item where sales_id = @id",
+                                                            DataAccess.P("@id", InvoiceNo));
                     datagrdSalesInvoice.DataSource = dt1;
 
                     //Total calculation
-                    string sql3 = "select SUM(Total)   from sales_item  where sales_id = '" + InvoiceNo + "'";
-                    DataTable dt3 = DataAccess.GetDataTable(sql3);
-                    /////label5.Text = "Total : " + dt3.Rows[0].ItemArray[0].ToString();
+                    decimal totalAmount = DataAccess.GetDecimal("select SUM(Total) from sales_item where sales_id = @id", DataAccess.P("@id", InvoiceNo));
 
-                    string sql6 = "select * from sales_payment  where (sales_id = '" + InvoiceNo + "')";
-                    DataTable dt6 = DataAccess.GetDataTable(sql6);
+                    DataTable dt6 = DataAccess.GetDataTable("select * from sales_payment where sales_id = @id", DataAccess.P("@id", InvoiceNo));
 
-                    //Invoice  Shippingfee 
-                    string sqlSaleinfo = "select ShippingFee from tbl_saleInfo  where (InvoiceNo = '" + InvoiceNo + "')";
-                    DataTable dtSaleinfo = DataAccess.GetDataTable(sqlSaleinfo);
-
+                    //Invoice  Shippingfee
+                    DataTable dtSaleinfo = DataAccess.GetDataTable("select ShippingFee from tbl_saleInfo where InvoiceNo = @id", DataAccess.P("@id", InvoiceNo));
 
                     // Header info
-                    string sqlTitle = "select * from tbl_terminalLocation where Shopid = '" + UserInfo.Shopid + "'";
-                    DataTable dtTitle = DataAccess.GetDataTable(sqlTitle); 
+                    DataTable dtTitle = DataAccess.GetDataTable("select * from tbl_terminalLocation where Shopid = @shopid", DataAccess.P("@shopid", UserInfo.Shopid));
                     string Ph           = dtTitle.Rows[0].ItemArray[4].ToString();
                     string web          = dtTitle.Rows[0].ItemArray[6].ToString();
+
+                    decimal discountAmount = 0m;
+                    decimal.TryParse(dt6.Rows[0].ItemArray[5].ToString(), out discountAmount);
 
                     DataRow dr = dt1.NewRow();
                     dr[0] = "";
                     dt1.Rows.Add(dr);
 
-                    /// Sub total = total - Discount
                     DataRow Total = dt1.NewRow();
                     Total[0] = "Total Amount: ";
-                    Total[3] = dt3.Rows[0].ItemArray[0].ToString();
+                    Total[3] = totalAmount;
                     dt1.Rows.Add(Total);
 
                     DataRow dis = dt1.NewRow();
                     dis[0] = "Discount Amount: ";
-                    dis[3] = dt6.Rows[0].ItemArray[5].ToString();
+                    dis[3] = discountAmount;
                     dt1.Rows.Add(dis);
 
                     DataRow dotlineSubtotal = dt1.NewRow();
                     dotlineSubtotal[0] = "___________________________________________________________________";
-                    //dotlineSubtotal[3] = 9898988.99;
                     dt1.Rows.Add(dotlineSubtotal);
 
                     /// Sub total = total - Discount
                     DataRow Subtotal = dt1.NewRow();
                     Subtotal[0] = "Sub total : ";
-                    Subtotal[3] = Convert.ToDouble(dt3.Rows[0].ItemArray[0].ToString()) - Convert.ToDouble(dt6.Rows[0].ItemArray[5].ToString());
+                    Subtotal[3] = totalAmount - discountAmount;
                     dt1.Rows.Add(Subtotal);
 
                     DataRow dr0 = dt1.NewRow();
@@ -206,25 +179,8 @@ namespace supershop.Inventory
                     DataRow dr9 = dt1.NewRow();
                     dr9[0] = "|||| ||| |||||||| Web: " + web;
                     dt1.Rows.Add(dr9);
-
-                    //DataRow emp = dt1.NewRow();
-                    //emp[0] = "Served by: " + dt6.Rows[0].ItemArray[9].ToString();
-                    //dt1.Rows.Add(emp);
-
-                    //DataRow dr8 = dt1.NewRow();
-                    //dr8[0] = "Recipt No : " + dt6.Rows[0].ItemArray[0].ToString();
-                    //dt1.Rows.Add(dr8);
-
-                    //DataRow credit = dt1.NewRow();
-                    //credit[0] = "citkar@live.com";
-                    //dt1.Rows.Add(credit);
-
-                    //label4.Text = dt6.Rows[0].ItemArray[9].ToString();
                 }
-                catch (Exception exp)
-                {
-                    MessageBox.Show("Sorry !!!! !! \r\n" + exp.Message);
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
         }
         #endregion

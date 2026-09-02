@@ -80,16 +80,20 @@ namespace supershop
             }
         }
 
+        // Logs the sign-out time (tbl_workrecords) so worked hours can be reported.
         public void workRecords()
         {
-            string logdate = DateTime.Now.ToString("yyyy-MM-dd");
-            string logtime = DateTime.Now.ToString("HH:mm:ss");
-            string logdatetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-            string sqlLogIn = " insert into tbl_workrecords (Username, datatype, logdate, logtime, logdatetime) " +
-                                 " values ('" + UserInfo.UserName + "' , 'OUT' , '" + logdate + "' , " +
-                                  " '" + logtime + "' , '" + logdatetime + "'  )";
-            DataAccess.ExecuteSQL(sqlLogIn);
+            try
+            {
+                DateTime now = DateTime.Now;
+                DataAccess.ExecuteSQL(
+                    " insert into tbl_workrecords (Username, datatype, logdate, logtime, logdatetime) values (@u, 'OUT', @d, @t, @dt)",
+                    DataAccess.P("@u", UserInfo.UserName),
+                    DataAccess.P("@d", now.ToString("yyyy-MM-dd")),
+                    DataAccess.P("@t", now.ToString("HH:mm:ss")),
+                    DataAccess.P("@dt", now.ToString("yyyy-MM-dd HH:mm:ss")));
+            }
+            catch (Exception exLog) { Logger.Error(exLog); } // sign-out must not be blocked by a logging failure
         }
       
 

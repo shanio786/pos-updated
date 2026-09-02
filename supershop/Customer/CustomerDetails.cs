@@ -41,9 +41,7 @@ namespace supershop.Customer
                 btn.HeaderText = "Edit";
                 btn.Text = "Edit";
                 btn.Name = "btn";
-               // btn.Width = 2;
                 btn.UseColumnTextForButtonValue = true;
-              
             }
             catch (Exception exLog) { Logger.Error(exLog); }
           
@@ -72,7 +70,6 @@ namespace supershop.Customer
             try
             {
                 DataGridViewRow row = dtGrdvCustomerDetails.Rows[e.RowIndex];
-               // label1.Text = row.Cells[0].Value.ToString();
 
                 Customer.AddNewCustomer mkc = new Customer.AddNewCustomer();
                 mkc.CustID      = row.Cells[1].Value.ToString();
@@ -85,10 +82,7 @@ namespace supershop.Customer
                 mkc.ShowDialog();
 
             }
-            catch // (Exception exp)
-            {
-                // MessageBox.Show("Sorry" + exp.Message);
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         #region Data serach
@@ -96,41 +90,32 @@ namespace supershop.Customer
         {
             try
             {
-
                 string sqlCmd = " Select * from  customercredit " +
-                                " where Name  like  '%" + txtCustomerSearch.Text + "%' or " +
-                                " ID like  '%" + txtCustomerSearch.Text + "%'  or " +
-                                "  Mobile  like  '%" + txtCustomerSearch.Text + "%' or " +
-                                "  City  like  '%" + txtCustomerSearch.Text + "%'  or " +
-                                " EmailAddress  like  '%" + txtCustomerSearch.Text + "%'";
-                // = txtCustomerSearch.Text ";// or Phone  like  '%" + txtCustomerSearch.Text + "%'  or City  like  '%" + txtCustomerSearch.Text + "%'  or emailAddress  like  '%" + txtCustomerSearch.Text + "%'";
-                DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
+                                " where Name like '%' + @q + '%' or " +
+                                " cast(ID as varchar(20)) like '%' + @q + '%' or " +
+                                " Mobile like '%' + @q + '%' or " +
+                                " City like '%' + @q + '%' or " +
+                                " EmailAddress like '%' + @q + '%'";
+                DataTable dt1 = DataAccess.GetDataTable(sqlCmd, DataAccess.P("@q", txtCustomerSearch.Text));
                 dtGrdvCustomerDetails.DataSource = dt1;
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
-                
+
         private void CombPeopleType_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
                 if (CombPeopleType.Text == "All")
                 {
-                   // string sqlCmd = "select  Name , Phone as [Contact],  EmailAddress as [Email], City, Address , PeopleType  from tbl_customer";
-                    string sqlCmd = "Select * from  customercredit";
-                    DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
+                    DataTable dt1 = DataAccess.GetDataTable("Select * from  customercredit");
                     dtGrdvCustomerDetails.DataSource = dt1;
-
-                    //DataGridViewColumn column = dtGrdvCustomerDetails.Columns[8];
-                    //column.Width = 5;
                 }
                 else
                 {
-                    string sqlCmd = "Select * from  customercredit  where PeopleType  = '" + CombPeopleType.Text + "'";
-                    DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
+                    DataTable dt1 = DataAccess.GetDataTable("Select * from  customercredit  where PeopleType = @type", DataAccess.P("@type", CombPeopleType.Text));
                     dtGrdvCustomerDetails.DataSource = dt1;
                 }
-              
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
@@ -162,18 +147,13 @@ namespace supershop.Customer
             { 
                 try
                 {
-                    string sql = "delete from tbl_customer where  id != '10000009'";
-                    DataAccess.ExecuteSQL(sql);                    
+                    // 10000009 is the built-in "Guest" customer and must stay
+                    DataAccess.ExecuteSQL("delete from tbl_customer where id != 10000009");
 
                     MessageBox.Show("Has been Deleted", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     Databind();
-
                 }
-                catch (Exception exp)
-                {
-                    MessageBox.Show("Sorry\r\n You have to Check the Data" + exp.Message);
-                }
-               
+                catch (Exception exLog) { Logger.Show(exLog, "Could not delete the customers."); }
             }
         }
     }

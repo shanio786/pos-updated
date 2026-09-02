@@ -42,7 +42,7 @@ namespace supershop
         }
         public string paidamount
         {
-            set { lbpaidamt.Text = value; }         get { return lbDueAmount.Text; }
+            set { lbpaidamt.Text = value; }         get { return lbpaidamt.Text; }
         }
         public string contact
         {
@@ -80,44 +80,55 @@ namespace supershop
         {
             if (txtReceive.Text == "" )
             {
-                // MessageBox.Show("You are Not able to Update");
                 MessageBox.Show("You are Not able to Update", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {
                 try
                 {
-                    if (Convert.ToDouble(txtReceive.Text) <= Convert.ToDouble(lbDueAmount.Text))
+                    decimal received = Convert.ToDecimal(txtReceive.Text);
+                    decimal due = Convert.ToDecimal(lbDueAmount.Text);
+                    if (received <= due)
                     {
-                        double Receiveamt = Convert.ToDouble(lbDueAmount.Text) - Convert.ToDouble(txtReceive.Text);
-                        string sql = "UPDATE sales_payment set due_amount = '" + Receiveamt + "'   where (sales_id = '" + lbsalesid.Text + "')";
-                        DataAccess.ExecuteSQL(sql);
+                        decimal remainingDue = due - received;
+                        string salesId = lbsalesid.Text;
+                        string receiveDate = dtReceiveDate.Text;        // 'yyyy-MM-dd'
+                        decimal totalAmt = Convert.ToDecimal(lbtotalamt.Text);
+                        string custId = lbcontact.Text;
 
-                        //Insert Due payment history
-                        double remainingdeu = Convert.ToDouble(lbDueAmount.Text) - Convert.ToDouble(txtReceive.Text);
-                        string sqlreceivedue = " insert into tbl_duepayment (receivedate, sales_id, totalamt , dueamt, receiveamt , custid,emp_id,Shopid) " +
-                                                " values ('" + dtReceiveDate.Text + "' , '" + lbsalesid.Text + "', '" + lbtotalamt.Text + "', " +
-                                                " '" + remainingdeu + "', '" + txtReceive.Text + "', '" + lbcontact.Text + "','" + UserInfo.UserName + "','" + UserInfo.Shopid + "') ";                                                
-                        DataAccess.ExecuteSQL(sqlreceivedue);
+                        // Update the invoice due and write the payment history together
+                        DataAccess.RunInTransaction(delegate(DataAccess.DbTransaction tx)
+                        {
+                            tx.Execute("UPDATE sales_payment set due_amount = @due where sales_id = @id",
+                                       DataAccess.P("@due", remainingDue),
+                                       DataAccess.P("@id", salesId));
+
+                            tx.Execute(" insert into tbl_duepayment (receivedate, sales_id, totalamt, dueamt, receiveamt, custid, emp_id, Shopid) " +
+                                       " values (@rdate, @id, @total, @due, @received, @custid, @emp, @shopid)",
+                                       DataAccess.P("@rdate", receiveDate),
+                                       DataAccess.P("@id", salesId),
+                                       DataAccess.P("@total", totalAmt),
+                                       DataAccess.P("@due", remainingDue),
+                                       DataAccess.P("@received", received),
+                                       DataAccess.P("@custid", custId),
+                                       DataAccess.P("@emp", UserInfo.UserName),
+                                       DataAccess.P("@shopid", UserInfo.Shopid));
+                        });
 
                         MessageBox.Show("Successfully Data Updated!", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         txtReceive.Text = string.Empty;
 
-
-                       // this.Close();
                         this.Hide();
                         DueList go = new DueList();
                         go.MdiParent = this.ParentForm;
                         go.Show();
-                                             
                     }
                     else
                     {
                         MessageBox.Show("You are Not able to Update \n\n Excced Due amount ", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
-                    
                 }
-                catch (Exception exLog) { Logger.Error(exLog); }
+                catch (Exception exLog) { Logger.Show(exLog, "Could not save the due payment. Nothing has been changed."); }
             }
         }
 

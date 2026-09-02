@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,6 @@ namespace supershop.User_mgt
     {
         DateTime dt = DateTime.Today;
         string thisMonth, thisYear = "";
-        string netamount = "";
-        string sql5 = "";
         string bounsValue = "";
         string dedcutValue = "";
 
@@ -67,8 +66,8 @@ namespace supershop.User_mgt
         private void bindGrid()
         {
             string sql = " SELECT user_name as Name , pay_month AS [Pay Month], pay_year as [Pay Year],pay_date as [Pay Date],leaves as [Leaves],basic_pay as [Basic Salary],bouns as [Bouns],total_salary as [Total Salary], deducations as [Deducations],net_amount as [Net Amount],paid_amount as [Paid Amount],bal_amount as [Balance],pay_status as [Status] FROM tbl_payroll" +
-                        " where pay_month = '" + cbmonth.Text + "' and pay_year = '"+txtYear.Text+"'";
-            DataTable dt1 = DataAccess.GetDataTable(sql);
+                        " where pay_month = @m and pay_year = @y";
+            DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@m", cbmonth.Text), DataAccess.P("@y", txtYear.Text));
             dataGridView1.DataSource = dt1;
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -88,8 +87,8 @@ namespace supershop.User_mgt
             try
             {
                 getclear();
-                sql5 = "select basic_salary from usermgt where Name = '" + cbUserName.Text + "'";
-                txtbais.Text = DataAccess.ExecuteSQLScaler(sql5);
+                txtbais.Text = DataAccess.ExecuteSQLScaler("select basic_salary from usermgt where Name = @n", DataAccess.P("@n", cbUserName.Text));
+                if (txtbais.Text == "") txtbais.Text = "0";
                 getdata();
                 
             }
@@ -112,9 +111,8 @@ namespace supershop.User_mgt
             dedcutValue = "0";
             try
             {
-                string sqlSal = " select basic_pay,paid_amount,deducations,net_amount,bouns,pay_status,bal_amount from tbl_payroll where (user_name = '" + cbUserName.Text + "')and(pay_month = '" + cbmonth.Text + "')and(pay_year = '" + txtYear.Text + "')"; // 
-                DataTable dtVat = DataAccess.GetDataTable(sqlSal);
-                // txtbais.Text = dtVat.Rows[0].ItemArray[0].ToString();
+                string sqlSal = " select basic_pay,paid_amount,deducations,net_amount,bouns,pay_status,bal_amount from tbl_payroll where user_name = @n and pay_month = @m and pay_year = @y";
+                DataTable dtVat = DataAccess.GetDataTable(sqlSal, DataAccess.P("@n", cbUserName.Text), DataAccess.P("@m", cbmonth.Text), DataAccess.P("@y", txtYear.Text));
 
                 try { txtPaidAmnt.Text = dtVat.Rows[0].ItemArray[1].ToString(); } catch (Exception) { txtPaidAmnt.Text = "0";}
                 try { dedcutValue = dtVat.Rows[0].ItemArray[2].ToString();} catch (Exception) { txtDedcut.Text = "0"; }
@@ -146,10 +144,9 @@ namespace supershop.User_mgt
             catch (Exception exLog) { Logger.Error(exLog); }
             try
             {
-                sql5 = "select Count(att_date) from userattendence where (Name = '" + cbUserName.Text + "')and(att_month = '" + cbmonth.Text + "')and(att_year = '" + txtYear.Text + "')and(att_status = 'Absent')";
-                txtLeaves.Text = DataAccess.ExecuteSQLScaler(sql5);
-                if (txtLeaves.Text == "")
-                    txtLeaves.Text = "0";
+                txtLeaves.Text = DataAccess.GetDecimal(
+                    "select Count(att_date) from userattendence where Name = @n and att_month = @m and att_year = @y and att_status = 'Absent'",
+                    DataAccess.P("@n", cbUserName.Text), DataAccess.P("@m", cbmonth.Text), DataAccess.P("@y", txtYear.Text)).ToString();
             }
             catch (Exception) { txtLeaves.Text = "0"; }
            
@@ -287,79 +284,77 @@ namespace supershop.User_mgt
             }
             try
             {
-                sql5 = "select user_name from tbl_payroll where (user_name = '" + cbUserName.Text + "')and(pay_month = '" + cbmonth.Text + "')and(pay_year = '" + txtYear.Text + "')";
-                paystatus = DataAccess.ExecuteSQLScaler(sql5);
+                paystatus = DataAccess.ExecuteSQLScaler("select user_name from tbl_payroll where user_name = @n and pay_month = @m and pay_year = @y",
+                    DataAccess.P("@n", cbUserName.Text), DataAccess.P("@m", cbmonth.Text), DataAccess.P("@y", txtYear.Text));
                 if (paystatus == "")
                     paystatus = "false";
             }
             catch (Exception) { paystatus = "false"; }
-            if (paystatus == "" || paystatus == "false")
+            // Everything belonging to one "pay" action (advance row + payroll row) is saved in one transaction.
+            try
             {
-                try
+                if (paystatus == "" || paystatus == "false")
                 {
                     if (cbPayType.Text == "Advence")
                     {
-                       
-                        sql5 = "insert into tbl_adv_sal (user_name, adv_month,adv_year,adv_date,adv_amount,bal_amnt)" +
-                                          "  values('" + cbUserName.Text + "', '" + cbmonth.Text + "','" + txtYear.Text + "','" + dtDate.Value.ToShortDateString() + "','" + txtAdvAmnt.Text + "','"+txtbalamnt.Text+"'" +
-                                          ")";
-                        DataAccess.ExecuteSQL(sql5);
-
-                        sql5 = "insert into tbl_payroll (user_name,pay_month,pay_year,pay_date,basic_pay,leaves,deducations,net_amount,pay_status,paid_amount,bouns,total_salary,bal_amount)" +
-                                        "  values('" + cbUserName.Text + "', '" + cbmonth.Text + "','" + txtYear.Text + "','" + dtDate.Value.ToShortDateString() + "','" + txtbais.Text + "','" + txtLeaves.Text + "','" + txtDedcut.Text + "','" + txtNetSal.Text + "','" + advpaid + "','" + txtNetSal.Text + "','" + txtBouns.Text + "','" + txtTotalPay.Text + "','" + txtbalamnt.Text + "'" +
-                                        ")";
-                        //Double net = Convert.ToDouble(txtbais.Text) + Convert.ToDouble(txtpa.Text);
-                        //txtTotalPay.Text = Convert.ToString(net);
+                        DataAccess.RunInTransaction(delegate(DataAccess.DbTransaction tx)
+                        {
+                            tx.Execute(InsertAdvanceSql, AdvanceParams());
+                            tx.Execute(InsertPayrollSql, PayrollInsertParams(advpaid, txtbalamnt.Text));
+                        });
                     }
                     else if (cbPayType.Text == "Normal")
                     {
-                        sql5 = "insert into tbl_payroll (user_name,pay_month,pay_year,pay_date,basic_pay,leaves,deducations,net_amount,pay_status,paid_amount,bouns,bal_amount,total_salary)" +
-                                                               "  values('" + cbUserName.Text + "', '" + cbmonth.Text + "','" + txtYear.Text + "','" + dtDate.Value.ToShortDateString() + "','" + txtbais.Text + "','" + txtLeaves.Text + "','" + txtDedcut.Text + "','" + txtNetSal.Text + "','Full Paid','" + txtNetSal.Text + "','" + txtBouns.Text + "','0','" + txtTotalPay.Text + "'" +
-                                                               ")";
+                        DataAccess.ExecuteSQL(InsertPayrollSql, PayrollInsertParams("Full Paid", "0"));
                     }
-                    DataAccess.ExecuteSQL(sql5);
+                    else
+                    {
+                        MessageBox.Show("Please select a pay type", "Not Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
                     MessageBox.Show("Record Save Successfully", "Pay Submit", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                catch (Exception)
+                else
                 {
-                    MessageBox.Show("Record Not Save", "Not Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+                    if (cbPayType.Text == "Normal")
+                    {
+                        MessageBox.Show("Record Already Saved Of This Month", "Not Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    else if (cbPayType.Text == "Due Balance")
+                    {
+                        double totalpaid = Convert.ToDouble(txtPaidAmnt.Text) + Convert.ToDouble(txtNetSal.Text);
+                        DataAccess.RunInTransaction(delegate(DataAccess.DbTransaction tx)
+                        {
+                            tx.Execute(InsertAdvanceSql, AdvanceParams());
+                            tx.Execute("Update tbl_payroll SET net_amount = '0', deducations = @ded, paid_amount = @paid where user_name = @n and pay_month = @m and pay_year = @y",
+                                DataAccess.P("@ded", txtDedcut.Text), DataAccess.P("@paid", totalpaid.ToString()),
+                                DataAccess.P("@n", cbUserName.Text), DataAccess.P("@m", cbmonth.Text), DataAccess.P("@y", txtYear.Text));
+                        });
+                    }
+                    else if (cbPayType.Text == "Advence")
+                    {
+                        double totalpaid = Convert.ToDouble(txtPaidAmnt.Text) + Convert.ToDouble(txtAdvAmnt.Text) + Convert.ToDouble(txtBouns.Text) - Convert.ToDouble(txtDedcut.Text);
+                        DataAccess.RunInTransaction(delegate(DataAccess.DbTransaction tx)
+                        {
+                            tx.Execute(InsertAdvanceSql, AdvanceParams());
+                            tx.Execute("Update tbl_payroll SET pay_status = @status, deducations = @ded, bouns = @bonus, total_salary = @total, net_amount = @net, paid_amount = @paid, bal_amount = @bal " +
+                                       " where user_name = @n and pay_month = @m and pay_year = @y",
+                                DataAccess.P("@status", advpaid), DataAccess.P("@ded", dedcutValue), DataAccess.P("@bonus", bounsValue),
+                                DataAccess.P("@total", txtTotalPay.Text), DataAccess.P("@net", txtNetSal.Text), DataAccess.P("@paid", totalpaid.ToString()),
+                                DataAccess.P("@bal", txtbalamnt.Text),
+                                DataAccess.P("@n", cbUserName.Text), DataAccess.P("@m", cbmonth.Text), DataAccess.P("@y", txtYear.Text));
+                        });
+                        MessageBox.Show("Record Save Successfully", "Pay Submit", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
-
             }
-            else
+            catch (Exception exSave)
             {
-                if (cbPayType.Text == "Normal")
-                {
-                    MessageBox.Show("Record Already Saved Of This Month", "Not Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                else if (cbPayType.Text == "Due Balance")
-                {
-                    sql5 = "insert into tbl_adv_sal (user_name, adv_month,adv_year,adv_date,adv_amount,bal_amnt)" +
-                                      "  values('" + cbUserName.Text + "', '" + cbmonth.Text + "','" + txtYear.Text + "','" + dtDate.Value.ToShortDateString() + "','" + txtAdvAmnt.Text + "','"+txtbalamnt.Text+"'" +
-                                      ")";
-                    DataAccess.ExecuteSQL(sql5);
-                    double totalpaid = Convert.ToDouble(txtPaidAmnt.Text) + Convert.ToDouble(txtNetSal.Text);
-                    sql5 = "Update tbl_payroll SET pay_status = 'Full Paid',deducations = '" + dedcutValue + "',bouns = '" + bounsValue + "',total_salary = '" + txtTotalPay.Text + "',net_amount = '" + txtNetSal.Text + "',paid_amount = '" + totalpaid + "',bal_amount = '0'  where user_name = '" + cbUserName.Text + "' and pay_month = '" + cbmonth.Text + "' and pay_year = '" + txtYear.Text + "'";
-
-                    sql5 = "Update tbl_payroll SET net_amount = '0',deducations = '" + txtDedcut.Text + "',paid_amount = '" + totalpaid + "'  where user_name = '" + cbUserName.Text + "' and pay_month = '" + cbmonth.Text + "' and pay_year = '" + txtYear.Text + "'";
-                    DataAccess.ExecuteSQL(sql5);
-                }
-                else if (cbPayType.Text == "Advence")
-                {
-                    sql5 = "insert into tbl_adv_sal (user_name, adv_month,adv_year,adv_date,adv_amount,bal_amnt)" +
-                                      "  values('" + cbUserName.Text + "', '" + cbmonth.Text + "','" + txtYear.Text + "','" + dtDate.Value.ToShortDateString() + "','" + txtAdvAmnt.Text + "','"+txtbalamnt.Text+"'" +
-                                      ")";
-                    DataAccess.ExecuteSQL(sql5);
-                    double totalpaid = Convert.ToDouble(txtPaidAmnt.Text) + Convert.ToDouble(txtAdvAmnt.Text) + Convert.ToDouble(txtBouns.Text) - Convert.ToDouble(txtDedcut.Text);
-                    sql5 = "Update tbl_payroll SET pay_status = '"+ advpaid + "',deducations = '" + dedcutValue + "',bouns = '" + bounsValue + "',total_salary = '" + txtTotalPay.Text+"',net_amount = '" + txtNetSal.Text + "',paid_amount = '" + totalpaid + "',bal_amount = '"+txtbalamnt.Text+"'  where user_name = '" + cbUserName.Text + "' and pay_month = '" + cbmonth.Text + "' and pay_year = '" + txtYear.Text + "'";
-                    DataAccess.ExecuteSQL(sql5);
-                    MessageBox.Show("Record Save Successfully", "Pay Submit", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                }
-                else { }
+                Logger.Show(exSave, "Could not save the payroll record.");
+                return;
             }
+
             bindGrid();
             preValTP = txtTotalPay.Text;
             preValNet = txtNetSal.Text;
@@ -376,6 +371,31 @@ namespace supershop.User_mgt
             }
             getclear();
             
+        }
+
+        const string InsertAdvanceSql =
+            "insert into tbl_adv_sal (user_name, adv_month, adv_year, adv_date, adv_amount, bal_amnt) values (@n, @m, @y, @d, @amount, @bal)";
+
+        const string InsertPayrollSql =
+            "insert into tbl_payroll (user_name, pay_month, pay_year, pay_date, basic_pay, leaves, deducations, net_amount, pay_status, paid_amount, bouns, total_salary, bal_amount) " +
+            " values (@n, @m, @y, @d, @basic, @leaves, @ded, @net, @status, @paid, @bonus, @total, @bal)";
+
+        // A SqlParameter can only belong to one command, so these build a fresh set every call.
+        private SqlParameter[] AdvanceParams()
+        {
+            return new SqlParameter[] {
+                DataAccess.P("@n", cbUserName.Text), DataAccess.P("@m", cbmonth.Text), DataAccess.P("@y", txtYear.Text),
+                DataAccess.P("@d", dtDate.Value.ToShortDateString()), DataAccess.P("@amount", txtAdvAmnt.Text), DataAccess.P("@bal", txtbalamnt.Text) };
+        }
+
+        private SqlParameter[] PayrollInsertParams(string status, string balance)
+        {
+            return new SqlParameter[] {
+                DataAccess.P("@n", cbUserName.Text), DataAccess.P("@m", cbmonth.Text), DataAccess.P("@y", txtYear.Text),
+                DataAccess.P("@d", dtDate.Value.ToShortDateString()), DataAccess.P("@basic", txtbais.Text), DataAccess.P("@leaves", txtLeaves.Text),
+                DataAccess.P("@ded", txtDedcut.Text), DataAccess.P("@net", txtNetSal.Text), DataAccess.P("@status", status),
+                DataAccess.P("@paid", txtNetSal.Text), DataAccess.P("@bonus", txtBouns.Text), DataAccess.P("@total", txtTotalPay.Text),
+                DataAccess.P("@bal", balance) };
         }
 
         private void txtTotalPay_TextChanged(object sender, EventArgs e)
@@ -405,8 +425,8 @@ namespace supershop.User_mgt
             {
                 panel1.Visible = true;
                 string sql = " SELECT adv_date as [Date],adv_amount as [Amount],bal_amnt as [Balance Amount] FROM tbl_adv_sal" +
-                         " where user_name = '" + cbUserName.Text + "' and adv_month = '" + cbmonth.Text + "' and adv_year = '" + txtYear.Text + "'";
-                DataTable dt1 = DataAccess.GetDataTable(sql);
+                         " where user_name = @n and adv_month = @m and adv_year = @y";
+                DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@n", cbUserName.Text), DataAccess.P("@m", cbmonth.Text), DataAccess.P("@y", txtYear.Text));
                 dataGridView2.DataSource = dt1;
             }
             catch(Exception)

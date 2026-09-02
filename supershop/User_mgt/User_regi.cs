@@ -41,81 +41,59 @@ namespace supershop.User_mgt
         // Load User Info for Update 
         public void loadData(string Uid)
         {
-            string sql3 = "select * from usermgt where id = '" + Uid + "'";
-            DataTable dt1 = DataAccess.GetDataTable(sql3);
+            // The stored password is a hash and is never shown; an empty box means "keep the current password".
+            DataTable dt1 = DataAccess.GetDataTable(
+                "select id, Name, Father_name, Address, Email, Contact, DOB, Username, usertype, imagename, Shopid, " +
+                " basic_salary, joning_date, in_time, out_time, shopname from usermgt where id = @id",
+                DataAccess.P("@id", Uid));
+            if (dt1.Rows.Count == 0)
+            {
+                MessageBox.Show("User not found.", "User", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            DataRow r = dt1.Rows[0];
 
-          //  lblUid.Text = dt1.Rows[0].ItemArray[0].ToString();
-            txtUserFullName.Text = dt1.Rows[0].ItemArray[1].ToString();
-            txtFatherName.Text = dt1.Rows[0].ItemArray[2].ToString();
-            txtAddress.Text = dt1.Rows[0].ItemArray[3].ToString();
-            txtEmailaddress.Text = dt1.Rows[0].ItemArray[4].ToString();
-            txtContact.Text = dt1.Rows[0].ItemArray[5].ToString();
-            dtDOB.Value = Convert.ToDateTime(dt1.Rows[0].ItemArray[6].ToString());
-            txtUsername.Text = dt1.Rows[0].ItemArray[7].ToString();
-            textUserPass.Text = dt1.Rows[0].ItemArray[8].ToString();             
-            lblimagename.Text = dt1.Rows[0].ItemArray[11].ToString();
-           
+            txtUserFullName.Text = r["Name"].ToString();
+            txtFatherName.Text = r["Father_name"].ToString();
+            txtAddress.Text = r["Address"].ToString();
+            txtEmailaddress.Text = r["Email"].ToString();
+            txtContact.Text = r["Contact"].ToString();
+            try { dtDOB.Value = Convert.ToDateTime(r["DOB"].ToString()); } catch (Exception) { }
+            txtUsername.Text = r["Username"].ToString();
+            textUserPass.Text = "";
+            label7.Text = "Password (leave blank to keep)";
+            lblimagename.Text = r["imagename"].ToString();
 
-            string path = Application.StartupPath + @"\IMAGE\" + dt1.Rows[0].ItemArray[11].ToString() + "";
+            string path = Application.StartupPath + @"\IMAGE\" + r["imagename"];
             picUserimage.ImageLocation = path;
-            picUserimage.InitialImage.Dispose();
+            if (picUserimage.InitialImage != null) picUserimage.InitialImage.Dispose();
 
-            if (dt1.Rows[0].ItemArray[9].ToString() == "1")
-            {
+            string usertype = r["usertype"].ToString();
+            if (usertype == "1")
                 rdbtnAdmin.Checked = true;
-            }
-            else if (dt1.Rows[0].ItemArray[9].ToString() == "2")
-            {
+            else if (usertype == "2")
                 rdbtnManager.Checked = true;
-            }
-            else if (dt1.Rows[0].ItemArray[9].ToString() == "3")
-            {
+            else if (usertype == "3")
                 rdbtnSalesMan.Checked = true;
-            }
-            else if (dt1.Rows[0].ItemArray[9].ToString() == "0")
-            {
+            else if (usertype == "0")
                 rdbtnblock.Checked = true;
-            }
-            else
-            {
-               // rdbtnInactive.Checked = true;
-            }         
-            cmboShopid.SelectedValue = dt1.Rows[0].ItemArray[12].ToString();
-            txtBasicSalary.Text = dt1.Rows[0].ItemArray[14].ToString();
-            try
-            {
-                dtJoning.Value = Convert.ToDateTime(dt1.Rows[0].ItemArray[15].ToString());
-            }
-            catch (Exception) { dtJoning.Text = ""; }
-            try
-            {
-                dtInTime.Value = Convert.ToDateTime(dt1.Rows[0].ItemArray[16].ToString());
-            }
-            catch (Exception) { dtInTime.Text = ""; }
-            try
-            {
-                dtOutTime.Value = Convert.ToDateTime(dt1.Rows[0].ItemArray[17].ToString());
-            }
-            catch (Exception) { dtOutTime.Text = ""; }
-            ShopNametextBox.Text = dt1.Rows[0].ItemArray[18].ToString();
 
+            cmboShopid.SelectedValue = r["Shopid"].ToString();
+            txtBasicSalary.Text = r["basic_salary"].ToString();
+            try { dtJoning.Value = Convert.ToDateTime(r["joning_date"].ToString()); }
+            catch (Exception) { dtJoning.Text = ""; }
+            try { dtInTime.Value = Convert.ToDateTime(r["in_time"].ToString()); }
+            catch (Exception) { dtInTime.Text = ""; }
+            try { dtOutTime.Value = Convert.ToDateTime(r["out_time"].ToString()); }
+            catch (Exception) { dtOutTime.Text = ""; }
+            ShopNametextBox.Text = r["shopname"].ToString();
         }
 
-        // Load UID No
+        // Next UID No (display only - the id column is an identity)
         private void showincrement()
         {
-            string sql = "select id from usermgt order by id desc";
-            DataTable dt = DataAccess.GetDataTable(sql);
-            if (dt.Rows.Count > 0)
-            {
-                int id = Convert.ToInt32(dt.Rows[0].ItemArray[0].ToString()) + 1;
-                txtUid.Text = id.ToString();
-            }
-            else
-            {
-                int id = 1;
-                txtUid.Text = id.ToString();
-            }
+            decimal next = DataAccess.GetDecimal("select ISNULL(MAX(id), 0) + 1 from usermgt");
+            txtUid.Text = next.ToString();
         }
 
         public void Bindshopbranch()
@@ -208,130 +186,111 @@ namespace supershop.User_mgt
                 MessageBox.Show("Please Add  Email address", "Fill Field", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 txtEmailaddress.Focus();
             }
-            else if (textUserPass.Text == "")
+            else if (lblUid.Text == "-" && textUserPass.Text == "")
             {
+                // a password is only mandatory for a new user; when updating, empty = unchanged
                 MessageBox.Show("Please Add  Password", "Fill Field", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 textUserPass.Focus();
             }
             else
             {
-               try
-                {                     
-                    
+                try
+                {
                     int flag;
-                    if (rdbtnAdmin.Checked)
-                    {
-                        flag = 1;
-                    }
-                    else if (rdbtnManager.Checked)
-                    {
-                        flag = 2;
-                    }
-                    else if (rdbtnSalesMan.Checked)
-                    {
-                        flag = 3;
-                    }
-                    else if (rdbtnblock.Checked)
-                    {
-                        flag = 0;
-                    }
-                    else
-                    {
-                        flag = 0;
-                    }
                     string posi;
-                    if (rdbtnAdmin.Checked)
-                    {
-                        posi = "Admin";
-                    }
-                    else if (rdbtnManager.Checked)
-                    {
-                        posi = "Manager";
-                    }
-                    else if (rdbtnSalesMan.Checked)
-                    {
-                        posi = "Salesman";
-                    }
-                    else if (rdbtnblock.Checked)
-                    {
-                        posi = "Block";
-                    }
-                    else
-                    {
-                        posi = "0";
-                    }
+                    if (rdbtnAdmin.Checked) { flag = 1; posi = "Admin"; }
+                    else if (rdbtnManager.Checked) { flag = 2; posi = "Manager"; }
+                    else if (rdbtnSalesMan.Checked) { flag = 3; posi = "Salesman"; }
+                    else if (rdbtnblock.Checked) { flag = 0; posi = "Block"; }
+                    else { flag = 0; posi = "0"; }
 
                     //New Insert / New Entry
-                    if(lblUid.Text == "-")
+                    if (lblUid.Text == "-")
                     {
-                        string sql1 = "";
-                        //string selno = txtUid.Text;
-                        string imageName = txtUid.Text + lblFileExtension.Text; //System.IO.Path.GetFileName(openFileDialog1.FileName);
-                          sql1 = "insert into usermgt (Name, Father_name, Address, Email , Contact, DOB , Username , password , usertype , position , imagename, Shopid, shopname,basic_salary,joning_date,in_time,out_time) " +
-                                          "  values('" + txtUserFullName.Text + "', '" + txtFatherName.Text + "', '" + txtAddress.Text + "', '" + txtEmailaddress.Text + "', " +
-                                          " '" + txtContact.Text + "',  '" + dtDOB.Text + "', '" + txtUsername.Text + "', '" + textUserPass.Text + "', " +
-                                          " '" + flag + "', '" + posi + "' , '" + imageName + "' , '" + cmboShopid.SelectedValue + "' , '" + ShopNametextBox.Text + "','" + txtBasicSalary.Text + "','" + dtJoning.Value.ToShortDateString() + "','" + dtIn.ToShortTimeString() + "','" + dtOut.ToShortTimeString() + "')";
-                            DataAccess.ExecuteSQL(sql1);
-                       
+                        string imageName = txtUid.Text + lblFileExtension.Text;
+                        string sql1 = "insert into usermgt (Name, Father_name, Address, Email, Contact, DOB, Username, password, usertype, position, imagename, Shopid, shopname, basic_salary, joning_date, in_time, out_time) " +
+                                      " values (@name, @father, @addr, @email, @contact, @dob, @user, @p, @type, @posi, @img, @shopid, @shopname, @salary, @joined, @in, @out)";
+                        DataAccess.ExecuteSQL(sql1,
+                            DataAccess.P("@name", txtUserFullName.Text),
+                            DataAccess.P("@father", txtFatherName.Text),
+                            DataAccess.P("@addr", txtAddress.Text),
+                            DataAccess.P("@email", txtEmailaddress.Text),
+                            DataAccess.P("@contact", txtContact.Text),
+                            DataAccess.P("@dob", dtDOB.Text),
+                            DataAccess.P("@user", txtUsername.Text),
+                            DataAccess.P("@p", PasswordHasher.Hash(textUserPass.Text)),
+                            DataAccess.P("@type", flag.ToString()),
+                            DataAccess.P("@posi", posi),
+                            DataAccess.P("@img", imageName),
+                            DataAccess.P("@shopid", cmboShopid.SelectedValue),
+                            DataAccess.P("@shopname", ShopNametextBox.Text),
+                            DataAccess.P("@salary", txtBasicSalary.Text),
+                            DataAccess.P("@joined", dtJoning.Value.ToShortDateString()),
+                            DataAccess.P("@in", dtIn.ToShortTimeString()),
+                            DataAccess.P("@out", dtOut.ToShortTimeString()));
 
-                        /////////////////////picture upload  /////////////////
-                        string path = Application.StartupPath + @"\IMAGE\";
-                        System.IO.File.Delete(path + @"\" + imageName);
-                        if (!System.IO.Directory.Exists(path))
-                            System.IO.Directory.CreateDirectory(Application.StartupPath + @"\IMAGE\");
-                        string filename = path + @"\" + openFileDialog1.SafeFileName;
-                        picUserimage.Image.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
-                        System.IO.File.Move(path + @"\" + openFileDialog1.SafeFileName, path + @"\" + imageName);
-                        MessageBox.Show("User hase been Created Successfully", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        SavePicture(imageName, null);
+                        MessageBox.Show("User has been Created Successfully", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         lblEmailerrormsg.Visible = false;
 
                         User_mgt.Manage_user go = new User_mgt.Manage_user();
                         go.MdiParent = this.ParentForm;
                         go.Show();
-                        this.Close(); 
+                        this.Close();
                     }
                     else // Update info
                     {
-                        string imageName;
-                        if (lblFileExtension.Text == "user.png")
-                        {
-                            imageName = lblimagename.Text;  //Unchange pictures
-                        }
-                        else  //When change 
-                        {
-                            imageName = lblUid.Text + lblFileExtension.Text;
-                        }                   
-                       
-                        string sql = "UPDATE usermgt set  Name = '" + txtUserFullName.Text + "', Father_name = '" + txtFatherName.Text + "', " +
-                        " Address = '" + txtAddress.Text + "', Email = '" + txtEmailaddress.Text + "', Contact = '" + txtContact.Text + "', " +
-                        " DOB = '" + dtDOB.Value.ToString("yyyy-MM-dd") + "' , Username= '" + txtUsername.Text + "', password = '" + textUserPass.Text + "',imagename = '" + imageName + "' ,    " +
-                        " usertype    = '" + flag + "', position = '" + posi + "', Shopid = '" + cmboShopid.SelectedValue + "', "+
-                        " basic_salary = '" + txtBasicSalary.Text + "', joning_date = '" + dtJoning.Value.ToShortDateString() + "', in_time = '" + dtIn.ToShortTimeString() + "', out_time = '" + dtOut.ToShortTimeString() + "'  "+
-                        " where (id = '" + lblUid.Text + "' )"; 
-                        DataAccess.ExecuteSQL(sql);        
+                        bool pictureChanged = lblFileExtension.Text != "user.png";
+                        string imageName = pictureChanged ? lblUid.Text + lblFileExtension.Text : lblimagename.Text;
 
-    
-                        /////////////////////////////////////////////Update image //////////////////////////////////////////////////////
-                        if (lblFileExtension.Text != "user.png")
-                        {
-                            picUserimage.InitialImage.Dispose();
-                            string path = Application.StartupPath + @"\IMAGE\";
-                            System.IO.File.Delete(path + @"\" + lblimagename.Text);
-                            if (!System.IO.Directory.Exists(path))
-                                System.IO.Directory.CreateDirectory(Application.StartupPath + @"\IMAGE\");
-                            string filename = path + @"\" + openFileDialog1.SafeFileName;
-                            picUserimage.Image.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
-                            System.IO.File.Move(path + @"\" + openFileDialog1.SafeFileName, path + @"\" + imageName);
-                        }
-     
+                        // An empty password box means "keep the current password"; otherwise store a hash.
+                        string passwordSet = textUserPass.Text == "" ? "" : ", password = @p ";
+                        string sql = "UPDATE usermgt set Name = @name, Father_name = @father, Address = @addr, Email = @email, Contact = @contact, " +
+                                     " DOB = @dob, Username = @user, imagename = @img, usertype = @type, position = @posi, Shopid = @shopid, " +
+                                     " basic_salary = @salary, joning_date = @joined, in_time = @in, out_time = @out " + passwordSet +
+                                     " where id = @id";
+                        DataAccess.ExecuteSQL(sql,
+                            DataAccess.P("@name", txtUserFullName.Text),
+                            DataAccess.P("@father", txtFatherName.Text),
+                            DataAccess.P("@addr", txtAddress.Text),
+                            DataAccess.P("@email", txtEmailaddress.Text),
+                            DataAccess.P("@contact", txtContact.Text),
+                            DataAccess.P("@dob", dtDOB.Value.ToString("yyyy-MM-dd")),
+                            DataAccess.P("@user", txtUsername.Text),
+                            DataAccess.P("@img", imageName),
+                            DataAccess.P("@type", flag.ToString()),
+                            DataAccess.P("@posi", posi),
+                            DataAccess.P("@shopid", cmboShopid.SelectedValue),
+                            DataAccess.P("@salary", txtBasicSalary.Text),
+                            DataAccess.P("@joined", dtJoning.Value.ToShortDateString()),
+                            DataAccess.P("@in", dtIn.ToShortTimeString()),
+                            DataAccess.P("@out", dtOut.ToShortTimeString()),
+                            DataAccess.P("@p", textUserPass.Text == "" ? null : PasswordHasher.Hash(textUserPass.Text)),
+                            DataAccess.P("@id", lblUid.Text));
+
+                        if (pictureChanged)
+                            SavePicture(imageName, lblimagename.Text);
+
                         MessageBox.Show("Successfully Data Updated!", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         lblEmailerrormsg.Visible = false;
                         loadData(lblUid.Text);
                     }
- 
                 }
-                catch (Exception exp) { Logger.Error(exp); }
+                catch (Exception exp) { Logger.Show(exp, "Could not save the user."); }
             }
+        }
+
+        // Writes the picture box image to \IMAGE\<imageName>, removing the old file first.
+        private void SavePicture(string imageName, string oldImageName)
+        {
+            if (picUserimage.Image == null) return;
+            string path = Application.StartupPath + @"\IMAGE\";
+            if (!System.IO.Directory.Exists(path))
+                System.IO.Directory.CreateDirectory(path);
+            if (!string.IsNullOrEmpty(oldImageName))
+                System.IO.File.Delete(path + oldImageName);
+            System.IO.File.Delete(path + imageName);
+            picUserimage.Image.Save(path + imageName, System.Drawing.Imaging.ImageFormat.Png);
         }
 
         // Reset  
@@ -444,10 +403,9 @@ namespace supershop.User_mgt
                 {
                     try
                     {
-                        string sql = "delete from usermgt where   (id = '" + lblUid.Text + "' )"; 
-                        DataAccess.ExecuteSQL(sql);
+                        DataAccess.ExecuteSQL("delete from usermgt where id = @id", DataAccess.P("@id", lblUid.Text));
 
-                        picUserimage.InitialImage.Dispose();
+                        if (picUserimage.InitialImage != null) picUserimage.InitialImage.Dispose();
                         string path = Application.StartupPath + @"\IMAGE\";
                         System.IO.File.Delete(path + @"\" + lblimagename.Text);
 
@@ -461,7 +419,7 @@ namespace supershop.User_mgt
                     }
                     catch (Exception exp)
                     {
-                        MessageBox.Show("Sorry\r\n You have to Check the Data" + exp.Message);
+                        Logger.Show(exp, "Could not delete the user.");
                     }
                 }
             }
@@ -478,8 +436,8 @@ namespace supershop.User_mgt
 
         private void cmboShopid_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string sql5 = "select Shopid  from tbl_terminallocation where Branchname = '"+ cmboShopid .Text+ "' ";
-            ShopNametextBox.Text =  DataAccess.ExecuteSQLScaler(sql5);
+            ShopNametextBox.Text = DataAccess.ExecuteSQLScaler("select Shopid from tbl_terminallocation where Branchname = @b",
+                DataAccess.P("@b", cmboShopid.Text));
         }
     }
 }

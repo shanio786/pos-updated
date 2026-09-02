@@ -13,7 +13,6 @@ namespace supershop.User_mgt
 {
     public partial class User_attendence : Form
     {
-        string uid = "";
         string att_status = "";
         DateTime dt = DateTime.Today;
         string thisMonth, thisYear = "";
@@ -51,70 +50,67 @@ namespace supershop.User_mgt
 
         private void button1_Click(object sender, EventArgs e)
         {
-
-            string sql1 = "";
-            if (cbUserName.Text != "")
+            if (cbUserName.Text == "")
             {
+                MessageBox.Show("Please Enter User Name", "User Name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            try
+            {
+                string attDate = dtDate.Value.ToShortDateString();
                 if (cbAttStatus.Text == "Absent")
                 {
-                    sql1 = "insert into userattendence (Name,att_date,att_status,att_month,att_year)" +
-                                      "  values('" + cbUserName.Text + "','" + dtDate.Value.ToShortDateString() + "','" + cbAttStatus.Text + "','" + thisMonth + "','" + thisYear + "'" +
-                                      ")";
-                    DataAccess.ExecuteSQL(sql1);
-                    MessageBox.Show("Record Save Successfully", "Pay Submit", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DataAccess.ExecuteSQL("insert into userattendence (Name, att_date, att_status, att_month, att_year) values (@n, @d, @s, @m, @y)",
+                        DataAccess.P("@n", cbUserName.Text), DataAccess.P("@d", attDate), DataAccess.P("@s", cbAttStatus.Text),
+                        DataAccess.P("@m", thisMonth), DataAccess.P("@y", thisYear));
+                    MessageBox.Show("Record Save Successfully", "Attendance", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     bindGrid();
+                    return;
+                }
+                if (cbAttStatus.Text == "")
+                {
+                    MessageBox.Show("Please select attendance status", "Attendance", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
+                if (button1.Text == "IN")
+                {
+                    DateTime dtIn = Convert.ToDateTime(dtInTime.Value.ToShortTimeString());
+                    DataAccess.ExecuteSQL("insert into userattendence (Name, intime, att_date, att_status, att_month, att_year) values (@n, @in, @d, @s, @m, @y)",
+                        DataAccess.P("@n", cbUserName.Text), DataAccess.P("@in", dtIn.ToShortTimeString()), DataAccess.P("@d", attDate),
+                        DataAccess.P("@s", cbAttStatus.Text), DataAccess.P("@m", thisMonth), DataAccess.P("@y", thisYear));
+                }
+                else if (button1.Text == "OUT")
+                {
+                    DateTime dtOut = Convert.ToDateTime(dtOutTime.Value.ToShortTimeString());
+                    DataAccess.ExecuteSQL("Update userattendence Set outtime = @out where Name = @n and att_date = @d",
+                        DataAccess.P("@out", dtOut.ToShortTimeString()), DataAccess.P("@n", cbUserName.Text), DataAccess.P("@d", attDate));
                 }
                 else
                 {
-                    if (cbUserName.Text != "" && cbAttStatus.Text != "")
-                    {
-                        if (button1.Text == "IN")
-                        {
-                            DateTime dtIn = Convert.ToDateTime(dtInTime.Value.ToShortTimeString());
-
-                            sql1 = "insert into userattendence (Name, intime,att_date,att_status,att_month,att_year)" +
-                                         "  values('" + cbUserName.Text + "', '" + dtIn.ToShortTimeString() + "','" + dtDate.Value.ToShortDateString() + "','" + cbAttStatus.Text + "','" + thisMonth + "','" + thisYear + "'" +
-                                         ")";
-                            //MessageBox.Show("IN Time Enter Successfully", "IN Time", MessageBoxButtons.OK);
-                        }
-                        else if (button1.Text == "OUT")
-                        {
-                            DateTime dtOut = Convert.ToDateTime(dtOutTime.Value.ToShortTimeString());
-
-                            sql1 = "Update userattendence Set outtime = '" + dtOut.ToShortTimeString() + "' where Name = '" + cbUserName.Text + "' and att_date = '" + dtDate.Value.ToShortDateString() + "'";
-                           // MessageBox.Show("Out Time Updated Successfully", "OUT Time", MessageBoxButtons.OK);
-                        }
-                        else
-                        { }
-                        DataAccess.ExecuteSQL(sql1);
-                        MessageBox.Show("Record Save Successfully", "Pay Submit", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        bindGrid();
-                        cbUserName.Text = "";
-                        cbAttStatus.Text = "";
-                    }
-                    else
-                    {
-                        MessageBox.Show("Please Enter User Name", "User Name", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    return;
                 }
+                MessageBox.Show("Record Save Successfully", "Attendance", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                bindGrid();
+                cbUserName.Text = "";
+                cbAttStatus.Text = "";
             }
+            catch (Exception exLog) { Logger.Show(exLog, "Could not save the attendance record."); }
         }
-        
 
         private void bindGrid()
         {
             string sql = " SELECT att_date as Date , Name AS [User Name], intime as [In Time],outtime as [Out Time],att_status as Status FROM userattendence " +
-                        " where att_date = '"+ dtSearch.Value.ToShortDateString()+"'";
-            DataTable dt1 = DataAccess.GetDataTable(sql);
+                        " where att_date = @d";
+            DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@d", dtSearch.Value.ToShortDateString()));
             dataGridView1.DataSource = dt1;
         }
         private void bindGrid(string empName)
         {
             string sql = " SELECT att_date as Date , Name AS [User Name], intime as [In Time],outtime as [Out Time],att_status as Status FROM userattendence" +
-                        " where att_date = '" + dtSearch.Value.ToShortDateString() + "' and Name = '"+ empName + "'";
-            DataTable dt1 = DataAccess.GetDataTable(sql);
+                        " where att_date = @d and Name = @n";
+            DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@d", dtSearch.Value.ToShortDateString()), DataAccess.P("@n", empName));
             dataGridView1.DataSource = dt1;
         }
       
@@ -131,12 +127,11 @@ namespace supershop.User_mgt
             try
             {
                 att_status = "";
-                string sql = " SELECT intime FROM userattendence " +
-                         " where att_date = '" + dtDate.Value.ToShortDateString() + "' and Name = '" + cbUserName.Text + "'";
-                att_status = DataAccess.ExecuteSQLScaler(sql);
-                sql = " SELECT att_status FROM userattendence " +
-                        " where att_date = '" + dtDate.Value.ToShortDateString() + "' and Name = '" + cbUserName.Text + "'";
-                string att_status1 = DataAccess.ExecuteSQLScaler(sql);
+                string attDate = dtDate.Value.ToShortDateString();
+                att_status = DataAccess.ExecuteSQLScaler(" SELECT intime FROM userattendence where att_date = @d and Name = @n",
+                    DataAccess.P("@d", attDate), DataAccess.P("@n", cbUserName.Text));
+                string att_status1 = DataAccess.ExecuteSQLScaler(" SELECT att_status FROM userattendence where att_date = @d and Name = @n",
+                    DataAccess.P("@d", attDate), DataAccess.P("@n", cbUserName.Text));
                 if (att_status1 == "Absent")
                 {
                     button1.Text = "SAVE";
@@ -169,8 +164,9 @@ namespace supershop.User_mgt
         private void cbEmpMnthly_SelectedIndexChanged(object sender, EventArgs e)
         {
             string sql = " SELECT att_date as Date , Name AS [User Name], intime as [In Time],outtime as [Out Time],att_status as Status FROM userattendence" +
-                        " where att_date >= '" + dtFrom.Value.ToShortDateString() + "' and att_date <= '" + dtTo.Value.ToShortDateString() + "' and Name = '" + cbEmpMnthly.Text + "'";
-            DataTable dt1 = DataAccess.GetDataTable(sql);
+                        " where att_date >= @f and att_date <= @t and Name = @n";
+            DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@f", dtFrom.Value.ToShortDateString()),
+                DataAccess.P("@t", dtTo.Value.ToShortDateString()), DataAccess.P("@n", cbEmpMnthly.Text));
             dataGridView1.DataSource = dt1;
         }
 

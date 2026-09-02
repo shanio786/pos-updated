@@ -32,10 +32,14 @@ namespace supershop.Customer
         }
         private void CustomerLedger_Load(object sender, EventArgs e)
         {
-            string sql = "select receivedate as [Receive Date], totalamt as [Total Amount] ,dueamt as [Due Amount] ,receiveamt as [Receive Amount] from tbl_duepayment where sales_id = '" + lbsalesid.Text+"' and custid = '"+lbcontact.Text+"'";
-            DataTable dt1 = DataAccess.GetDataTable(sql);
-            datagridDueList.DataSource = dt1;
-            //datagridDueList.Columns[5].DefaultCellStyle.ForeColor = Color.DarkViolet;
+            try
+            {
+                string sql = "select receivedate as [Receive Date], totalamt as [Total Amount] ,dueamt as [Due Amount] ,receiveamt as [Receive Amount] " +
+                             " from tbl_duepayment where sales_id = @id and custid = @custid";
+                DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@id", lbsalesid.Text), DataAccess.P("@custid", lbcontact.Text));
+                datagridDueList.DataSource = dt1;
+            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)

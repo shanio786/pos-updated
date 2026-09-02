@@ -33,46 +33,41 @@ namespace supershop.Customer
 
         }
 
-        public void Databind()
+        /// <summary>Appends a blank row and a "Store Credit Balance" total row to the grid table.</summary>
+        private static void AddTotalRow(DataTable dt1, decimal creditSum)
         {
-           // string sqlCmd = "SELECT cc.ID TrxID,  cc.Date, Customers.ID, Customers.Name, Customers.Phone as Mobile, Customers.EmailAddress, cc.OrderID,  cc.Credit , cc.Description FROM tbl_CustCredit  cc LEFT JOIN tbl_customer Customers ON CC.CustID=Customers.ID"; 
-            string sqlCmd = "SELECT * from vw_custcreditreport    order by TrxID  desc";
-            DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
-            dtGrdvCustomerDetails.DataSource = dt1;
-
-            string sqlSUM = "SELECT   Sum(Credit) as CreditSum from vw_custcreditreport ";
-            DataTable dtSUM = DataAccess.GetDataTable(sqlSUM);
-
             DataRow dr = dt1.NewRow();
             dr[1] = " ";
             dt1.Rows.Add(dr);
 
             DataRow CreditTotal = dt1.NewRow();
             CreditTotal[3] = "Store Credit Balance";
-            CreditTotal[5] = dtSUM.Rows[0].ItemArray[0].ToString();
+            CreditTotal[5] = creditSum;
             dt1.Rows.Add(CreditTotal);
+        }
+
+        public void Databind()
+        {
+            DataTable dt1 = DataAccess.GetDataTable("SELECT * from vw_custcreditreport    order by TrxID  desc");
+            dtGrdvCustomerDetails.DataSource = dt1;
+
+            decimal creditSum = DataAccess.GetDecimal("SELECT ISNULL(Sum(Credit), 0) as CreditSum from vw_custcreditreport ");
+            AddTotalRow(dt1, creditSum);
         }
 
         private void txtCustomerSearch_TextChanged(object sender, EventArgs e)
         {
             try
             {
-                string sqlCmd = "Select * from  vw_custcreditreport  where Name  like  '%" + txtCustomerSearch.Text + "%' or CustID like  '%" + txtCustomerSearch.Text + "%'    or OrderID  like  '%" + txtCustomerSearch.Text + "%'    order by TrxID  desc"; 
-                DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
+                string where = " where Name like '%' + @q + '%' or cast(CustID as varchar(20)) like '%' + @q + '%' or OrderID like '%' + @q + '%' ";
+
+                DataTable dt1 = DataAccess.GetDataTable("Select * from  vw_custcreditreport " + where + " order by TrxID  desc",
+                                                        DataAccess.P("@q", txtCustomerSearch.Text));
                 dtGrdvCustomerDetails.DataSource = dt1;
 
-
-                string sqlSUM = "SELECT   Sum(Credit) as CreditSum from vw_custcreditreport  where Name  like  '%" + txtCustomerSearch.Text + "%' or CustID like  '%" + txtCustomerSearch.Text + "%'    or OrderID  like  '%" + txtCustomerSearch.Text + "%' ";                 
-                DataTable dtSUM = DataAccess.GetDataTable(sqlSUM);
-
-                DataRow dr = dt1.NewRow();
-                dr[1] = " ";
-                dt1.Rows.Add(dr);
-
-                DataRow CreditTotal = dt1.NewRow();
-                CreditTotal[3] = "Store Credit Balance";
-                CreditTotal[5] = dtSUM.Rows[0].ItemArray[0].ToString();
-                dt1.Rows.Add(CreditTotal);
+                decimal creditSum = DataAccess.GetDecimal("SELECT ISNULL(Sum(Credit), 0) as CreditSum from vw_custcreditreport " + where,
+                                                          DataAccess.P("@q", txtCustomerSearch.Text));
+                AddTotalRow(dt1, creditSum);
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
@@ -87,22 +82,14 @@ namespace supershop.Customer
         {
             try
             {
-                string sqlCmd = "Select * from  vw_custcreditreport  where  Date BETWEEN '" + StartDate + "' AND    '" + EndDate + "'    Order  by  TrxID desc";
-                DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
+                // Date is stored as 'yyyy-MM-dd' text
+                DataTable dt1 = DataAccess.GetDataTable("Select * from  vw_custcreditreport  where  Date BETWEEN @from AND @to    Order  by  TrxID desc",
+                                                        DataAccess.P("@from", StartDate), DataAccess.P("@to", EndDate));
                 dtGrdvCustomerDetails.DataSource = dt1;
 
-
-                string sqlSUM = "SELECT   Sum(Credit) as CreditSum from vw_custcreditreport   where  Date BETWEEN '" + StartDate + "' AND    '" + EndDate + "'";
-                DataTable dtSUM = DataAccess.GetDataTable(sqlSUM);
-
-                DataRow dr = dt1.NewRow();
-                dr[1] = " ";
-                dt1.Rows.Add(dr);
-
-                DataRow CreditTotal = dt1.NewRow();
-                CreditTotal[3] = "Store Credit Balance";
-                CreditTotal[5] = dtSUM.Rows[0].ItemArray[0].ToString();
-                dt1.Rows.Add(CreditTotal);
+                decimal creditSum = DataAccess.GetDecimal("SELECT ISNULL(Sum(Credit), 0) as CreditSum from vw_custcreditreport   where  Date BETWEEN @from AND @to",
+                                                          DataAccess.P("@from", StartDate), DataAccess.P("@to", EndDate));
+                AddTotalRow(dt1, creditSum);
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
@@ -116,9 +103,7 @@ namespace supershop.Customer
         }
 
 
-        /// //////////////  Print Part  Start
-        /// 
-
+        #region Print
         DataGridViewPrinter MyDataGridViewPrinter;
 
         private bool SetupThePrinting()
@@ -154,13 +139,7 @@ namespace supershop.Customer
                 MyDataGridViewPrinter = new DataGridViewPrinter(dtGrdvCustomerDetails,
                 printDocument1, true, true, sd + " Store Credit Report \n", new Font("Baskerville Old Face", 13,
                 FontStyle.Regular, GraphicsUnit.Point), Color.Black, true);
-
-                // tosend = "<html><table>" + tosend + "</table></html>";
-            //  mail.IsBodyHtml = true;
-            //mail.Body = tosend;
-
             else
-
                 MyDataGridViewPrinter = new DataGridViewPrinter(dtGrdvCustomerDetails,
                 printDocument1, false, true, sd + "   Store Credit Report   \n", new Font("Times New Roman", 14, FontStyle.Regular, GraphicsUnit.Point), Color.Black, true);
 
@@ -193,7 +172,6 @@ namespace supershop.Customer
             if (more == true)
                 e.HasMorePages = true;
         }
-
-      
+        #endregion
     }
 }

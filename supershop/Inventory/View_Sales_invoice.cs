@@ -19,9 +19,6 @@ namespace supershop
         {
             InitializeComponent();
             lblInvoiceNo.Text = InvoiceNo;
-           // lblctype.Text = ctype;
-            //if ctype 0 = customer 1 = admin
-            // if 0 take payment button is not show
         }
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -33,16 +30,14 @@ namespace supershop
         public void SalesPaymentInfo()
         {             
             // // Sale Info
-            string sqlSale = "select * from tbl_saleInfo  where InvoiceNO  = '" + lblInvoiceNo.Text + "' ";
-            DataTable dtsqlSale = DataAccess.GetDataTable(sqlSale);
+            DataTable dtsqlSale = DataAccess.GetDataTable("select * from tbl_saleInfo  where InvoiceNO = @id", DataAccess.P("@id", lblInvoiceNo.Text));
             lblSalesDate.Text = dtsqlSale.Rows[0].ItemArray[10].ToString();
             lblShippingfee.Text = dtsqlSale.Rows[0].ItemArray[8].ToString();
             txtCondition.Text = dtsqlSale.Rows[0].ItemArray[5].ToString();
             lblcustid.Text = dtsqlSale.Rows[0].ItemArray[4].ToString();
 
             // // Customer Info
-            string sqlCmd = "select * from tbl_customer  where ID  = '" + lblcustid.Text + "' ";
-            DataTable dt = DataAccess.GetDataTable(sqlCmd);
+            DataTable dt = DataAccess.GetDataTable("select * from tbl_customer  where ID = @id", DataAccess.P("@id", lblcustid.Text));
             lblCustomer.Text = dt.Rows[0].ItemArray[1].ToString();
             lblCustAddress.Text = dt.Rows[0].ItemArray[4].ToString() + " , " + dt.Rows[0].ItemArray[5].ToString();
             lblEmail.Text = dt.Rows[0].ItemArray[2].ToString();
@@ -54,18 +49,16 @@ namespace supershop
             try
             {
                 SalesPaymentInfo();
-           
+
                 string sql = "select  itemName 'Products' , Retailsprice 'Price' ," +
-                            " Qty 'Quantity', Total  'Total'    from sales_item where sales_id = '" + lblInvoiceNo.Text + "' ";
-                DataTable dt = DataAccess.GetDataTable(sql);
+                            " Qty 'Quantity', Total  'Total'    from sales_item where sales_id = @id";
+                DataTable dt = DataAccess.GetDataTable(sql, DataAccess.P("@id", lblInvoiceNo.Text));
                 dgrvSalesInvoice.DataSource = dt;
 
+                decimal subTotal = DataAccess.GetDecimal("select SUM(total) from sales_item where sales_id = @id", DataAccess.P("@id", lblInvoiceNo.Text));
 
-                string sql3 = "select SUM(total)    from sales_item  where sales_id = '" + lblInvoiceNo.Text + "'  ";
-                DataTable dt3 = DataAccess.GetDataTable(sql3);
-
-                string sqltbl = "select *  from sales_payment where sales_id = '" + lblInvoiceNo.Text + "' and  TrxType = 'Inventory' ";
-                DataTable dttbl = DataAccess.GetDataTable(sqltbl);
+                DataTable dttbl = DataAccess.GetDataTable("select *  from sales_payment where sales_id = @id and  TrxType = 'Inventory' ",
+                                                          DataAccess.P("@id", lblInvoiceNo.Text));
 
                 DataRow dr = dt.NewRow();
                 dr[0] = " ";
@@ -73,7 +66,7 @@ namespace supershop
 
                 DataRow SubTotal = dt.NewRow();
                 SubTotal[0] = "Sub Total ";
-                SubTotal[3] = Convert.ToDouble(dt3.Rows[0].ItemArray[0].ToString());
+                SubTotal[3] = subTotal;
                 dt.Rows.Add(SubTotal);
 
                 DataRow dis = dt.NewRow();
@@ -96,11 +89,6 @@ namespace supershop
                 Total[3] = Convert.ToDouble(dttbl.Rows[0].ItemArray[2].ToString());
                 dt.Rows.Add(Total);
 
-                //DataRow Paid = dt.NewRow();
-                //Paid[0] = "Total Paid";
-                //Paid[3] = Convert.ToDouble(dttbl.Rows[0].ItemArray[2].ToString()) + Convert.ToDouble(dttbl.Rows[0].ItemArray[3].ToString());
-                //dt.Rows.Add(Paid);
-
                 DataRow due = dt.NewRow();
                 due[0] = "Due";
                 due[3] = Convert.ToDouble(dttbl.Rows[0].ItemArray[4].ToString());
@@ -109,25 +97,18 @@ namespace supershop
                 DataRow ShippingFee = dt.NewRow();
                 ShippingFee[0] = "Shipping Fee";
                 ShippingFee[3] = Convert.ToDouble(lblShippingfee.Text);
-                dt.Rows.Add(ShippingFee);      
+                dt.Rows.Add(ShippingFee);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void btnDue_Click(object sender, EventArgs e)
-        {           
-            //Sales.TakePayment go = new Sales.TakePayment(lblInvoiceNo.Text);
-            //go.ShowDialog(); 
-            //this.Hide();
+        {
         }
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
-            string sql3 = "select * from tbl_terminalLocation where Shopid = '" + UserInfo.Shopid + "'";
-            DataTable dt1 = DataAccess.GetDataTable(sql3);
+            DataTable dt1 = DataAccess.GetDataTable("select * from tbl_terminalLocation where Shopid = @shopid", DataAccess.P("@shopid", UserInfo.Shopid));
 
             DateTime dt = DateTime.Now;
             string printdate = dt.ToString("MMM-dd, yyyy HH:mm:ss");
@@ -136,13 +117,10 @@ namespace supershop
             string Location = dt1.Rows[0].ItemArray[3].ToString();
             string phone = dt1.Rows[0].ItemArray[4].ToString();
             string email = dt1.Rows[0].ItemArray[5].ToString();
-            string web = dt1.Rows[0].ItemArray[6].ToString();
-         
+
             string Header       = Location + "." + "\n" + email + "\n" + branchname + " ph: " + phone + "\n" + printdate + "\n";
             string Sellerinfo   = Location + "." + "\n" + email + "\n"   + phone + "\n" + printdate + "\n";
-           // string hd           = address + "\n" + phone + "\n" + vatno + "\n" + web;
-           // var result = web.Insert(7, "</b>").Insert(6 - 1, "<b>");
-            
+
             Document doc = new Document(iTextSharp.text.PageSize.A4, 20, 10, 42, 35);
             PdfWriter wri = PdfWriter.GetInstance(doc, new FileStream("InvoicePdf\\SalesInvoice.pdf", FileMode.Create));
             doc.Open();//Open Document to write
@@ -162,13 +140,10 @@ namespace supershop
             doc.Add(Header2);
 
             //// Bill to and ship to information
-            iTextSharp.text.Font fontTable2 = FontFactory.GetFont("Arial", 2, iTextSharp.text.Font.NORMAL, BaseColor.BLUE);
             PdfPTable table2 = new PdfPTable(3);
             table2.SpacingBefore = 45f;
             table2.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
-            table2.DefaultCell.Padding = 3; 
-            
-            //table2.AddCell(cell);
+            table2.DefaultCell.Padding = 3;
             table2.TotalWidth = 800;
             table2.SetTotalWidth(new float[] { 300f, 300f, 250f });
             table2.DefaultCell.Phrase = new Phrase() { Font = HeaderFont };
@@ -177,10 +152,7 @@ namespace supershop
             table2.AddCell("Ship To" + "\n ----------");
             table2.AddCell("Invoice" + "\n ----------");
 
-           // table2.AddCell("");
-         //   table2.AddCell("Invoice #: " + lblInvoiceNo.Text);  
-
-            //Seller info  
+            //Seller info
             table2.AddCell(Companyname + "\n" + Sellerinfo);
             table2.AddCell(lblCustomer.Text + "\n" + lblEmail.Text + "\n" + lblPhone.Text + "\n" + lblCustAddress.Text);
             table2.AddCell("Invoice #: " + lblInvoiceNo.Text + "\n" + "Date: " + lblSalesDate.Text);             
@@ -244,25 +216,6 @@ namespace supershop
             doc.Add(Footer1);
             doc.Add(Footer2);
 
-          
-            ///--------------------------------///
-
-            //RomanList rl = new RomanList(false,20);
-            //rl.IndentationLeft = 260f;
-            //rl.Add(new ListItem("Company limited inc."));         
-            //doc.Add(rl);
-
-
-            //List lst = new List(List.UNORDERED);
-            //lst.Add(new ListItem("T"));            
-            //doc.Add(lst);
-
-            ////Create table by setting table value datagridview
-
-            ///--------------------------------///
-          
-            //
-            //MessageBox.Show("PDF Created!");
             doc.Close();
 
             Inventory.InvoicePrintCopy go = new Inventory.InvoicePrintCopy();

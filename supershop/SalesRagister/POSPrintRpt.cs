@@ -44,8 +44,8 @@ namespace supershop
                             " ON sp.Shopid  = tl.Shopid " +
                             " INNER JOIN tbl_customer c " +
                             " ON  sp.c_id  = c.ID " +
-                            " Where sp.sales_id  = '" + toolsaleno.Text + "'  ";         
-                DataTable dt = DataAccess.GetDataTable(sql);
+                            " Where sp.sales_id  = @id ";
+                DataTable dt = DataAccess.GetDataTable(sql, DataAccess.P("@id", toolsaleno.Text));
 
                 ReportDataSource reportDSDetail = new ReportDataSource("POSPRINTDataSet", dt);
                 this.reportViewer1.LocalReport.DataSources.Clear();

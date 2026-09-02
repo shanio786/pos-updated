@@ -47,52 +47,37 @@ namespace supershop.Inventory
             dtgrdViewStockItem.Columns[5].ReadOnly = true;
 
             dtgrdViewStockItem.Columns[0].ToolTipText = " Click on Code/ID row it's automatically copied ";
-            dtgrdViewStockItem.Rows[0].Cells[0].ToolTipText = " Click on Code/ID row it's automatically copied ";
+            if (dtgrdViewStockItem.Rows.Count > 0)
+                dtgrdViewStockItem.Rows[0].Cells[0].ToolTipText = " Click on Code/ID row it's automatically copied ";
 
             DataGridViewColumn ColName = dtgrdViewStockItem.Columns[1];
             ColName.Width = 151;
         }
         private void txtItemSearchBar_TextChanged(object sender, EventArgs e)
         {
-            if (txtItemSearchBar.Text == "")
-            {
-                //MessageBox.Show("Please Type product id ");
-            }
-            else
+            if (txtItemSearchBar.Text != "")
             {
                 try
                 {
-
-                    string sql = "select product_id as 'Code/ID', product_name as 'Item Name' , product_quantity as 'Qty/Stock-Item' , " + 
-                                   "  cost_price as 'Cost Price' , retail_price as 'Sale Price' , category as 'Category' , supplier as 'Supplier'   " + 
-                                   "   from purchase where product_id like  '%" + txtItemSearchBar.Text + "%' or " + 
-                                   "  product_name like '%" + txtItemSearchBar.Text + "%'or category like '%" + txtItemSearchBar.Text + "%' " + 
-                                    "  or supplier like '%" + txtItemSearchBar.Text + "%' ";
-                    DataTable dt1 = DataAccess.GetDataTable(sql);
+                    string sql = "select product_id as 'Code/ID', product_name as 'Item Name' , product_quantity as 'Qty/Stock-Item' , " +
+                                   "  cost_price as 'Cost Price' , retail_price as 'Sale Price' , category as 'Category' , supplier as 'Supplier'   " +
+                                   "   from purchase where product_id like '%' + @q + '%' or " +
+                                   "  product_name like '%' + @q + '%' or category like '%' + @q + '%' " +
+                                   "  or supplier like '%' + @q + '%' ";
+                    DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@q", txtItemSearchBar.Text));
                     dtgrdViewStockItem.DataSource = dt1;
-
-                    string sql3 = "select SUM(total_cost_price)   from purchase  where product_id = '" + txtItemSearchBar.Text + "'";
-                    DataTable dt3 = DataAccess.GetDataTable(sql3);                    
-
-
-                    string sql5 = "select SUM(total_retail_price) from purchase where product_id = '" + txtItemSearchBar.Text + "'";
-                    DataAccess.ExecuteSQL(sql5);
-                    DataTable dt5 = DataAccess.GetDataTable(sql3);
-
-                    
                 }
-                catch (Exception exp)
-                {
-                    MessageBox.Show("Sorry\r\n" + exp.Message);
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
         }
 
         private void StockShortList_Load(object sender, EventArgs e)
         {
-            
-          //  dtgrdViewStockItem.DataSource = vatdisvalue.vat;
-             loadData();
+            try
+            {
+                loadData();
+            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void lnkClose_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -105,24 +90,13 @@ namespace supershop.Inventory
             try
             {
                 DataGridViewRow row = dtgrdViewStockItem.Rows[e.RowIndex];
-                // /UserInfo.invoiceNo = row.Cells[0].Value.ToString(); //barcode number
-                Clipboard.SetText(row.Cells[0].Value.ToString());
-                //this.Hide();
-                //Inventory.Add_Sales go = new Inventory.Add_Sales(UserInfo.UserName);
-                //go.MdiParent = this.ParentForm;
-                //go.Show();
+                Clipboard.SetText(row.Cells[0].Value.ToString());   // product code copied to clipboard
             }
             catch (Exception exLog) { Logger.Error(exLog); }
-        
         }
 
         private void dtgrdViewStockItem_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyData == (Keys.F5))
-            {
-              //  DataGridViewRow row = dtgrdViewStockItem.Rows[ee.RowIndex];                
-               // Clipboard.SetText(row.Cells[0].Value.ToString());
-            }
         }
     }
 }

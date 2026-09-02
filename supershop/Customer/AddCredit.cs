@@ -40,8 +40,7 @@ namespace supershop.Customer
             DataTable dt5 = DataAccess.GetDataTable(sql5);
             ComboCustID.DataSource = dt5;
             ComboCustID.DisplayMember = "Name";
-            
-           // lblCustID.Text = dt5.Rows[0].ItemArray[0].ToString();
+
             CustomerID();
         }
 
@@ -55,41 +54,32 @@ namespace supershop.Customer
                 }
                 else
                 {
-                    string sqlCmd = "insert into tbl_custcredit (CustID, orderID, Date, Credit, Description)  values ('" + lblCustID.Text + "', 'SyS', '" + dtDate.Text + "', '" + NumUDcredit.Text + "', '" + txtDesCription.Text + "')";
-                    DataAccess.ExecuteSQL(sqlCmd);
+                    DataAccess.ExecuteSQL("insert into tbl_custcredit (CustID, orderID, Date, Credit, Description) values (@custid, 'SyS', @date, @credit, @desc)",
+                                          DataAccess.P("@custid", lblCustID.Text),
+                                          DataAccess.P("@date", dtDate.Text),
+                                          DataAccess.P("@credit", NumUDcredit.Value),
+                                          DataAccess.P("@desc", txtDesCription.Text));
                     MessageBox.Show("Successfully Added Credit to " + lblCustID.Text);
                     txtDesCription.Text = string.Empty;
                 }
-
             }
-            catch (Exception exp)
-            {
-                MessageBox.Show("Sorry\r\n this id already added \n\n " + exp.Message);
-            }
+            catch (Exception exLog) { Logger.Show(exLog, "Could not save the credit."); }
         }
 
         private void ComboCustID_SelectedIndexChanged(object sender, EventArgs e)
         {
-            try
-            {
-
-                CustomerID();
-            }
-            catch // (Exception exp)
-            {
-               // MessageBox.Show(exp.Message);
-            }
+            CustomerID();
         }
 
         public void CustomerID()
         {
-            string sqlCmd = "Select ID from  tbl_customer  where Name  = '" + ComboCustID.Text + "'";
-            DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
-
-            lblCustID.Text = dt1.Rows[0].ItemArray[0].ToString();
+            try
+            {
+                DataTable dt1 = DataAccess.GetDataTable("Select ID from  tbl_customer  where Name  = @name", DataAccess.P("@name", ComboCustID.Text));
+                if (dt1.Rows.Count > 0)
+                    lblCustID.Text = dt1.Rows[0].ItemArray[0].ToString();
+            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
-                 
-                  
-                 
     }
 }
