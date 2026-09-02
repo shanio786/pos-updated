@@ -467,6 +467,13 @@ namespace supershop
 
 
         //Only Save
+        private void dayCloseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Report.DayClose go = new Report.DayClose();
+            go.MdiParent = this;
+            go.Show();
+        }
+
         private void saveAsDatabaseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
