@@ -94,7 +94,7 @@ namespace supershop
 
                         tx.Execute("update tbl_terminallocation set Branchname = @name, Location = @address, Phone = @phone, " +
                                    " VAT = @vatrate, Web = @web, Dis = @disrate, VATRegiNo = @vatno, Footermsg = @footer, " +
-                                   " CompanyName = @name where Shopid = 'MTQC02'",
+                                   " CompanyName = @name where Shopid = @shopid",
                             DataAccess.P("@name", txtCompanyName.Text),
                             DataAccess.P("@address", txtCompanyAddress.Text),
                             DataAccess.P("@phone", txtPhone.Text),
@@ -102,7 +102,8 @@ namespace supershop
                             DataAccess.P("@web", txtWebSite.Text),
                             DataAccess.P("@disrate", disrate),
                             DataAccess.P("@vatno", txtVatRegiNo.Text),
-                            DataAccess.P("@footer", txtFootermsg.Text));
+                            DataAccess.P("@footer", txtFootermsg.Text),
+                            DataAccess.P("@shopid", UserInfo.Shopid));
                     });
 
                     lblmsg.Text = "Configuation has been Saved";

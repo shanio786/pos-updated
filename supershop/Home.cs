@@ -310,12 +310,12 @@ namespace supershop
                 {
                     dlg.Title = "Backup database";
                     dlg.Filter = "SQL Server backup (*.bak)|*.bak";
+                    dlg.InitialDirectory = BackupHelper.BackupFolder;
                     dlg.FileName = "APOSDB_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm") + ".bak";
                     if (dlg.ShowDialog() != DialogResult.OK) return;
 
                     // The path is written by the SQL Server service, so it must be reachable from the server machine.
-                    DataAccess.ExecuteSQL("BACKUP DATABASE [APOSDB] TO DISK = @path WITH INIT, NAME = 'Adv_POS backup'",
-                        DataAccess.P("@path", dlg.FileName));
+                    BackupHelper.Backup(dlg.FileName);
                     MessageBox.Show("Backup saved to\n" + dlg.FileName, "Backup", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }

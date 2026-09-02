@@ -75,6 +75,8 @@ namespace supershop
                 UserInfo.usertype = usertype; // 1 = admin, 2 = manager, 3 = salesman
                 UserInfo.Shopid   = shopid;
                 workRecords();
+                if (usertype == "1")                       // once a day, when an admin logs in
+                    System.Threading.ThreadPool.QueueUserWorkItem(delegate { BackupHelper.EnsureDailyBackup(); });
 
                 Form home;
                 if (usertype == "1")      home = new Home();
