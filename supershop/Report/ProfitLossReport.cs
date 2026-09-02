@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -11,13 +13,34 @@ using System.Drawing.Printing;
 
 namespace supershop.Report
 {
+    /// <summary>
+    /// Profit / loss summary for the period ReportValue.StartDate .. ReportValue.EndDate
+    /// (both inclusive, 'yyyy-MM-dd').  Every figure is read with DataAccess.GetDecimal
+    /// so an empty period simply shows zeros instead of crashing on a NULL SUM.
+    ///
+    /// Formulas (see ProfitLossReport_Load):
+    ///   Gross item sales     = SUM(sales_item.Total)            status &lt;&gt; 2   (before discount)
+    ///   Total discount       = SUM(sales_payment.dis)                          (item + counter discount)
+    ///   Sales after discount = gross item sales - total discount
+    ///   Returns              = SUM(return_item.Total) - SUM(disamt) + SUM(vatamt)
+    ///   Sales after returns  = sales after discount - returns
+    ///   TAX collected        = SUM(sales_payment.vat)
+    ///   Due (unpaid)         = SUM(sales_payment.due_amount)
+    ///   Received             = SUM(sales_payment.payment_amount) - due - returns
+    ///   Cost of goods sold   = SUM((RetailsPrice * (1 - discount/100) - profit) * Qty)   status &lt;&gt; 2
+    ///   Gross profit         = SUM(profit * Qty)                                        status &lt;&gt; 2
+    ///   Counter discount     = total discount - SUM(RetailsPrice * Qty * discount/100)  (item discounts are already inside profit)
+    ///   Expenses             = SUM(tbl_expense.Amount)
+    ///   Net profit           = gross profit - counter discount - expenses
+    ///   Cash in hand         = received - expenses
+    /// </summary>
     public partial class ProfitLossReport : Form
     {
         public ProfitLossReport()
         {
             InitializeComponent();
         }
-        
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape)
@@ -26,20 +49,21 @@ namespace supershop.Report
         }
 
         DataGridViewPrinter MyDataGridViewPrinter;
+
         private bool SetupThePrinting()
         {
-            string sql3 = "select * from tbl_terminalLocation where Shopid = '"+ UserInfo.Shopid +"'";
-            DataTable dt1 = DataAccess.GetDataTable(sql3);
-            DateTime dt = DateTime.Now;
-            string printdate    = dt.ToString("MMMM dd, yyyy    hh:mm:ss tt");
-            string Companyname  = dt1.Rows[0].ItemArray[1].ToString();
-            string branchname   = dt1.Rows[0].ItemArray[2].ToString();
-            string Location     = dt1.Rows[0].ItemArray[3].ToString();  
-            string phone        = dt1.Rows[0].ItemArray[4].ToString();            
-            string email        = dt1.Rows[0].ItemArray[5].ToString();
-            string web          = dt1.Rows[0].ItemArray[6].ToString();
+            DataTable dt1 = DataAccess.GetDataTable(
+                "SELECT CompanyName, Branchname, Location, Phone, Email, Web FROM tbl_terminalLocation WHERE Shopid = @shop",
+                DataAccess.P("@shop", UserInfo.Shopid));
 
-            string Header = Companyname + "\n" + Location + "." + "\n" + email + "\n" + branchname + " ph: " + phone + "\n" + printdate + "\n";
+            string printdate = DateTime.Now.ToString("MMMM dd, yyyy    hh:mm:ss tt");
+            string Header = printdate + "\n";
+            if (dt1.Rows.Count > 0)
+            {
+                DataRow r = dt1.Rows[0];
+                Header = Convert.ToString(r[0]) + "\n" + Convert.ToString(r[2]) + "." + "\n" + Convert.ToString(r[4]) + "\n" +
+                         Convert.ToString(r[1]) + " ph: " + Convert.ToString(r[3]) + "\n" + printdate + "\n";
+            }
 
             PrintDialog MyPrintDialog = new PrintDialog();
             MyPrintDialog.AllowCurrentPage = false;
@@ -50,7 +74,6 @@ namespace supershop.Report
             MyPrintDialog.ShowHelp = false;
             MyPrintDialog.ShowNetwork = false;
 
-
             if (MyPrintDialog.ShowDialog() != DialogResult.OK)
                 return false;
 
@@ -59,203 +82,131 @@ namespace supershop.Report
             printDocument1.DefaultPageSettings = MyPrintDialog.PrinterSettings.DefaultPageSettings;
             printDocument1.DefaultPageSettings.Margins = new Margins(40, 40, 40, 40);
 
-            //if (MessageBox.Show("Do you want the report to be centered on the page",
-            //    "InvoiceManager - Center on Page", MessageBoxButtons.YesNo,
-            //    MessageBoxIcon.Question) == DialogResult.Yes)
-            MyDataGridViewPrinter = new DataGridViewPrinter(dtgrdViewProfitLoss, printDocument1, true, true, Header + "\n", 
+            MyDataGridViewPrinter = new DataGridViewPrinter(dtgrdViewProfitLoss, printDocument1, true, true, Header + "\n",
                 new Font("Baskerville Old Face", 13, FontStyle.Regular, GraphicsUnit.Point), Color.Black, true);
-             
-
-            //else
-            //    MyDataGridViewPrinter = new DataGridViewPrinter(dtgrdViewProfitLoss,
-            //    printDocument1, false, true, Header  + "   Sales Report   \n", new Font("Times New Roman", 14, FontStyle.Regular, GraphicsUnit.Point), Color.Black, true);
 
             return true;
         }
 
+        /// <summary>Fresh @from/@to parameters for each query (a SqlParameter can only belong to one command).</summary>
+        static SqlParameter[] DateParams()
+        {
+            return new SqlParameter[] {
+                DataAccess.P("@from", ReportValue.StartDate),
+                DataAccess.P("@to", ReportValue.EndDate)
+            };
+        }
+
+        /// <summary>'yyyy-MM-dd' report date to DateTime (needed for the smalldatetime expense column).</summary>
+        static DateTime ParseDate(string s)
+        {
+            DateTime d;
+            if (DateTime.TryParseExact(s, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out d))
+                return d;
+            return DateTime.Parse(s);
+        }
+
+        static string Money(decimal d)
+        {
+            return d.ToString("0.00", CultureInfo.InvariantCulture);
+        }
+
+        void AddRow(string label, string value, string extra)
+        {
+            dtgrdViewProfitLoss.Rows.Add(new string[] { label, value, extra });
+        }
+
+        void AddRow(string label, decimal value)
+        {
+            AddRow(label, Money(value), " ");
+        }
+
+        void AddBlank()
+        {
+            AddRow(" ", " ", " ");
+        }
+
         private void ProfitLossReport_Load(object sender, EventArgs e)
         {
-
             try
             {
-
-                // dtgrdViewProfitLoss.Refresh(); //.Columns.Clear();
                 this.dtgrdViewProfitLoss.RowsDefaultCellStyle.BackColor = Color.White;
                 this.dtgrdViewProfitLoss.AlternatingRowsDefaultCellStyle.BackColor = Color.White;
-
                 dtgrdViewProfitLoss.ColumnCount = 3;
 
+                // ---- sales_item (returned lines, status = 2, are excluded) ----
+                const string itemWhere = " FROM sales_item WHERE sales_time BETWEEN @from AND @to AND status <> 2 ";
 
-                string sql3 = " select SUM(Total) ,  SUM(( profit * Qty)) as Profit , SUM(RetailsPrice) as SubTotal,SUM(discount) as discount    from sales_item  " +
-                    " where sales_time   >='" + ReportValue.StartDate + "' AND  sales_time <='" + ReportValue.EndDate + "' ";
-                DataTable dt3 = DataAccess.GetDataTable(sql3);
-                string Totalsales = dt3.Rows[0].ItemArray[0].ToString();
-                string grossprofit = dt3.Rows[0].ItemArray[1].ToString();
-                string subTotal = dt3.Rows[0].ItemArray[2].ToString();
-                string discountFromReturnedItem = dt3.Rows[0].ItemArray[3].ToString();
+                decimal grossSales = DataAccess.GetDecimal("SELECT SUM(Total)" + itemWhere, DateParams());
+                decimal grossProfit = DataAccess.GetDecimal("SELECT SUM(profit * Qty)" + itemWhere, DateParams());
+                decimal itemDiscount = DataAccess.GetDecimal("SELECT SUM(RetailsPrice * Qty * ISNULL(discount, 0) / 100.0)" + itemWhere, DateParams());
+                decimal costOfGoods = DataAccess.GetDecimal("SELECT SUM((RetailsPrice * (1 - ISNULL(discount, 0) / 100.0) - profit) * Qty)" + itemWhere, DateParams());
 
+                // ---- sales_payment (one row per invoice; payment_amount is already net of discount and includes tax) ----
+                const string payWhere = " FROM sales_payment WHERE sales_time BETWEEN @from AND @to ";
 
+                decimal paymentTotal = DataAccess.GetDecimal("SELECT SUM(payment_amount)" + payWhere, DateParams());
+                decimal totalDiscount = DataAccess.GetDecimal("SELECT SUM(dis)" + payWhere, DateParams());
+                decimal tax = DataAccess.GetDecimal("SELECT SUM(vat)" + payWhere, DateParams());
+                decimal due = DataAccess.GetDecimal("SELECT SUM(due_amount)" + payWhere, DateParams());
 
+                // ---- return_item: value refunded to customers ----
+                decimal returns = DataAccess.GetDecimal(
+                    "SELECT SUM(ISNULL(Total, 0) - ISNULL(disamt, 0) + ISNULL(vatamt, 0)) FROM return_item WHERE return_time BETWEEN @from AND @to",
+                    DateParams());
 
-                string[] row = new string[] { "  ", "Profit Loss Report", " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-                row = new string[] { "Date Between ", ReportValue.StartDate.ToString(), ReportValue.EndDate };
-                dtgrdViewProfitLoss.Rows.Add(row);
-                row = new string[] { "_______________________", "__________________", "___________________" };
-                dtgrdViewProfitLoss.Rows.Add(row);
-                row = new string[] { " ", " ", " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
+                // ---- tbl_expense: [Date] is smalldatetime, so the end day is included with '< end + 1 day' ----
+                decimal expenses = DataAccess.GetDecimal(
+                    "SELECT SUM(Amount) FROM tbl_expense WHERE [Date] >= @fromDt AND [Date] < DATEADD(day, 1, @toDt)",
+                    DataAccess.P("@fromDt", ParseDate(ReportValue.StartDate)),
+                    DataAccess.P("@toDt", ParseDate(ReportValue.EndDate)));
 
+                // ---- derived figures ----
+                decimal salesAfterDiscount = grossSales - totalDiscount;
+                decimal salesAfterReturns = salesAfterDiscount - returns;
+                decimal received = paymentTotal - due - returns;
+                decimal counterDiscount = totalDiscount - itemDiscount;
+                decimal netProfit = grossProfit - counterDiscount - expenses;
+                decimal cashInHand = received - expenses;
 
-                string sqlPayment = " select SUM(payment_amount), SUM(dis), SUM(vat) , SUM(due_amount)  from sales_payment " +
-                                  " where sales_time   >='" + ReportValue.StartDate + "' AND  sales_time <='" + ReportValue.EndDate + "' ";
-                DataTable dtPayment = DataAccess.GetDataTable(sqlPayment);
+                // ---- report rows ----
+                AddRow("  ", "Profit Loss Report", " ");
+                AddRow("Date Between ", ReportValue.StartDate, ReportValue.EndDate);
+                AddRow("_______________________", "__________________", "___________________");
+                AddBlank();
 
-                string totalpaidbycustomer = dtPayment.Rows[0].ItemArray[0].ToString(); // total paid by customer with vat
-                string dis = dtPayment.Rows[0].ItemArray[1].ToString();
-                string vat = dtPayment.Rows[0].ItemArray[2].ToString();
-                string due = dtPayment.Rows[0].ItemArray[3].ToString();
-                double salesminusdis = Convert.ToDouble(Totalsales) - Convert.ToDouble(dis);
-                if (salesminusdis < 0)
-                    salesminusdis = 0;
-                Double grossprofitNew = Convert.ToDouble(grossprofit) - Convert.ToDouble(dis);
-                string totalcost = (Convert.ToDouble(Totalsales) - Convert.ToDouble(grossprofitNew)).ToString();
+                AddRow("Gross Item Sales (before discount) ", grossSales);
+                AddRow("Total Discount ", totalDiscount);
+                AddRow("Total Sales after discount ", salesAfterDiscount);
+                AddRow("Total Return ", returns);
+                AddRow("Total Sale After Return ", salesAfterReturns);
+                AddRow("Total TAX ", tax);
+                AddRow("Total Due Amount ", due);
+                AddBlank();
 
-                //int totallossamount = Convert.ToInt32(due) - Convert.ToInt32(totalcost);
+                AddRow("Received From Customers ", received);
+                AddBlank();
 
+                AddRow("Cost of Goods Sold ", costOfGoods);
+                AddRow("Gross Profit ", grossProfit);
+                AddRow("Counter Discount ", counterDiscount);
+                AddRow("Total Expenses ", expenses);
+                AddBlank();
 
-                double totalreturnedamt = 0;
-                double totalreturn = 0;
-                double totaldis = 0;
-                try
-                {
-                    string sqlReturn = " select SUM(Total) , SUM(disamt), SUM(vatamt)  from return_item " +
-                        " where return_time   >='" + ReportValue.StartDate + "' AND  return_time <='" + ReportValue.EndDate + "' ";
-                    DataTable dtReturn = DataAccess.GetDataTable(sqlReturn);
-                    totalreturn = Convert.ToDouble(dtReturn.Rows[0].ItemArray[0].ToString());
-                    totaldis = Convert.ToDouble(dtReturn.Rows[0].ItemArray[1].ToString());
-                    double totalvat = Convert.ToDouble(dtReturn.Rows[0].ItemArray[2].ToString());
-                    totalreturnedamt = (totalreturn) + totalvat- Convert.ToDouble(totaldis);
-                }
-                catch (Exception)
-                {
-                    totalreturnedamt = 0;
-                }
-                double totalSale = 0;
-                if (totalreturn > 0)
-                {
-                    totalSale = Convert.ToDouble(Totalsales) + Convert.ToDouble(totalreturn);
-                    row = new string[] { "Sub Total ", totalSale.ToString(), " " };
-                    double disNew = 0;
-                    if (discountFromReturnedItem != "")
-                    {
-                        disNew = Convert.ToDouble(dis) + Convert.ToDouble(totaldis);
-                    }
-                    else
-                    {
-                        disNew = Convert.ToDouble(dis) + totaldis;
-                    }
-                    dis = disNew.ToString();
-                }
-                else
-                {
-                    totalSale = Convert.ToDouble(Totalsales);
-                    row = new string[] { "Sub Total ", totalSale.ToString(), " " };
+                AddRow("Net Profit ", "After discount and expenses ", Money(netProfit));
+                AddBlank();
 
-                }
-                dtgrdViewProfitLoss.Rows.Add(row);
-
-                row = new string[] { "Total Discount ", dis, " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-
-                double subTotalSaleAfterDis = Convert.ToDouble(totalSale) - Convert.ToDouble(dis);
-
-                row = new string[] { "Total Sales after discount ", subTotalSaleAfterDis.ToString(), " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-
-                row = new string[] { "Total Return ", totalreturnedamt.ToString(), " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-
-                double totalSaleAfterReturn = Convert.ToDouble(subTotalSaleAfterDis) - Convert.ToDouble(totalreturnedamt);
-                row = new string[] { "Total Sale After Return ", totalSaleAfterReturn.ToString(), " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-
-
-
-
-
-                row = new string[] { "Total TAX ", vat, " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-                row = new string[] { "Total Due Amount ", due, " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-
-                //row = new string[] { "Total Loss Amount ", totallossamount.ToString(), " " };
-                //dtgrdViewProfitLoss.Rows.Add(row);
-
-                row = new string[] { " ", " ", " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-
-                //  row = new string[] { "Total buy Cost ", totalcost, " " };
-                //  dtgrdViewProfitLoss.Rows.Add(row);
-                double totalPaidByCustomerFinal = Convert.ToDouble(Totalsales) - Convert.ToDouble(totalreturnedamt);
-
-                row = new string[] { "Total Paid By Customer ", totalSaleAfterReturn.ToString(), " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-                row = new string[] { " ", " ", " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-
-                double Netprofit = grossprofitNew;//Convert.ToDouble(totalSaleAfterReturn) - Convert.ToDouble(totalcost);
-                row = new string[] { "Net profit ", "After discount ", Netprofit.ToString() };
-                dtgrdViewProfitLoss.Rows.Add(row);
-                row = new string[] { " ", " ", " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-
-                row = new string[] { "Total Cost", totalcost.ToString(), "" };
-                dtgrdViewProfitLoss.Rows.Add(row);
-                row = new string[] { " ", " ", " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-
-                //Return  Start
-
-                //// Return END
-
-                //Expenses Start                
-                string sqlExpenses = " select SUM(Amount)   from tbl_expense " +
-                                 " where Date   >='" + ReportValue.StartDate + "' AND  Date <='" + ReportValue.EndDate + "' ";
-                DataTable dtExpenses = DataAccess.GetDataTable(sqlExpenses);
-
-                double totalExpenses = Convert.ToDouble(dtExpenses.Rows[0].ItemArray[0].ToString());
-                row = new string[] { "Total Expenses ", totalExpenses.ToString(), " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-                // Expenses END
-
-                double incash = (Convert.ToDouble(totalpaidbycustomer) - Convert.ToDouble(due)) - Convert.ToDouble(dis) - totalreturnedamt - totalExpenses;
-                row = new string[] { " ", " ", " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-                row = new string[] { "In cash ", incash.ToString(), " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-                row = new string[] { " ", " ", " " };
-                dtgrdViewProfitLoss.Rows.Add(row);
-
+                AddRow("Cash In Hand ", cashInHand);
+                AddBlank();
             }
-            catch (Exception exLog) { Logger.Error(exLog); }
-
+            catch (Exception exLog) { Logger.Show(exLog, "Could not load the profit / loss report."); }
         }
 
+        // The grid is read-only; the figures are computed in ProfitLossReport_Load, so nothing to recalculate here.
         private void dtgrdViewProfitLoss_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            try
-            {
-                //Calculate sum of Operation Cost and Other cost
-                double sumofOperationCostNOthercost = Convert.ToDouble(dtgrdViewProfitLoss.Rows[10].Cells[1].Value) + Convert.ToDouble(dtgrdViewProfitLoss.Rows[11].Cells[1].Value);
-                double grossprofit = Convert.ToDouble(dtgrdViewProfitLoss.Rows[8].Cells[2].Value);
-                double Netprofit = grossprofit  - sumofOperationCostNOthercost;
-                dtgrdViewProfitLoss.Rows[12].Cells[2].Value = sumofOperationCostNOthercost;
-                dtgrdViewProfitLoss.Rows[14].Cells[2].Value = Netprofit;
-            }
-            catch (Exception exLog) { Logger.Error(exLog); }
         }
-        
+
         //save as
         private void btnExport_Click(object sender, EventArgs e)
         {
@@ -265,47 +216,24 @@ namespace supershop.Report
 
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
-            //Build the CSV file data as a Comma separated string.
-            string csv = string.Empty;
-
-            //Add the Header row for CSV file.
-            foreach (DataGridViewColumn column in dtgrdViewProfitLoss.Columns)
+            try
             {
-                csv += column.HeaderText + ',';
-            }
+                StringBuilder csv = new StringBuilder();
 
-            //Add new line.
-            csv += "\r\n";
+                foreach (DataGridViewColumn column in dtgrdViewProfitLoss.Columns)
+                    csv.Append(column.HeaderText).Append(',');
+                csv.Append("\r\n");
 
-            //Adding the Rows
-            foreach (DataGridViewRow row in dtgrdViewProfitLoss.Rows)
-            {
-                foreach (DataGridViewCell cell in row.Cells)
+                foreach (DataGridViewRow row in dtgrdViewProfitLoss.Rows)
                 {
-                    //Add the Data rows.
-                    csv += cell.Value.ToString().Replace(",", ";") + ',';
+                    foreach (DataGridViewCell cell in row.Cells)
+                        csv.Append(Convert.ToString(cell.Value).Replace(",", ";")).Append(',');
+                    csv.Append("\r\n");
                 }
 
-                //Add new line.
-                csv += "\r\n";
+                File.WriteAllText(saveFileDialog1.FileName, csv.ToString());
             }
-
-            //Exporting to CSV.            
-            string fileName = "ProfitLossReport_" + DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss") + ".csv";
-            string targetPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string destFile = System.IO.Path.Combine(targetPath, fileName);
-
-            // To copy a folder's contents to a new location: 
-            // Create a new target folder, if necessary. 
-            if (!System.IO.Directory.Exists(targetPath))
-            {
-                System.IO.Directory.CreateDirectory(targetPath);
-
-            }
-
-            // Get file name.
-            string name = saveFileDialog1.FileName;
-            File.WriteAllText(name, csv);
+            catch (Exception exLog) { Logger.Show(exLog, "Could not export the report."); }
         }
 
         private void btnPrint_Click(object sender, EventArgs e)
@@ -321,7 +249,7 @@ namespace supershop.Report
                     MyPrintPreviewDialog.WindowState = FormWindowState.Maximized;
                     MyPrintPreviewDialog.PrintPreviewControl.Zoom = 1.0;
                     MyPrintPreviewDialog.Document = printDocument1;
-                    MyPrintPreviewDialog.ShowDialog();  
+                    MyPrintPreviewDialog.ShowDialog();
                 }
             }
             catch (Exception exp)
@@ -336,7 +264,5 @@ namespace supershop.Report
             if (more == true)
                 e.HasMorePages = true;
         }
-
-       
     }
 }

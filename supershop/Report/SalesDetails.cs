@@ -21,7 +21,7 @@ namespace supershop.Report
             lblTotal.Text       = Convert.ToString(PayAmt);
         }
 
-        //Escape Closing 
+        //Escape Closing
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape)
@@ -29,7 +29,7 @@ namespace supershop.Report
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        // Mouse Moving 
+        // Mouse Moving
         private void MouseDown_Class_mouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -41,16 +41,27 @@ namespace supershop.Report
 
         public void Databind()
         {
-            string sqlCmd = "select  Sales_id as 'Receipt No' , sales_time as Date , itemName as 'Item Name' , " +
-                            " RetailsPrice  as Price , Qty,  Total , Profit * Qty as 'Profit'     " + 
-                            " from sales_item  Where sales_id = '" + lblReceiptNo.Text + "' ";               
-            DataTable dt = DataAccess.GetDataTable(sqlCmd);
+            long id;
+            if (!long.TryParse(lblReceiptNo.Text.Trim(), out id))
+            {
+                datagrdSalesDetails.DataSource = null;
+                return;
+            }
+
+            string sqlCmd = "select sales_id as 'Receipt No', sales_time as Date, itemName as 'Item Name', " +
+                            " RetailsPrice as Price, Qty, Total, Profit * Qty as 'Profit' " +
+                            " from sales_item where sales_id = @id";
+            DataTable dt = DataAccess.GetDataTable(sqlCmd, DataAccess.P("@id", id));
             datagrdSalesDetails.DataSource = dt;
         }
 
         private void SalesDetails_Load(object sender, EventArgs e)
         {
-            Databind();
+            try
+            {
+                Databind();
+            }
+            catch (Exception exLog) { Logger.Show(exLog, "Could not load the sale details."); }
         }
 
         //Cross Button
@@ -64,15 +75,6 @@ namespace supershop.Report
             parameter.autoprintid = "2";
             POSPrintRpt mkc = new POSPrintRpt(lblReceiptNo.Text);
             mkc.ShowDialog();
-
-            //PrintPage mkc = new PrintPage();
-            //mkc.saleno      = lblReceiptNo.Text;
-            //mkc.vat         = "";
-            //mkc.dis         = "";
-            //mkc.paidamt     = lblTotal.Text;
-            //mkc.subtotal    = lblSubTotal.Text;
-            //mkc.ShowDialog();
         }
-
     }
 }

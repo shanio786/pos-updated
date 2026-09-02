@@ -23,22 +23,30 @@ namespace supershop.Report
                 this.Close();
             return base.ProcessCmdKey(ref msg, keyData);
         }
-        
+
         private void btnPrint_Click(object sender, EventArgs e)
         {
             POSPrintRpt mkc = new POSPrintRpt(lblOrder.Text);
             mkc.ShowDialog();
         }
 
+        // Mark every line of the order as served (status 1)
         private void btnCompleteOrder_Click(object sender, EventArgs e)
         {
-            string sql = " update sales_item set " +
-                           " status = 1 " +
-                           " where sales_id  = '" + lblOrder.Text + "' ";
-            DataTable dt1 = DataAccess.GetDataTable(sql);
-            MessageBox.Show("Order completed \n Wait 10 s for Refresh Display ");
-            this.Hide();
-            
+            try
+            {
+                long orderNo;
+                if (!long.TryParse(lblOrder.Text.Trim(), out orderNo))
+                {
+                    MessageBox.Show("Invalid order number: " + lblOrder.Text);
+                    return;
+                }
+
+                DataAccess.ExecuteSQL("update sales_item set status = 1 where sales_id = @id", DataAccess.P("@id", orderNo));
+                MessageBox.Show("Order completed \n Wait 10 s for Refresh Display ");
+                this.Hide();
+            }
+            catch (Exception exLog) { Logger.Show(exLog, "Could not complete the order."); }
         }
     }
 }

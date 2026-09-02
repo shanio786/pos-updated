@@ -7,9 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-//using System.Data.SqlClient;
-using Finisar.SQLite;
- 
 
 namespace supershop
 {
@@ -19,146 +16,72 @@ namespace supershop
         {
             InitializeComponent();
         }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape)
                 this.Close();
             return base.ProcessCmdKey(ref msg, keyData);
-        } 
+        }
+
         private void Overview_Load(object sender, EventArgs e)
         {
             dtyearmonth.Format = DateTimePickerFormat.Custom;
-            dtyearmonth.CustomFormat = "yyyy-MM";   
-
-            DateTime dt = DateTime.Now;
-            string date = dt.ToString("yyyy-MM");
-            try
-            {            
-                //Profit Chart
-                string sql5 = " select sales_time, SUM(profit * Qty) as Profit from sales_item " + 
-                                " where sales_time   like  '%" + date + "%' and status = 1  or status = 3 GROUP BY  sales_time ";
-                DataTable dt5 = DataAccess.GetDataTable(sql5);
-                chartbarProfit.DataSource = dt5;
-                chartbarProfit.Visible = true;
-                chartbarProfit.ChartAreas[0].AxisX.LabelStyle.Angle = 45;  
-                chartbarProfit.Series["Profit"].XValueMember = "sales_time";
-                chartbarProfit.Series["Profit"].YValueMembers = "Profit";
-                chartbarProfit.DataBind();             
-                 
-                //Profit Pie chart 
-                string sql2 = "select  SUM(profit * Qty) as Profit , sales_time from sales_item " + 
-                            " where sales_time   like  '%" + date + "%' and status = 1  or status = 3  GROUP BY  sales_time ";
-                DataTable dt2 = DataAccess.GetDataTable(sql2);
-                chartPieProfit.DataSource = dt2;
-                chartPieProfit.Visible = true;
-                chartPieProfit.Series["Profit"].XValueMember = "sales_time";
-                chartPieProfit.Series["Profit"].YValueMembers = "Profit";
-                chartPieProfit.DataBind();
-
-                // Sales Pie chart
-                string sql3 = " select sales_time, SUM(total) as Total from sales_item where sales_time " + 
-                                "  like  '%" + date + "%' and status = 1  or status = 3  GROUP BY  sales_time ";
-                DataTable dt3 = DataAccess.GetDataTable(sql3);
-                chartPieSales.DataSource = dt3;
-                chartPieSales.Visible = true;
-                chartPieSales.Series["Total"].XValueMember = "sales_time";
-                chartPieSales.Series["Total"].YValueMembers = "Total";
-                chartPieSales.DataBind();
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }       
-
-            
-//}
+            dtyearmonth.CustomFormat = "yyyy-MM";
+            LoadCharts(DateTime.Now.ToString("yyyy-MM"));
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
+            LoadCharts(dtyearmonth.Value.ToString("yyyy-MM"));
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            LoadCharts(dtyearmonth.Value.ToString("yyyy-MM"));
+        }
+
+        /// <summary>Daily profit / sales charts for one month ('yyyy-MM'); sold and partly-returned lines only.</summary>
+        void LoadCharts(string yearMonth)
+        {
             try
             {
-                string sql5 = " select sales_time,  SUM(profit * Qty) as Profit from sales_item " +
-                               " where sales_time   like  '%" + dtyearmonth.Text + "%' and status = 1  or status = 3 GROUP BY  sales_time"; 
-                DataTable dt5 = DataAccess.GetDataTable(sql5);
+                //Profit bar chart
+                string sql5 = " select sales_time, SUM(profit * Qty) as Profit from sales_item " +
+                              " where sales_time like @ym and (status = 1 or status = 3) GROUP BY sales_time order by sales_time";
+                DataTable dt5 = DataAccess.GetDataTable(sql5, DataAccess.P("@ym", "%" + yearMonth + "%"));
                 chartbarProfit.DataSource = dt5;
                 chartbarProfit.Visible = true;
-                chartbarProfit.ChartAreas[0].AxisX.LabelStyle.Angle = 45;  
+                chartbarProfit.ChartAreas[0].AxisX.LabelStyle.Angle = 45;
                 chartbarProfit.Series["Profit"].XValueMember = "sales_time";
                 chartbarProfit.Series["Profit"].YValueMembers = "Profit";
                 chartbarProfit.DataBind();
 
-
-
-                string sql2 = "select   SUM(profit * Qty) as Profit, sales_time from sales_item " +
-                                " where sales_time   like  '%" + dtyearmonth.Text + "%' and status = 1  or status = 3 GROUP BY  sales_time";
-
-                DataTable dt2 = DataAccess.GetDataTable(sql2);
+                //Profit pie chart
+                string sql2 = " select SUM(profit * Qty) as Profit, sales_time from sales_item " +
+                              " where sales_time like @ym and (status = 1 or status = 3) GROUP BY sales_time order by sales_time";
+                DataTable dt2 = DataAccess.GetDataTable(sql2, DataAccess.P("@ym", "%" + yearMonth + "%"));
                 chartPieProfit.DataSource = dt2;
                 chartPieProfit.Visible = true;
                 chartPieProfit.Series["Profit"].XValueMember = "sales_time";
                 chartPieProfit.Series["Profit"].YValueMembers = "Profit";
                 chartPieProfit.DataBind();
 
+                // Sales pie chart
                 string sql3 = " select sales_time, SUM(total) as Total from sales_item " +
-                                " where sales_time   like  '%" + dtyearmonth.Text + "%' and status = 1  or status = 3 GROUP BY  sales_time";
-
-                DataTable dt3 = DataAccess.GetDataTable(sql3);
+                              " where sales_time like @ym and (status = 1 or status = 3) GROUP BY sales_time order by sales_time";
+                DataTable dt3 = DataAccess.GetDataTable(sql3, DataAccess.P("@ym", "%" + yearMonth + "%"));
                 chartPieSales.DataSource = dt3;
                 chartPieSales.Visible = true;
                 chartPieSales.Series["Total"].XValueMember = "sales_time";
                 chartPieSales.Series["Total"].YValueMembers = "Total";
                 chartPieSales.DataBind();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            catch (Exception exLog) { Logger.Show(exLog, "Could not load the overview charts."); }
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                //string sql3 = "select SUM(Profit)   from sales where sales_time   like  '%" + textBox1.Text + "%'";
-                //DataAccess.ExecuteSQL(sql3);
-                //DataTable dt3 = DataAccess.GetDataTable(sql3);
-                
-               
-                //int pro = Convert.ToInt32(dt3.Rows[0].ItemArray[0].ToString());
-                //string pr = Convert.ToString(pro.ToString()); 
-                //label1.Text = pr;
-               // string sql3 = " Select   rollno as 'Class Roll' , stdname as 'Student Name' , SUM(point)as 'Total Marks',CAST(AVG(gpatb) AS DECIMAL(10,2)) as 'GPA' From markspostdb WHERE  classname ='" + textBox2.Text + "' and section = '" + textBox3.Text + "' and examterm = '" + textBox4.Text + "'  GROUP BY  rollno,stdname   ORDER by SUM(point) DESC ";
-
-                string sql5 = "select sales_time, SUM(profit * Qty) as Profit from sales_item where sales_time   like  '%" + dtyearmonth.Text + "%' GROUP BY  sales_time ";
-                DataTable dt5 = DataAccess.GetDataTable(sql5);
-               // string pro = dt5.Rows[0].ItemArray[0].ToString();
-
-                chartbarProfit.DataSource = dt5;
-                chartbarProfit.Visible = true;
-
-                chartbarProfit.Series["Profit"].XValueMember = "sales_time";
-                chartbarProfit.Series["Profit"].YValueMembers = "Profit";
-                chartbarProfit.DataBind();
-
-
-            }
-            
-            catch(Exception ex)
-            
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-      
-
-      
 
         private void chart2_Click(object sender, EventArgs e)
         {
-            //chart2.Dock = DockStyle.Fill;
         }
 
         private void chart2_MouseLeave(object sender, EventArgs e)
@@ -200,7 +123,6 @@ namespace supershop
             chartPieProfit.Visible = false;
             chartbarProfit.Visible = false;
             label2.Visible = false;
-           
         }
 
         private void chart3_MouseLeave(object sender, EventArgs e)
@@ -215,23 +137,18 @@ namespace supershop
         {
             try
             {
-                //chart1.Dock = DockStyle.Fill;
                 chartPieProfit.Dock = DockStyle.Fill;
                 chartPieSales.Dock = DockStyle.Fill;
                 chartbarProfit.Printing.PrintDocument.DefaultPageSettings.Landscape = true;
                 chartPieProfit.Printing.PrintDocument.DefaultPageSettings.Landscape = true;
                 chartPieSales.Printing.PrintDocument.DefaultPageSettings.Landscape = true;
-                // Print preview chart
-                
+
                 chartbarProfit.Printing.PrintPreview();
                 chartPieProfit.Printing.PrintPreview();
                 chartPieSales.Printing.PrintPreview();
-
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
-
-   
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -241,7 +158,5 @@ namespace supershop
 
             this.Hide();
         }
-
-        
     }
 }

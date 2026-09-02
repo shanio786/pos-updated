@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -22,87 +23,52 @@ namespace supershop.Report
             if (keyData == Keys.Escape)
                 this.Close();
             return base.ProcessCmdKey(ref msg, keyData);
-        } 
+        }
 
         private void SaleReportRdlc_Load(object sender, EventArgs e)
         {
             this.reportViewer1.SetDisplayMode(DisplayMode.PrintLayout);
             try
             {
-                if (ReportValue.emp == "" && ReportValue.Terminal == "")   //Report by Every transaction -  Only Date to Date 
-                {
-                    ReportParameter parReportParam1 = new ReportParameter("Dates", ReportValue.StartDate + "  To  " + ReportValue.EndDate);
-                    this.reportViewer1.LocalReport.SetParameters(new ReportParameter[] { parReportParam1 });
-                    string sql = "select storeconfig.* , sales_payment.payment_amount AS Payamount,  sales_payment.due_amount AS due, " +
-                     " sales_payment.dis, sales_payment.vat, sales_payment.sales_time AS sales_time , sales_payment.emp_id AS empID , sales_payment.sales_id AS salesid   " +
-                     " from sales_payment , storeconfig " +
-                     " where sales_payment.sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' " +
-                     "  Order  by sales_payment.sales_time";
-                    DataTable dt = DataAccess.GetDataTable(sql);
+                string emp = ReportValue.emp ?? "";
+                string terminal = ReportValue.Terminal ?? "";
 
-                    ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
-                    this.reportViewer1.LocalReport.DataSources.Clear();
-                    this.reportViewer1.LocalReport.DataSources.Add(reportDSDetail);
-                }
-                else if (ReportValue.emp != "" && ReportValue.Terminal == "")   //Report by Every transaction -  Employee with date to date 
-                {
-                    string paravalue = ReportValue.StartDate + "  To  " + ReportValue.EndDate + " and " + ReportValue.emp;
-                    ReportParameter parReportParam1 = new ReportParameter("Dates", "Report by : " + paravalue);
-                    this.reportViewer1.LocalReport.SetParameters(new ReportParameter[] { parReportParam1 });
-                    string sql = "select storeconfig.* , sales_payment.payment_amount AS Payamount,  sales_payment.due_amount AS due, " +
-                     " sales_payment.dis, sales_payment.vat, sales_payment.sales_time AS sales_time , sales_payment.emp_id AS empID , sales_payment.sales_id AS salesid   " +
-                     " from sales_payment , storeconfig " +
-                     " where sales_payment.sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' " +
-                     " AND sales_payment.emp_id = '" + ReportValue.emp + "' " +
-                     "  Order  by sales_payment.sales_time";
-                    DataTable dt = DataAccess.GetDataTable(sql);
+                // Report header: date range plus the optional employee / terminal filters
+                string paravalue = ReportValue.StartDate + "  To  " + ReportValue.EndDate;
+                if (emp != "" && terminal != "")
+                    paravalue = "Report by : " + paravalue + " and " + emp + " - " + terminal;
+                else if (emp != "")
+                    paravalue = "Report by : " + paravalue + " and " + emp;
+                else if (terminal != "")
+                    paravalue = "Report by : " + paravalue + " and " + terminal;
 
-                    ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
-                    this.reportViewer1.LocalReport.DataSources.Clear();
-                    this.reportViewer1.LocalReport.DataSources.Add(reportDSDetail);
-                }
-                else if (ReportValue.emp == "" && ReportValue.Terminal != "")     //Report by Every transaction -    Terminal with date to date
-                {
-                    string paravalue = ReportValue.StartDate + "  To  " + ReportValue.EndDate + " and " + ReportValue.Terminal;
-                    ReportParameter parReportParam1 = new ReportParameter("Dates", "Report by : " + paravalue);
-                    this.reportViewer1.LocalReport.SetParameters(new ReportParameter[] { parReportParam1 });
-                    string sql = "select storeconfig.* , sales_payment.payment_amount AS Payamount,  sales_payment.due_amount AS due, " +
-                     " sales_payment.dis, sales_payment.vat, sales_payment.sales_time AS sales_time , sales_payment.emp_id AS empID , sales_payment.sales_id AS salesid   " +
-                     " from sales_payment , storeconfig " +
-                     " where sales_payment.sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' " +
-                     " AND sales_payment.Shopid = '" + ReportValue.Terminal + "' " +
-                     "  Order  by sales_payment.sales_time";
-                    DataTable dt = DataAccess.GetDataTable(sql);
+                ReportParameter parReportParam1 = new ReportParameter("Dates", paravalue);
+                this.reportViewer1.LocalReport.SetParameters(new ReportParameter[] { parReportParam1 });
 
-                    ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
-                    this.reportViewer1.LocalReport.DataSources.Clear();
-                    this.reportViewer1.LocalReport.DataSources.Add(reportDSDetail);
-                }
-                else if (ReportValue.emp != "" && ReportValue.Terminal != "")   //Report by Every transaction -  Employee and  Terminal with date to date  -- All
-                {
-                    string empterminal = ReportValue.StartDate + "  To  " + ReportValue.EndDate + " and " + ReportValue.emp + " - " + ReportValue.Terminal;
-                    ReportParameter parReportParam1 = new ReportParameter("Dates", "Report by : " + empterminal);
-                    this.reportViewer1.LocalReport.SetParameters(new ReportParameter[] { parReportParam1 });
-                    string sql = "select storeconfig.* , sales_payment.payment_amount AS Payamount,  sales_payment.due_amount AS due, " +
-                     " sales_payment.dis, sales_payment.vat, sales_payment.sales_time AS sales_time , sales_payment.emp_id AS empID , sales_payment.sales_id AS salesid   " +
-                     " from sales_payment , storeconfig " +
-                     " where sales_payment.sales_time BETWEEN '" + ReportValue.StartDate + "'  AND    '" + ReportValue.EndDate + "' " +
-                     " AND sales_payment.emp_id = '" + ReportValue.emp + "' AND sales_payment.Shopid = '" + ReportValue.Terminal + "' " +
-                     "  Order  by sales_payment.sales_time";
-                    DataTable dt = DataAccess.GetDataTable(sql);
+                // Empty employee / terminal means "all"
+                string sql = "select sc.*, sp.payment_amount AS Payamount, sp.due_amount AS due, " +
+                             " sp.dis, sp.vat, sp.sales_time AS sales_time, sp.emp_id AS empID, sp.sales_id AS salesid " +
+                             " from sales_payment sp, storeconfig sc " +
+                             " where sp.sales_time BETWEEN @from AND @to " +
+                             (emp == "" ? "" : " AND sp.emp_id = @emp ") +
+                             (terminal == "" ? "" : " AND sp.Shopid = @shop ") +
+                             " order by sp.sales_time";
+                DataTable dt = DataAccess.GetDataTable(sql,
+                    DataAccess.P("@from", ReportValue.StartDate),
+                    DataAccess.P("@to", ReportValue.EndDate),
+                    DataAccess.P("@emp", emp),
+                    DataAccess.P("@shop", terminal));
 
-                    ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
-                    this.reportViewer1.LocalReport.DataSources.Clear();
-                    this.reportViewer1.LocalReport.DataSources.Add(reportDSDetail);
-                }
+                ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
+                this.reportViewer1.LocalReport.DataSources.Clear();
+                this.reportViewer1.LocalReport.DataSources.Add(reportDSDetail);
+
                 this.reportViewer1.LocalReport.Refresh();
                 this.reportViewer1.SetDisplayMode(DisplayMode.PrintLayout);
                 this.reportViewer1.ZoomMode = ZoomMode.PageWidth;
-               // this.reportViewer1.ZoomPercent = 35;
-                this.reportViewer1.RefreshReport(); 
+                this.reportViewer1.RefreshReport();
             }
-            catch (Exception exLog) { Logger.Error(exLog); }
-
+            catch (Exception exLog) { Logger.Show(exLog, "Could not load the report."); }
         }
     }
 }
