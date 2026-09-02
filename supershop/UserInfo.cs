@@ -60,7 +60,6 @@ namespace supershop
                 get
                 {
                     string sqlVat = " select VAT from tbl_terminallocation where Shopid = '" + UserInfo.Shopid + "' "; // 
-                    DataAccess.ExecuteSQL(sqlVat);
                     DataTable dtVat = DataAccess.GetDataTable(sqlVat);                  
                     string vl = dtVat.Rows[0].ItemArray[0].ToString();                                      
                     return vl;                    
@@ -80,7 +79,6 @@ namespace supershop
                 get
                 {
                     string sqldis = "select Dis from tbl_terminallocation   where Shopid = '" + UserInfo.Shopid + "' ";
-                    DataAccess.ExecuteSQL(sqldis);
                     DataTable dtdis = DataAccess.GetDataTable(sqldis);
                     string vl = dtdis.Rows[0].ItemArray[0].ToString();
                     return vl;

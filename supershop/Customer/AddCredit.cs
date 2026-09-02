@@ -37,7 +37,6 @@ namespace supershop.Customer
             dtDate.CustomFormat = "yyyy-MM-dd";
 
             string sql5 = "select   DISTINCT  *   from tbl_customer where PeopleType = 'Customer'";
-            DataAccess.ExecuteSQL(sql5);
             DataTable dt5 = DataAccess.GetDataTable(sql5);
             ComboCustID.DataSource = dt5;
             ComboCustID.DisplayMember = "Name";
@@ -85,7 +84,6 @@ namespace supershop.Customer
         public void CustomerID()
         {
             string sqlCmd = "Select ID from  tbl_customer  where Name  = '" + ComboCustID.Text + "'";
-            DataAccess.ExecuteSQL(sqlCmd);
             DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
 
             lblCustID.Text = dt1.Rows[0].ItemArray[0].ToString();

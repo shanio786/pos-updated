@@ -36,7 +36,6 @@ namespace supershop.Items
         public void categorybind()
         {
             string sql = " select ID, category_name as 'Category' from tbl_category ";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             datagridcategories.DataSource = dt1;
         }
@@ -68,9 +67,7 @@ namespace supershop.Items
                 DataGridViewColumn ColName = datagridcategories.Columns[1];
                 ColName.Width = 220;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void datagridcategories_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -110,10 +107,7 @@ namespace supershop.Items
                 }           
 
             }
-            catch  
-            {
-               
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
     }
 }

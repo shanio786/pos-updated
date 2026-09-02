@@ -31,7 +31,6 @@ namespace supershop
         {
             string sqlterminallist = "select Shopid as 'ID', Branchname	 ,Location ,Phone ,  " + 
                                      " VAT as 'TAX %' ,Dis as 'Discount %'    from tbl_terminallocation";
-            DataAccess.ExecuteSQL(sqlterminallist);
             DataTable dtterminallist = DataAccess.GetDataTable(sqlterminallist);
             dtgrdViewTerminallist.DataSource = dtterminallist;
         }
@@ -42,7 +41,6 @@ namespace supershop
             {
                 //Bind store info 
                 string sql3 = "select * from storeconfig";
-                DataAccess.ExecuteSQL(sql3);
                 DataTable dt1 = DataAccess.GetDataTable(sql3);
 
                 txtCompanyName.Text = dt1.Rows[0].ItemArray[1].ToString();
@@ -71,9 +69,7 @@ namespace supershop
                     lnkDelete.Visible = true;
                 }
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
           
         }
 
@@ -137,9 +133,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
 
         private void txtDiscountRate_KeyPress(object sender, KeyPressEventArgs e)
@@ -162,9 +156,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
 
         // Click terminal list and move to add and update
@@ -179,7 +171,6 @@ namespace supershop
                 string sqlterminallist = "select Shopid  , Branchname , Location ,Phone , Email , " +
                                          " Web, VAT , Dis , VATRegiNo , Footermsg    from tbl_terminalLocation " +
                                          " where Shopid = '" + terminalid + "' ";
-                DataAccess.ExecuteSQL(sqlterminallist);
                 DataTable dtterminallist = DataAccess.GetDataTable(sqlterminallist);
 
                 lblShopID.Text          = dtterminallist.Rows[0].ItemArray[0].ToString(); 
@@ -197,9 +188,7 @@ namespace supershop
                 lnkDelete.Visible = true;
                 lbltrmsg.Visible = false;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
        
                        
         }
@@ -244,9 +233,7 @@ namespace supershop
                 }
              
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         // Prevent String value
@@ -270,9 +257,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
 
         // Prevent String value
@@ -296,9 +281,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
 
         private void btnAddnew_Click(object sender, EventArgs e)

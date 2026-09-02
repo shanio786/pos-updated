@@ -23,14 +23,12 @@ namespace supershop
             {
                 //Product Category
                 string sql5 = "select    product_id  from purchase ";
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 cmbitems.DataSource = dt5;
                 cmbitems.DisplayMember = "product_id";
 
                 string sql = "Select product_name, product_id, retail_price  from purchase  ";
                // string sql = " select  * from purchase a, sales_item b where a.product_id = '8940000000003' limit 11 ";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
 
                 ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
@@ -42,9 +40,7 @@ namespace supershop
                 //this.reportViewer1.ZoomPercent = 35;
                 this.reportViewer1.RefreshReport();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
 
@@ -55,7 +51,6 @@ namespace supershop
 
                 string sql = " select  product_name, product_id, retail_price  " + 
                              " from purchase a, sales_item b where a.product_id = '" + cmbitems.Text + "' limit  " + txtQuantity.Text + " ";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
 
                 ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
@@ -67,9 +62,7 @@ namespace supershop
                // this.reportViewer1.ZoomPercent = 35;
                 this.reportViewer1.RefreshReport();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -79,7 +72,6 @@ namespace supershop
 
                 string sql = " select Top " + txtQuantity.Text + " product_name, product_id, retail_price "+
                               "  from purchase a, sales_item b where a.product_id = '" + cmbitems.Text + "'    ";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
 
                 ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
@@ -91,9 +83,7 @@ namespace supershop
                // this.reportViewer1.ZoomPercent = 35;
                 this.reportViewer1.RefreshReport();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void btnlink_Click(object sender, EventArgs e)

@@ -24,7 +24,6 @@ namespace supershop.BarCode
         private void newBarcode_Generator_Load(object sender, EventArgs e)
         {
             string sql5 = "select    product_id  from purchase ";
-            DataAccess.ExecuteSQL(sql5);
             DataTable dt5 = DataAccess.GetDataTable(sql5);
             cmbitems.DataSource = dt5;
             cmbitems.DisplayMember = "product_id";
@@ -42,7 +41,6 @@ namespace supershop.BarCode
 
             string sql = " select  product_name, product_id, retail_price  " +
                               " from purchase a, sales_item b where a.product_id = '" + cmbitems.Text + "'";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             string pname = dt1.Rows[0].ItemArray[0].ToString();
            // string barcode = dt1.Rows[0].ItemArray[1].ToString();

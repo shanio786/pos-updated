@@ -33,7 +33,6 @@ namespace supershop.Customer
         private void CustomerLedger_Load(object sender, EventArgs e)
         {
             string sql = "select receivedate as [Receive Date], totalamt as [Total Amount] ,dueamt as [Due Amount] ,receiveamt as [Receive Amount] from tbl_duepayment where sales_id = '" + lbsalesid.Text+"' and custid = '"+lbcontact.Text+"'";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             datagridDueList.DataSource = dt1;
             //datagridDueList.Columns[5].DefaultCellStyle.ForeColor = Color.DarkViolet;

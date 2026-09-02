@@ -45,7 +45,6 @@ namespace supershop.Report
 						 " ON p.product_id = si.itemcode " +
                          "  where si.status = 3   and  si.Qty != 0 " +
                          "  order by si.item_id asc ";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
 
                 int currentImage = 0;
@@ -137,7 +136,6 @@ namespace supershop.Report
 					 "  ON si.sales_id = sp.sales_id " +
                      "  where si.status = 3 " +
                      "  order by si.sales_id desc ";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             dtgridKitchenWaitingList.DataSource = dt1;
           //  dtgridKitchenWaitingList.Columns[5].DefaultCellStyle.ForeColor = Color.DarkViolet;
@@ -157,9 +155,7 @@ namespace supershop.Report
                 //btn.UseColumnTextForButtonValue = true;
                 //kitchen_displayDataload();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void dtgridKitchenWaitingList_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -177,17 +173,13 @@ namespace supershop.Report
                         string sql = " update sales_item set " +
                                     " status = 1 " +
                                     " where item_id  = '" + item_id  + "' ";
-                        DataAccess.ExecuteSQL(sql);
                         DataTable dt1 = DataAccess.GetDataTable(sql);
                         kitchen_displayDataload();
                     //    MessageBox.Show("Item has been Served", "Yes or No", MessageBoxButtons.OK, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2); ;
                    // }
                 } 
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -196,9 +188,7 @@ namespace supershop.Report
             { 
                 ItemList_with_images();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
       

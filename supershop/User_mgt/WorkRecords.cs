@@ -35,7 +35,6 @@ namespace supershop.User_mgt
             string sql = " SELECT * FROM vw_workrecords " +
                          " where Date BETWEEN '" + dtstart + "' AND    '" + dtend + "'  and " +
                          " username = '" + UserInfo.usernamWK + "'    order by  Date ";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             dtgrdWorkingHoursList.DataSource = dt1;
         }
@@ -48,10 +47,7 @@ namespace supershop.User_mgt
                
                 Databind(DateTime.Now.AddDays(-30).ToString(), DateTime.Now.ToString("yyyy-MM-dd"));              
             }
-            catch
-            {
-
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
 
         private void dtEndDate_ValueChanged(object sender, EventArgs e)
@@ -60,10 +56,7 @@ namespace supershop.User_mgt
             {
                 Databind(dtStartDate.Text, dtEndDate.Text);                 
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void btn30days_Click(object sender, EventArgs e)
@@ -72,7 +65,7 @@ namespace supershop.User_mgt
             {
                 Databind(DateTime.Now.AddDays(-30).ToString(), DateTime.Now.ToString("yyyy-MM-dd"));
             }
-            catch { }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         #endregion
@@ -86,10 +79,7 @@ namespace supershop.User_mgt
                 saveFileDialog1.FileName = "WorkedHours_" + UserInfo.usernamWK + "_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".csv";
                 saveFileDialog1.ShowDialog(); 
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)

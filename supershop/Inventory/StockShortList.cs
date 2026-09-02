@@ -37,7 +37,6 @@ namespace supershop.Inventory
         {
             string sql = "select product_id as 'Code/ID', product_name as 'Item Name' , product_quantity as 'Qty/Stock-Item' ," +
                 "  retail_price as 'Sale Price' , category as 'Category' , supplier as 'Supplier'      from purchase";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             dtgrdViewStockItem.DataSource = dt1;
             dtgrdViewStockItem.Columns[0].ReadOnly = false;
@@ -69,12 +68,10 @@ namespace supershop.Inventory
                                    "   from purchase where product_id like  '%" + txtItemSearchBar.Text + "%' or " + 
                                    "  product_name like '%" + txtItemSearchBar.Text + "%'or category like '%" + txtItemSearchBar.Text + "%' " + 
                                     "  or supplier like '%" + txtItemSearchBar.Text + "%' ";
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt1 = DataAccess.GetDataTable(sql);
                     dtgrdViewStockItem.DataSource = dt1;
 
                     string sql3 = "select SUM(total_cost_price)   from purchase  where product_id = '" + txtItemSearchBar.Text + "'";
-                    DataAccess.ExecuteSQL(sql3);
                     DataTable dt3 = DataAccess.GetDataTable(sql3);                    
 
 
@@ -115,9 +112,7 @@ namespace supershop.Inventory
                 //go.MdiParent = this.ParentForm;
                 //go.Show();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         
         }
 

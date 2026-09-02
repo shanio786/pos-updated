@@ -45,9 +45,7 @@ namespace supershop.Customer
                 btn.UseColumnTextForButtonValue = true;
               
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
           
         }
 
@@ -56,14 +54,12 @@ namespace supershop.Customer
             if (parameter.peopleid == "SUP")
             {
                 string sqlCmd = "Select * from  customercredit   where PeopleType  = 'Supplier' and id != '10000009' "; //From view combination of tbl_customer and custcredit
-                DataAccess.ExecuteSQL(sqlCmd);
                 DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
                 dtGrdvCustomerDetails.DataSource = dt1;
             }
             else
             {
                 string sqlCmd = "Select * from  customercredit where id != '10000009'"; //From view combination of tbl_customer and custcredit
-                DataAccess.ExecuteSQL(sqlCmd);
                 DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
                 dtGrdvCustomerDetails.DataSource = dt1;
             }
@@ -108,13 +104,10 @@ namespace supershop.Customer
                                 "  City  like  '%" + txtCustomerSearch.Text + "%'  or " +
                                 " EmailAddress  like  '%" + txtCustomerSearch.Text + "%'";
                 // = txtCustomerSearch.Text ";// or Phone  like  '%" + txtCustomerSearch.Text + "%'  or City  like  '%" + txtCustomerSearch.Text + "%'  or emailAddress  like  '%" + txtCustomerSearch.Text + "%'";
-                DataAccess.ExecuteSQL(sqlCmd);
                 DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
                 dtGrdvCustomerDetails.DataSource = dt1;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
                 
         private void CombPeopleType_SelectedIndexChanged(object sender, EventArgs e)
@@ -125,7 +118,6 @@ namespace supershop.Customer
                 {
                    // string sqlCmd = "select  Name , Phone as [Contact],  EmailAddress as [Email], City, Address , PeopleType  from tbl_customer";
                     string sqlCmd = "Select * from  customercredit";
-                    DataAccess.ExecuteSQL(sqlCmd);
                     DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
                     dtGrdvCustomerDetails.DataSource = dt1;
 
@@ -135,15 +127,12 @@ namespace supershop.Customer
                 else
                 {
                     string sqlCmd = "Select * from  customercredit  where PeopleType  = '" + CombPeopleType.Text + "'";
-                    DataAccess.ExecuteSQL(sqlCmd);
                     DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
                     dtGrdvCustomerDetails.DataSource = dt1;
                 }
               
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
         #endregion
 

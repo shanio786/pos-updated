@@ -123,7 +123,6 @@ namespace supershop
 
                   //Customer Info
                   string sqlCust = "select   DISTINCT  *   from tbl_customer where PeopleType = 'Customer'";
-                  DataAccess.ExecuteSQL(sqlCust);
                   DataTable dtCust = DataAccess.GetDataTable(sqlCust);
                   ComboCustID.DataSource = dtCust;
                   ComboCustID.DisplayMember = "Name";
@@ -238,7 +237,6 @@ namespace supershop
 
                   // Update Quantity | Increase Quantity to Purchase table 
                   string sqlupdateQty = "select product_quantity  from purchase where product_id = '" + itemcode + "'";
-                  DataAccess.ExecuteSQL(sqlupdateQty);
                   DataTable dtUqty = DataAccess.GetDataTable(sqlupdateQty);
                   double product_quantity = Convert.ToDouble(dtUqty.Rows[0].ItemArray[0].ToString()) + Qty;
 
@@ -253,7 +251,6 @@ namespace supershop
                 // Decrease Sales Item into Sales_item table
                 //Update sales_item Qty , status . Status 1 = Sold 2 = Sold item has been returned
                 string sqlSalesQTY = " select Qty from sales_item  where item_id = '" + SoldID + "' ";
-                  DataAccess.ExecuteSQL(sqlSalesQTY);
                   DataTable dtSalesQTY = DataAccess.GetDataTable(sqlSalesQTY);
                   double SalesQTY = Convert.ToDouble(dtSalesQTY.Rows[0].ItemArray[0].ToString()) - Qty;
                   double totalsale = SalesQTY * RetailsPrice;
@@ -315,14 +312,11 @@ namespace supershop
               try
               {
                   string sqlCmd = "Select ID from  tbl_customer  where Name  = '" + ComboCustID.Text + "'";
-                  DataAccess.ExecuteSQL(sqlCmd);
                   DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
 
                   lblCustID.Text = dt1.Rows[0].ItemArray[0].ToString();
               }
-              catch
-              {
-              }
+              catch (Exception exLog) { Logger.Error(exLog); }
           }
 
           public void salePaymentinfo()
@@ -332,7 +326,6 @@ namespace supershop
                   string sqlCmd =   " Select  sales_id , change_amount , due_amount , dis, vat , sales_time , " +
                                     " c_id, emp_id , comment , TrxType, ShopId , payment_type , payment_amount, ovdisrate, vaterate " +
                                     "  from  sales_payment  where sales_id  = '" + txtbarcodeinputer.Text + "'";
-                  DataAccess.ExecuteSQL(sqlCmd);
                   DataTable dt = DataAccess.GetDataTable(sqlCmd);
                   for (int i = 0; i < dt.Rows.Count; i++)
                   {
@@ -361,9 +354,7 @@ namespace supershop
                   }
                 
               }
-              catch
-              {
-              }
+              catch (Exception exLog) { Logger.Error(exLog); }
           }
  
 
@@ -477,9 +468,7 @@ namespace supershop
                       }
                   }
               }
-              catch
-              {
-              }
+              catch (Exception exLog) { Logger.Error(exLog); }
           }
 
         private void btnSubmit_Click(object sender, EventArgs e)
@@ -498,7 +487,6 @@ namespace supershop
                     " END 'taxamt', discount , taxapply as 'Tax' , itemcode, item_id " +
                     " FROM sales_item where (sales_id = '" + txtbarcodeinputer.Text + "' and status = 1 and Qty != 0) " +
                     " or (sales_id = '" + txtbarcodeinputer.Text + "' and status = 3  and Qty != 0)";
-                    DataAccess.ExecuteSQL(sqlitems);
                     DataTable dtItems = DataAccess.GetDataTable(sqlitems);
                     dtgrdviewReturnItem.DataSource = dtItems;
 
@@ -544,9 +532,7 @@ namespace supershop
                   dtgrdviewReturnItem.Rows.Clear();
                   total();
               }
-              catch
-              {
-              }
+              catch (Exception exLog) { Logger.Error(exLog); }
           }
 
           //Call system Calculator
@@ -562,9 +548,7 @@ namespace supershop
                   p.WaitForInputIdle();
 
               }
-              catch
-              {
-              }
+              catch (Exception exLog) { Logger.Error(exLog); }
           }
 
         private void txtNewDiscountOnReturn_KeyDown(object sender, KeyEventArgs e)

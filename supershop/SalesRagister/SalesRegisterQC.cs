@@ -32,7 +32,6 @@ namespace supershop
         public void LoadTotalDiscount()
         {
             string sql3 = "select * from storeconfig";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
 
             txtDiscountRate.Text = dt1.Rows[0].ItemArray[7].ToString();
@@ -40,7 +39,6 @@ namespace supershop
         public void LoadTotalTax()
         {
             string sql3 = "select * from storeconfig";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
 
             txtVATRate.Text = dt1.Rows[0].ItemArray[6].ToString();
@@ -63,7 +61,6 @@ namespace supershop
 
                 //Customer Databind 
                 string sqlCust = "select   DISTINCT  *   from tbl_customer where PeopleType = 'Customer'";
-                DataAccess.ExecuteSQL(sqlCust);
                 DataTable dtCust = DataAccess.GetDataTable(sqlCust);
                 ComboCustID.DataSource = dtCust;
                 ComboCustID.DisplayMember = "Name";
@@ -203,7 +200,6 @@ namespace supershop
                // " ORDER BY RAND() LIMIT 12 "; // MySQL
               //  " ORDER BY NEWID() "; // SQL server and use -- top 12 after select  
 
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
                 if (dt.Rows.Count > 0)
                 {
@@ -517,7 +513,6 @@ namespace supershop
                             " ELSE '0.00'  " +
                             " END 'taxamt' , product_id as ID , discount , taxapply, status, product_quantity  " +
                             " FROM  purchase  where product_id = '" + txtBarcodeReaderBox.Text + "'  and product_quantity >= 1 ";
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt = DataAccess.GetDataTable(sql);
 
                     string ItemsName = dt.Rows[0].ItemArray[0].ToString();
@@ -614,10 +609,7 @@ namespace supershop
                     }
                 }
 
-                  catch
-                {
-                    //MessageBox.Show("sorry");
-                }
+                  catch (Exception exLog) { Logger.Error(exLog); }
             }
             //}
         }
@@ -935,9 +927,7 @@ namespace supershop
                     }
                 }
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
         
@@ -961,10 +951,7 @@ namespace supershop
                    // btnInvoiceNo.Text = btnInvoiceNo.Text = "# " + Convert.ToString(id);
                 }
             }
-            catch
-            {
-
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
         //Discount Set
         public void SetDiscount()
@@ -1074,7 +1061,6 @@ namespace supershop
                 // Profit = (Retail_priceAfterDiscount * QTY )   - (cost_price * qty);  ---( 47.53 * 1 ) - ( 45 * 1) = 2.53
 
                 string sqlprofit = "Select cost_price , discount  from  purchase  where product_id  = '" + itemid + "'";
-                DataAccess.ExecuteSQL(sqlprofit);
                 DataTable dt1 = DataAccess.GetDataTable(sqlprofit);
 
                 double cost_price = Convert.ToDouble(dt1.Rows[0].ItemArray[0].ToString());
@@ -1104,7 +1090,6 @@ namespace supershop
 
                     // Update Quantity
                     string sqlupdateQty = "select product_quantity  from purchase where product_id = '" + itemids + "'";
-                    DataAccess.ExecuteSQL(sqlupdateQty);
                     DataTable dtUqty = DataAccess.GetDataTable(sqlupdateQty);
                     double product_quantity = Convert.ToDouble(dtUqty.Rows[0].ItemArray[0].ToString()) - qtyupdate;
 
@@ -1504,9 +1489,7 @@ namespace supershop
                 txtBarcodeReaderBox.Focus();
                 //  this.tabPageSR_Payment.Parent = null; //Hide payment tab
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
         
         //Customer filter
@@ -1538,9 +1521,7 @@ namespace supershop
                 p.WaitForInputIdle();
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
        
         //--  new   8.1 version
@@ -1601,9 +1582,7 @@ namespace supershop
                     LoadTotalDiscount();
                     LoadTotalTax();
                 }
-                catch
-                {
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
             else if (keyData == (Keys.F6)) // Increase item Qty
             {
@@ -1641,9 +1620,7 @@ namespace supershop
                     DiscountCalculation();
                     vatcal();
                 }
-                catch
-                {
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
             else if (keyData == (Keys.F7)) // Decrease item Qty
             {
@@ -1684,9 +1661,7 @@ namespace supershop
                     }
 
                 }
-                catch
-                {
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
 
             }
 
@@ -1717,9 +1692,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
 
         //Validation Paid amount
@@ -1743,9 +1716,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
         #endregion
 
@@ -1801,7 +1772,6 @@ namespace supershop
         {
             string sql = "SELECT   product_quantity  " +
                         " FROM  purchase  where product_id = '" + itemcode + "'  ";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt = DataAccess.GetDataTable(sql);
 
             double totalstockQty = Convert.ToDouble(dt.Rows[0].ItemArray[0].ToString());
@@ -1857,7 +1827,6 @@ namespace supershop
                             " INNER JOIN tbl_customer c " +
                             " ON  sp.c_id  = c.ID " +
                             " Where sp.sales_id  = '" + txtInvoice.Text + "'  ";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt = DataAccess.GetDataTable(sql);
 
             string storename = dt.Rows[0]["companyname"].ToString(); //"Doglus Coffee Shop"
@@ -1986,7 +1955,7 @@ namespace supershop
                 txtDiscountRate.Text = Convert.ToString(Math.Round(res, 2));
               //  lbloveralldiscount.Text = lblTotalDisCount.Text;
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtBarcodeReaderBox_KeyDown(object sender, KeyEventArgs e)
@@ -2076,7 +2045,7 @@ namespace supershop
                 txtBarcodeReaderBox.Text = a;
                 
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtPaidAmount_Click(object sender, EventArgs e)

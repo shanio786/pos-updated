@@ -32,7 +32,6 @@ namespace supershop
 
             //Product Code Databind from Database
             string sql5 = "select   product_id   from purchase";
-            DataAccess.ExecuteSQL(sql5);
             DataTable dt5 = DataAccess.GetDataTable(sql5);
             cmboProductCode.DataSource = dt5;
             cmboProductCode.DisplayMember = "product_id";
@@ -135,9 +134,7 @@ namespace supershop
                   
                 }               
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
@@ -283,9 +280,7 @@ namespace supershop
                 txtManufacturerCode.Text = cmboProductCode.Text.Substring(1, 5);
                 txtProductCode.Text = cmboProductCode.Text.Substring(6, 5);
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
            
         }
 
@@ -300,9 +295,7 @@ namespace supershop
                 txtManufacturerCode.Text = cmboProductCode.Text.Substring(2, 5);
                 txtProductCode.Text = cmboProductCode.Text.Substring(7, 5);
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
            
         }
 
@@ -313,7 +306,6 @@ namespace supershop
                 if (rdbtnEAN13.Checked)
                 {
                     string sql5 = "select  product_name , retail_price  from purchase where product_id = '" + cmboProductCode.Text + "' ";
-                    DataAccess.ExecuteSQL(sql5);
                     DataTable dt5 = DataAccess.GetDataTable(sql5);
                     lblProductName.Text = dt5.Rows[0].ItemArray[0].ToString();
                     lblPrice.Text = "| " + dt5.Rows[0].ItemArray[1].ToString();
@@ -325,7 +317,6 @@ namespace supershop
                 else if (rdbtnUPCA.Checked)
                 {
                     string sql5 = "select  product_name , retail_price  from purchase where product_id = '" + cmboProductCode.Text + "' ";
-                    DataAccess.ExecuteSQL(sql5);
                     DataTable dt5 = DataAccess.GetDataTable(sql5);
                     lblProductName.Text = dt5.Rows[0].ItemArray[0].ToString();
                     lblPrice.Text = "| " + dt5.Rows[0].ItemArray[1].ToString();
@@ -339,9 +330,7 @@ namespace supershop
 
                
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void linkHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

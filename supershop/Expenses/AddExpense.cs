@@ -32,7 +32,6 @@ namespace supershop.Expenses
         {
             string sql = " select  ID, Date , ReferenceNo as 'Refer No' , Category ,	Amount , Note ,	Createdby as 'Posted by', Attachment , fileextension from tbl_expense " +
                             " where ID = '" + lblfileID.Text + "' ";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
            // dtStartDate.Value           = Convert.ToDateTime(dt1.Rows[0].ItemArray[1].ToString());
             txtReferNo.Text             = dt1.Rows[0].ItemArray[2].ToString();
@@ -55,9 +54,7 @@ namespace supershop.Expenses
                 Expensebind();
                  
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
  
           
         }
@@ -175,9 +172,7 @@ namespace supershop.Expenses
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
     }

@@ -321,6 +321,8 @@
       <DependentUpon>Due_payment_History.cs</DependentUpon>
     </Compile>
     <Compile Include="DataAccess_MSSQLServer.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="PasswordHasher.cs" />
     <Compile Include="db_licenseDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

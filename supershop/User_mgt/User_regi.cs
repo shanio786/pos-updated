@@ -42,7 +42,6 @@ namespace supershop.User_mgt
         public void loadData(string Uid)
         {
             string sql3 = "select * from usermgt where id = '" + Uid + "'";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
 
           //  lblUid.Text = dt1.Rows[0].ItemArray[0].ToString();
@@ -122,7 +121,6 @@ namespace supershop.User_mgt
         public void Bindshopbranch()
         {
             string sql5 = "select   BranchName , Shopid from tbl_terminallocation";
-            DataAccess.ExecuteSQL(sql5);
             DataTable dt5 = DataAccess.GetDataTable(sql5);
             cmboShopid.DataSource = dt5;
             cmboShopid.DisplayMember = "BranchName";
@@ -155,9 +153,7 @@ namespace supershop.User_mgt
                 }
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
 
         }
@@ -334,10 +330,7 @@ namespace supershop.User_mgt
                     }
  
                 }
-                catch (Exception exp)
-                {
-                  //  MessageBox.Show("Sorry\r\n" + exp.Message);
-                }
+                catch (Exception exp) { Logger.Error(exp); }
             }
         }
 

@@ -54,9 +54,7 @@ namespace supershop.Data_Manage
                      }
                  }                        
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
               
         }
     }

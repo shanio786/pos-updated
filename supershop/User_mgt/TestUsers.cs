@@ -64,7 +64,6 @@ namespace supershop.User_mgt
            // dataGridView1.Columns[2].Name = "Product Price";
              
             string sql = "select id, name  from usermgt  ";
-            DataAccess.ExecuteSQL(sql);            
             
             DataTable dt = DataAccess.GetDataTable(sql);
             DataSet ds = DataAccess.GetDataSet(sql);

@@ -195,13 +195,10 @@ namespace supershop.Customer
                                     "   (payment_amount - due_amount) as 'Paid Amount' ,  payment_type as 'Payment Type' , " +
                                     "   due_amount as Due, emp_id as 'Sold by' ,    c_id  as Contact , Comment as 'Cust Name/Comment' " +
                                     "   from sales_payment   where c_id = '" + lblCustID.Text + "' order by  sales_id desc";
-                        DataAccess.ExecuteSQL(sql);
                         DataTable dt1 = DataAccess.GetDataTable(sql);
                         dtgviewCusttrxHistory.DataSource = dt1;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
 
@@ -225,10 +222,7 @@ namespace supershop.Customer
                 go.ShowDialog();
 
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         #region print section
@@ -237,7 +231,6 @@ namespace supershop.Customer
         private bool SetupThePrinting()
         {
             string sql3 = "select * from tbl_terminallocation where Shopid = '" + UserInfo.Shopid + "'";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
             DateTime dt = DateTime.Now;
             string printdate = dt.ToString("MMMM dd, yyyy    hh:mm:ss tt");

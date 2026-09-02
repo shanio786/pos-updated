@@ -33,7 +33,6 @@ namespace supershop.User_mgt
             try
             { 
                 string sql = "select * from usermgt  ";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
 
                 //int count = dataReader.FieldCount;
@@ -107,7 +106,6 @@ namespace supershop.User_mgt
             {
                 string sql = "select * from usermgt where Name like '" + txtsearchUser.Text + "%' OR Username like '" + txtsearchUser.Text + "%' " +
                             " OR Contact like '" + txtsearchUser.Text + "%' OR position like '" + txtsearchUser.Text + "%' ";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
 
                 //int count = dataReader.FieldCount;
@@ -189,9 +187,7 @@ namespace supershop.User_mgt
             {
                 list_images();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
          
         }

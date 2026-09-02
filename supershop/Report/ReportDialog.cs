@@ -30,246 +30,69 @@ namespace supershop.Report
         {
             try
             {
-                ReportValue.StartDate = dtStartDate.Text; // dtStartDate.Value.ToShortDateString();
-                ReportValue.EndDate = dtEndDate.Text; // dtEndDate.Value.ToShortDateString();
+                ReportValue.StartDate = dtStartDate.Text;
+                ReportValue.EndDate = dtEndDate.Text;
                 ReportValue.emp = cmbEmp.Text;
-                ReportValue.Terminal = cmboterminal.SelectedValue.ToString();
-                decimal recvd = 0;
-                decimal inCash = 0;
-                decimal returnAmount = 0;
+                ReportValue.Terminal = cmboterminal.SelectedValue == null ? "" : cmboterminal.SelectedValue.ToString();
 
-                string query = "";
-                DataSet ds = new DataSet();
+                // optional filters: empty employee / terminal means "all"
+                string empFilter = ReportValue.emp == "" ? "" : " AND sp.emp_id = @emp ";
+                string shopFilter = ReportValue.Terminal == "" ? "" : " AND sp.Shopid = @shop ";
 
-                if (ReportValue.emp == "" && ReportValue.Terminal == "")   //Report by Every transaction -  Only Date to Date 
-                {
-                    query = @"select  payment_amount,due_amount,
-                     dis, vat, sales_time ,emp_id , sales_id
-                     from sales_payment 
-                     where sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' Order  by sales_time";
+                DataTable sales = DataAccess.GetDataTable(
+                    " SELECT sp.payment_amount, sp.due_amount, sp.dis, sp.vat, sp.sales_time, sp.emp_id, sp.sales_id " +
+                    " FROM sales_payment sp " +
+                    " WHERE sp.sales_time BETWEEN @from AND @to " + empFilter + shopFilter +
+                    " ORDER BY sp.sales_time, sp.sales_id",
+                    Params());
+                sales.TableName = "DS_SaleReport";
 
-                    SqlCommand cmd = new SqlCommand(query, DataAccess.Connection);
-                    cmd.ExecuteNonQuery();
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                decimal inCash = DataAccess.GetDecimal(
+                    " SELECT SUM(sp.payment_amount - sp.dis - sp.vat) FROM sales_payment sp " +
+                    " WHERE sp.SaleType = 'CashSale' AND sp.sales_time BETWEEN @from AND @to " + empFilter + shopFilter,
+                    Params());
 
-                    da.Fill(ds, "DS_SaleReport");
-                    query = @"select  SUM(payment_amount-dis-vat) from sales_payment
-                     where SaleType = 'CashSale' And sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "'";
+                decimal recvd = DataAccess.GetDecimal(
+                    " SELECT SUM(sp.receiveamt) FROM tbl_duepayment sp " +
+                    " WHERE sp.receivedate BETWEEN @from AND @to " + empFilter + shopFilter,
+                    Params());
 
-                    try
-                    {
-                        inCash = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { inCash = 0; }
-                    if (Convert.ToString(inCash) == "")
-                    {
-                        inCash = 0;
-                    }
+                decimal returnAmount = DataAccess.GetDecimal(
+                    " SELECT SUM(sp.Total) FROM return_item sp " +
+                    " WHERE sp.return_time BETWEEN @from AND @to " +
+                    (ReportValue.emp == "" ? "" : " AND sp.emp = @emp ") + shopFilter,
+                    Params());
 
-                    query = @"select  SUM(receiveamt) from tbl_duepayment
-                     where receivedate BETWEEN '" + ReportValue.StartDate + "' AND '" + ReportValue.EndDate + "'";
-                    try
-                    {
-                        recvd = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { recvd = 0; }
-                    if (Convert.ToString(recvd) == "")
-                    {
-                        recvd = 0;
-                    }
-
-
-                    query = @"select  SUM(Total) from return_item
-                    where  return_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "'";
-
-                    try
-                    {
-                        returnAmount = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { returnAmount = 0; }
-                    if (Convert.ToString(returnAmount) == "")
-                    {
-                        returnAmount = 0;
-                    }
-                }
-                else if (ReportValue.emp != "" && ReportValue.Terminal == "")   //Report by Every transaction -  Employee with date to date 
-                {
-                    query = @"select  payment_amount,due_amount,
-                     dis, vat, sales_time ,emp_id , sales_id
-                     from sales_payment 
-                     where sales_time BETWEEN 
-                     '" + ReportValue.StartDate + "' AND '" + ReportValue.EndDate + "' AND sales_payment.emp_id = '" + ReportValue.emp + "' Order  by sales_time";
-
-                    SqlCommand cmd = new SqlCommand(query, DataAccess.Connection);
-                    cmd.ExecuteNonQuery();
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-
-                    da.Fill(ds, "DS_SaleReport");
-                    query = @"select  SUM(payment_amount-dis-vat) from sales_payment
-                     where SaleType = 'CashSale' And sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' AND sales_payment.emp_id = '" + ReportValue.emp + "' ";
-
-                    try
-                    {
-                        inCash = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { inCash = 0; }
-                    if (Convert.ToString(inCash) == "")
-                    {
-                        inCash = 0;
-                    }
-
-                    query = @"select  SUM(receiveamt) from tbl_duepayment
-                     where receivedate BETWEEN '" + ReportValue.StartDate + "' AND '" + ReportValue.EndDate + "' AND emp_id = '" + ReportValue.emp + "' ";
-                    try
-                    {
-                        recvd = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { recvd = 0; }
-                    if (Convert.ToString(recvd) == "")
-                    {
-                        recvd = 0;
-                    }
-
-                    query = @"select  SUM(Total) from return_item
-                    where  return_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' AND emp = '" + ReportValue.emp + "' ";
-
-                    try
-                    {
-                        returnAmount = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { returnAmount = 0; }
-                    if (Convert.ToString(returnAmount) == "")
-                    {
-                        returnAmount = 0;
-                    }
-                }
-                else if (ReportValue.emp == "" && ReportValue.Terminal != "")     //Report by Every transaction -    Terminal with date to date
-                {
-                    query = @"select  payment_amount,due_amount,
-                     dis, vat, sales_time ,emp_id , sales_id
-                     from sales_payment 
-                     where sales_time BETWEEN 
-                     '" + ReportValue.StartDate + "' AND '" + ReportValue.EndDate + "' AND sales_payment.Shopid = '" + ReportValue.Terminal + "'  Order  by sales_time";
-
-                    SqlCommand cmd = new SqlCommand(query, DataAccess.Connection);
-                    cmd.ExecuteNonQuery();
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-
-                    da.Fill(ds, "DS_SaleReport");
-                    query = @"select  SUM(payment_amount-dis-vat) from sales_payment
-                     where SaleType = 'CashSale' And sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' AND  sales_payment.Shopid = '" + ReportValue.Terminal + "'";
-
-                    try
-                    {
-                        inCash = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { inCash = 0; }
-                    if (Convert.ToString(inCash) == "")
-                    {
-                        inCash = 0;
-                    }
-
-                    query = @"select  SUM(receiveamt) from tbl_duepayment
-                     where receivedate BETWEEN '" + ReportValue.StartDate + "' AND '" + ReportValue.EndDate + "' AND Shopid = '" + ReportValue.Terminal + "'";
-                    try
-                    {
-                        recvd = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { recvd = 0; }
-                    if (Convert.ToString(recvd) == "")
-                    {
-                        recvd = 0;
-                    }
-
-                    query = @"select  SUM(Total) from return_item
-                    where  return_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' AND Shopid = '" + ReportValue.Terminal + "'";
-
-                    try
-                    {
-                        returnAmount = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { returnAmount = 0; }
-                    if (Convert.ToString(returnAmount) == "")
-                    {
-                        returnAmount = 0;
-                    }
-                }
-                else if (ReportValue.emp != "" && ReportValue.Terminal != "")   //Report by Every transaction -  Employee and  Terminal with date to date  -- All
-                {
-                    query = @"select  payment_amount,due_amount,
-                     dis, vat, sales_time ,emp_id , sales_id
-                     from sales_payment 
-                     where sales_time BETWEEN 
-                     '" + ReportValue.StartDate + "' AND '" + ReportValue.EndDate + "'AND sales_payment.emp_id = '" + ReportValue.emp + "' AND sales_payment.Shopid = '" + ReportValue.Terminal + "'  Order  by sales_time";
-
-                    SqlCommand cmd = new SqlCommand(query, DataAccess.Connection);
-                    cmd.ExecuteNonQuery();
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-
-                    da.Fill(ds, "DS_SaleReport");
-                    query = @"select  SUM(payment_amount-dis-vat) from sales_payment
-                     where SaleType = 'CashSale' And sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' AND sales_payment.emp_id = '" + ReportValue.emp + "' AND sales_payment.Shopid = '" + ReportValue.Terminal + "'";
-
-                    try
-                    {
-                        inCash = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { inCash = 0; }
-                    if (Convert.ToString(inCash) == "")
-                    {
-                        inCash = 0;
-                    }
-
-                    query = @"select  SUM(receiveamt) from tbl_duepayment
-                     where receivedate BETWEEN '" + ReportValue.StartDate + "' AND '" + ReportValue.EndDate + "' AND emp_id = '" + ReportValue.emp + "' AND Shopid = '" + ReportValue.Terminal + "'";
-                    try
-                    {
-                        recvd = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { recvd = 0; }
-                    if (Convert.ToString(recvd) == "")
-                    {
-                        recvd = 0;
-                    }
-
-                    query = @"select  SUM(Total) from return_item
-                    where  return_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' AND emp = '" + ReportValue.emp + "' AND Shopid = '" + ReportValue.Terminal + "'";
-
-                    try
-                    {
-                        returnAmount = Convert.ToDecimal(DataAccess.ExecuteSQLScaler(query));
-                    }
-                    catch { returnAmount = 0; }
-                    if (Convert.ToString(returnAmount) == "")
-                    {
-                        returnAmount = 0;
-                    }
-                }
                 Report.SaleReport exprpr = new Report.SaleReport();
-                exprpr.SetDataSource(ds.Tables[0]);
-                exprpr.DataDefinition.FormulaFields["due_recv"].Text = "" + recvd + "";
-                exprpr.DataDefinition.FormulaFields["incash2"].Text = "" + inCash + "";
-                exprpr.DataDefinition.FormulaFields["return"].Text = "" + returnAmount + "";
-
+                exprpr.SetDataSource(sales);
+                exprpr.DataDefinition.FormulaFields["due_recv"].Text = recvd.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                exprpr.DataDefinition.FormulaFields["incash2"].Text = inCash.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                exprpr.DataDefinition.FormulaFields["return"].Text = returnAmount.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
                 ReportViwer rp = new ReportViwer();
-
-
                 TextObject dtFrom = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["dtFrom"];
                 dtFrom.Text = ReportValue.StartDate;
-
                 TextObject dtTo = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["dtTo"];
-                dtTo.Text = ReportValue.StartDate;
-
+                dtTo.Text = ReportValue.EndDate;
                 rp.Show();
                 rp.crystalReportViewer1.ReportSource = exprpr;
                 rp.crystalReportViewer1.Refresh();
-                //Report.SaleReportRdlc go = new Report.SaleReportRdlc();
-                //go.ShowDialog();		    
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Show(ex, "Could not build the sales report.");
             }
+        }
+
+        /// <summary>Fresh parameter set for each query (a SqlParameter can only belong to one command).</summary>
+        static SqlParameter[] Params()
+        {
+            return new SqlParameter[] {
+                DataAccess.P("@from", ReportValue.StartDate),
+                DataAccess.P("@to", ReportValue.EndDate),
+                DataAccess.P("@emp", ReportValue.emp),
+                DataAccess.P("@shop", ReportValue.Terminal)
+            };
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -290,7 +113,6 @@ namespace supershop.Report
 
                 string sql5 = "   select     DISTINCT '' as Username    from usermgt  union all " +  
                                 " select   DISTINCT  Username   from usermgt ";
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 cmbEmp.DataSource = dt5;
                 cmbEmp.DisplayMember = "Username";
@@ -298,15 +120,12 @@ namespace supershop.Report
 
                 string sqltr = " select  DISTINCT '' as BranchName ,'' as Shopid from tbl_terminalLocation  union all" +
                                " select   BranchName , Shopid from tbl_terminalLocation   ";
-                DataAccess.ExecuteSQL(sqltr);
                 DataTable dttr = DataAccess.GetDataTable(sqltr);
                 cmboterminal.DataSource = dttr;
                 cmboterminal.DisplayMember = "BranchName";
                 cmboterminal.ValueMember = "Shopid";
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void btnReset_Click(object sender, EventArgs e)

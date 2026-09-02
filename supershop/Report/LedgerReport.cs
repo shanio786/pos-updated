@@ -30,21 +30,17 @@ namespace supershop.Report
                 dtEndDate.Format = DateTimePickerFormat.Custom;
                 dtEndDate.CustomFormat = "yyyy-MM-dd";
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
 
         public void Databind()
         {
             string sqlCmd = "SELECT * from vw_general_ledger  order by Date desc";
-            DataAccess.ExecuteSQL(sqlCmd);
             DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
             dtGrdLedgerReport.DataSource = dt1;
 
             string sqlSUM = "SELECT   Sum(Credit), Sum(Debit) from vw_general_ledger";
-            DataAccess.ExecuteSQL(sqlSUM);
             DataTable dtSUM = DataAccess.GetDataTable(sqlSUM);
 
             DataRow dr = dt1.NewRow();
@@ -69,12 +65,10 @@ namespace supershop.Report
             try
             {
                 string sqlCmd = "Select * from  vw_general_ledger where  Date BETWEEN '" + StartDate + "' AND    '" + EndDate + "'   order by Date desc ";
-                DataAccess.ExecuteSQL(sqlCmd);
                 DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
                 dtGrdLedgerReport.DataSource = dt1;
 
                 string sqlSUM = "SELECT   Sum(Credit), Sum(Debit) from vw_general_ledger";
-                DataAccess.ExecuteSQL(sqlSUM);
                 DataTable dtSUM = DataAccess.GetDataTable(sqlSUM);
 
                 DataRow dr = dt1.NewRow();
@@ -96,9 +90,7 @@ namespace supershop.Report
                 dr3[0] = "______________________________________________ ";
                 dt1.Rows.Add(dr3);
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         /// //////////////  Print Part  Start
@@ -109,7 +101,6 @@ namespace supershop.Report
         private bool SetupThePrinting()
         {
             string sql3 = "select * from storeconfig";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
             DateTime dt = DateTime.Now;
             string s = dt.ToString("MMMM dd, yyyy    hh:mm:ss tt");

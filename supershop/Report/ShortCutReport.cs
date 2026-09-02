@@ -29,7 +29,6 @@ namespace supershop.Report
         private bool SetupThePrinting()
         {
             string sql3 = "select * from tbl_terminalLocation where Shopid = '" + UserInfo.Shopid + "'";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
 
             DateTime dt = DateTime.Now;
@@ -172,13 +171,11 @@ namespace supershop.Report
                     string sql = "select  sales_id as 'Recipt No' , sales_time as Date , payment_amount as Total , emp_id as 'Sold by',  " + 
                         " dis as Discount , vat as TAX ,  payment_type as 'Payment Type' ,  due_amount as Due, Comment as Comments " + 
                         " from sales_payment where sales_time   like  '%" + lblStartDate.Text + "%' order by sales_time";     
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt1 = DataAccess.GetDataTable(sql);
                     datagrdReportDetails.DataSource = dt1;
 
                     string sql3 = "select SUM(payment_amount), SUM(vat) , SUM(due_amount), SUM(dis) "+ 
                         " from sales_payment  where sales_time   >='" + lblStartDate.Text + "' AND  sales_time <='" + lblStartDate.Text + "' ";
-                    DataAccess.ExecuteSQL(sql3);
                     DataTable dt3 = DataAccess.GetDataTable(sql3);
 
 
@@ -249,10 +246,7 @@ namespace supershop.Report
                     //rep[4] = dt3.Rows[0].ItemArray[5].ToString();
                     dt1.Rows.Add(repdt2);
                 }
-                catch
-                {
-                    // MessageBox.Show("There is no Data in this date");
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
         }
 
@@ -280,13 +274,11 @@ namespace supershop.Report
                     string sql = "select  sales_id as 'Recipt No' , sales_time as Date , payment_amount as Total , emp_id as 'Sold by', " + 
                         " dis as Discount , vat as TAX ,  payment_type as 'Payment Type' ,  due_amount as Due, Comment as Comments " +
                         "  from sales_payment where sales_time BETWEEN '" + startDate + "' AND    '" + endDate + "'    Order  by sales_time";
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt1 = DataAccess.GetDataTable(sql);
                     datagrdReportDetails.DataSource = dt1;
 
                     string sql3 = "select SUM(payment_amount), SUM(vat) , SUM(due_amount), SUM(dis)  "+
                                 "  from sales_payment where sales_time BETWEEN '" + startDate + "' AND    '" + endDate + "'    Order  by sales_time";
-                    DataAccess.ExecuteSQL(sql3);
                     DataTable dt3 = DataAccess.GetDataTable(sql3);
 
                     DataRow dr = dt1.NewRow();
@@ -356,10 +348,7 @@ namespace supershop.Report
                     //rep[4] = dt3.Rows[0].ItemArray[5].ToString();
                     dt1.Rows.Add(repdt2);
                 }
-                catch
-                {
-                    // MessageBox.Show("There is no Data in this date");
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
         }
 
@@ -444,13 +433,11 @@ namespace supershop.Report
                 string sql = "select  sales_id as 'Recipt No' , sales_time as Date , payment_amount as Total , emp_id as 'Sold by',  " +
                     " dis as Discount , vat as TAX ,  payment_type as 'Payment Type' ,  due_amount as Due, Comment as Comments " +
                     " from sales_payment where   sales_id  = '" + txtInvoice.Text + "' order by sales_time";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt1 = DataAccess.GetDataTable(sql);
                 datagrdReportDetails.DataSource = dt1;
 
                 string sql3 = "select SUM(payment_amount), SUM(vat) , SUM(due_amount), SUM(dis) " +
                     " from sales_payment  where sales_id  = '" + txtInvoice.Text + "'  ";
-                DataAccess.ExecuteSQL(sql3);
                 DataTable dt3 = DataAccess.GetDataTable(sql3);
 
 
@@ -521,10 +508,7 @@ namespace supershop.Report
                 //rep[4] = dt3.Rows[0].ItemArray[5].ToString();
                 dt1.Rows.Add(repdt2);
             }
-            catch
-            {
-                // MessageBox.Show("There is no Data in this date");
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void helplnk_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -541,10 +525,7 @@ namespace supershop.Report
             {
                 e.Column.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
     }

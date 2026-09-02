@@ -34,9 +34,7 @@ namespace supershop.Report
                 Report.ProfitLossReport go = new Report.ProfitLossReport();
                 go.ShowDialog();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void PLdialog_Load(object sender, EventArgs e)

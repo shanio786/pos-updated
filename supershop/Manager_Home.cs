@@ -98,15 +98,12 @@ namespace supershop
             {
                 //Bind store info 
                 string sql3 = "select * from storeconfig";
-                DataAccess.ExecuteSQL(sql3);
                 DataTable dt1 = DataAccess.GetDataTable(sql3);
 
                 companynamelabel.Text = dt1.Rows[0].ItemArray[1].ToString();
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void aboutSoftToolStripMenuItem_Click(object sender, EventArgs e)
@@ -156,9 +153,7 @@ namespace supershop
                                  "\n If File is not Appear Please Show hidden files; From the Folder Option  ", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void topToolStripMenuItem_Click(object sender, EventArgs e)

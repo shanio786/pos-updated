@@ -39,7 +39,6 @@ namespace supershop
                                 " where sales_time   like  '%" + date + "%' and status = 1  or status = 3  GROUP BY  sales_time ";
                               
 
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 chartBarSale.DataSource = dt5;
                 chartBarSale.Visible = true;
@@ -50,7 +49,6 @@ namespace supershop
 
                 string sql2 = "select sales_time, SUM(total) as Total , SUM(profit * Qty) as Profit from sales_item " +
                             " where sales_time   like  '%" + date + "%' and status = 1  or status = 3  GROUP BY  sales_time ";
-                DataAccess.ExecuteSQL(sql2);
                 DataTable dt2 = DataAccess.GetDataTable(sql2);
                 chartBarSalesProfitCom.DataSource = dt2;
                 chartBarSalesProfitCom.Visible = true;
@@ -63,10 +61,7 @@ namespace supershop
                 chartBarSalesProfitCom.DataBind();
 
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
             
         }
 
@@ -77,7 +72,6 @@ namespace supershop
                 string sql5 = "select sales_time, SUM(total) as Total from sales_item " +
                     " where sales_time   like  '%" + dtyearmonth.Text + "%' and status = 1  or status = 3 GROUP BY  sales_time "; 
 
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 chartBarSale.DataSource = dt5;
                 chartBarSale.Visible = true;
@@ -88,7 +82,6 @@ namespace supershop
 
                 string sql2 = "select sales_time, SUM(total) as Total , SUM(profit * Qty) as Profit from sales_item " +
                     "  where sales_time   like  '%" + dtyearmonth.Text + "%'  and status = 1  or status = 3 GROUP BY  sales_time "; 
-                DataAccess.ExecuteSQL(sql2);
                 DataTable dt2 = DataAccess.GetDataTable(sql2);
                 chartBarSalesProfitCom.DataSource = dt2;
                 chartBarSalesProfitCom.Visible = true;
@@ -101,10 +94,7 @@ namespace supershop
                 chartBarSalesProfitCom.DataBind();
                
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -116,10 +106,7 @@ namespace supershop
                 // Print preview chart
                 chartBarSale.Printing.PrintPreview();
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -132,10 +119,7 @@ namespace supershop
                 // Print preview chart
                 chartBarSalesProfitCom.Printing.PrintPreview();
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)

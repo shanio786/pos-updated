@@ -22,102 +22,63 @@ namespace supershop.Expenses
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string[] aa = new string[100];
-
-            DataAccess DataAccess = new DataAccess();
-            SqlConnection cnn;
-            cnn = DataAccess.OpenDBConn();
-
-
-
-             try
+            try
             {
+                ReportValue.StartDate = dtStartDate.Value.ToString("yyyy-MM-dd");
+                ReportValue.EndDate = dtEndDate.Value.ToString("yyyy-MM-dd");
 
-                ReportValue.StartDate = dtStartDate.Value.ToShortDateString(); // dtStartDate.Value.ToShortDateString();
-                ReportValue.EndDate = dtEndDate.Value.ToShortDateString();
-                int count = 0;
-                DataSet ds = new DataSet();
                 DataTable dt = new DataTable();
-                ds.Tables.Add("DSExpense");
-                dt.Columns.Add("Category", System.Type.GetType("System.String"));
-                dt.Columns.Add("Note", System.Type.GetType("System.String"));
-                dt.Columns.Add("Date", System.Type.GetType("System.DateTime"));
-                dt.Columns.Add("Amount", System.Type.GetType("System.Double"));
-                dt.Columns.Add("exp_amnt", System.Type.GetType("System.Double"));
-                dt.Columns.Add("exp_tamnt", System.Type.GetType("System.Double"));
+                dt.Columns.Add("Category", typeof(string));
+                dt.Columns.Add("Note", typeof(string));
+                dt.Columns.Add("Date", typeof(DateTime));
+                dt.Columns.Add("Amount", typeof(double));
+                dt.Columns.Add("exp_amnt", typeof(double));
+                dt.Columns.Add("exp_tamnt", typeof(double));
+                dt.Columns.Add("exp_cate_Heading", typeof(string));
+                dt.Columns.Add("exp_amnt_Heading", typeof(string));
 
-                dt.Columns.Add("exp_cate_Heading", System.Type.GetType("System.String"));
-                dt.Columns.Add("exp_amnt_Heading", System.Type.GetType("System.String"));
+                // one query for everything: rows ordered by category, with the category total on every row
+                DataTable rows = DataAccess.GetDataTable(
+                    " SELECT e.Category, e.Note, e.[Date], e.Amount, " +
+                    "        SUM(e.Amount) OVER (PARTITION BY e.Category) AS CategoryTotal " +
+                    " FROM tbl_expense e " +
+                    " WHERE e.[Date] >= @from AND e.[Date] < DATEADD(day, 1, @to) " +
+                    " ORDER BY e.Category, e.[Date]",
+                    DataAccess.P("@from", dtStartDate.Value.Date), DataAccess.P("@to", dtEndDate.Value.Date));
 
-                DataRow r;
-                SqlCommand cmddpt = new SqlCommand("select DISTINCT(Category) from tbl_expense", cnn);
-                cmddpt.ExecuteNonQuery();
-                SqlDataReader datardr = cmddpt.ExecuteReader();
-                while (datardr.Read())
+                string lastCategory = null;
+                foreach (DataRow src in rows.Rows)
                 {
-                    aa[count] = datardr[0].ToString();
-                    count++;
-                }
-                datardr.Dispose();
-                for (int i = 0; i < count; i++)
-                {
-                    int cc = 0;
-                    double exp_amount = 0;
-                    try
+                    DataRow r = dt.NewRow();
+                    string category = Convert.ToString(src["Category"]);
+                    r["Note"] = Convert.ToString(src["Note"]);
+                    r["Date"] = src["Date"] == DBNull.Value ? (object)DBNull.Value : Convert.ToDateTime(src["Date"]);
+                    r["Amount"] = src["Amount"] == DBNull.Value ? 0.0 : Convert.ToDouble(src["Amount"]);
+                    if (category != lastCategory)
                     {
-                        SqlCommand cmd_amnt = new SqlCommand("select SUM(Amount) from tbl_expense where (Date >= '" + ReportValue.StartDate + "')AND(Date <= '" + ReportValue.EndDate + "')AND(Category = '" + aa[i] + "')", cnn);
-                        exp_amount = Convert.ToDouble(cmd_amnt.ExecuteScalar().ToString());
+                        r["Category"] = category;
+                        r["exp_tamnt"] = src["CategoryTotal"] == DBNull.Value ? 0.0 : Convert.ToDouble(src["CategoryTotal"]);
+                        r["exp_cate_Heading"] = "Expense Type";
+                        r["exp_amnt_Heading"] = "Expense amount";
+                        lastCategory = category;
                     }
-                    catch (Exception)
-                    { }
-
-
-                    SqlCommand cmdqp1 = new SqlCommand("select Note,Date,Amount from tbl_expense where (Date >= '" + ReportValue.StartDate + "')AND(Date <= '" + ReportValue.EndDate + "')AND(Category = '" + aa[i] + "')", cnn);
-                    cmdqp1.ExecuteNonQuery();
-                    SqlDataReader drreadr11 = cmdqp1.ExecuteReader();
-                    while (drreadr11.Read())
-                    {
-                        r = dt.NewRow();
-                        r["Note"] = drreadr11[0].ToString();
-                        r["Date"] = drreadr11[1].ToString();
-                        r["Amount"] = drreadr11[2].ToString();
-
-
-                        if (cc == 0)
-                        {
-                            r["Category"] = aa[i];
-                            r["exp_tamnt"] = exp_amount;
-                            r["exp_cate_Heading"] = "Expense Type";
-                            r["exp_amnt_Heading"] = "Expense amount";
-
-                        }
-                        dt.Rows.Add(r);
-                        cc++;
-                    }
-
-
-                    drreadr11.Dispose();
-
-
-
+                    dt.Rows.Add(r);
                 }
 
                 Expenses.Expense_List exprpr = new Expenses.Expense_List();
-
                 exprpr.SetDataSource(dt);
-
                 ReportViwer rf = new ReportViwer();
                 TextObject dtFrom = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["dtFrom"];
                 dtFrom.Text = ReportValue.StartDate;
-
                 TextObject dtTo = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["dtTo"];
                 dtTo.Text = ReportValue.EndDate;
                 rf.Show();
                 rf.crystalReportViewer1.ReportSource = exprpr;
                 rf.crystalReportViewer1.Refresh();
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Show(ex, "Could not build the expense report.");
             }
         }
     }

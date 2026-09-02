@@ -44,7 +44,6 @@ namespace supershop.Report
             string sqlCmd = "select  Sales_id as 'Receipt No' , sales_time as Date , itemName as 'Item Name' , " +
                             " RetailsPrice  as Price , Qty,  Total , Profit * Qty as 'Profit'     " + 
                             " from sales_item  Where sales_id = '" + lblReceiptNo.Text + "' ";               
-            DataAccess.ExecuteSQL(sqlCmd);
             DataTable dt = DataAccess.GetDataTable(sqlCmd);
             datagrdSalesDetails.DataSource = dt;
         }

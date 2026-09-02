@@ -78,9 +78,7 @@ namespace supershop
                      }
               
                  }
-                 catch
-                 {
-                 }
+                 catch (Exception exLog) { Logger.Error(exLog); }
            
           
         }

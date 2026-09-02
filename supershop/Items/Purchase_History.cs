@@ -45,13 +45,11 @@ namespace supershop.Items
                          "  ((cost_price * product_quantity) * 1.00) as 'Total',  category as 'Category' , supplier , Shopid , ptype as 'Status'  " +
                          "  from tbl_purchase_history  where purchase_date   BETWEEN '" + dtstartvl + "' AND    '" + dtendvl + "' " +
                          " and status = 1 Order  by id desc";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt1 = DataAccess.GetDataTable(sql);
                 datagrdpurchasehistory.DataSource = dt1;
 
                 string sql3 = " select SUM(cost_price * product_quantity)   " +
                                "  from tbl_purchase_history where purchase_date   BETWEEN '" + dtstartvl + "' AND    '" + dtendvl + "' and status = 1 ";
-                DataAccess.ExecuteSQL(sql3);
                 DataTable dt3 = DataAccess.GetDataTable(sql3);
 
                 DataRow dr = dt1.NewRow();
@@ -80,9 +78,7 @@ namespace supershop.Items
                 repdt2[1] = "To : " + dtEndDate.Text; 
                 dt1.Rows.Add(repdt2);
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
          
         }
 
@@ -98,7 +94,6 @@ namespace supershop.Items
         private bool SetupThePrinting()
         {
             string sql3 = "select * from tbl_terminalLocation where Shopid = '" + UserInfo.Shopid + "'";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
 
             DateTime dt = DateTime.Now;
@@ -177,10 +172,7 @@ namespace supershop.Items
             {
                 e.Column.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void datagrdpurchasehistory_CellClick(object sender, DataGridViewCellEventArgs e)

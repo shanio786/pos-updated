@@ -29,7 +29,6 @@ namespace supershop.Report
         private bool SetupThePrinting()
         {
             string sql3 = "select * from tbl_terminalLocation where Shopid = '"+ UserInfo.Shopid +"'";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
             DateTime dt = DateTime.Now;
             string printdate    = dt.ToString("MMMM dd, yyyy    hh:mm:ss tt");
@@ -89,7 +88,6 @@ namespace supershop.Report
 
                 string sql3 = " select SUM(Total) ,  SUM(( profit * Qty)) as Profit , SUM(RetailsPrice) as SubTotal,SUM(discount) as discount    from sales_item  " +
                     " where sales_time   >='" + ReportValue.StartDate + "' AND  sales_time <='" + ReportValue.EndDate + "' ";
-                DataAccess.ExecuteSQL(sql3);
                 DataTable dt3 = DataAccess.GetDataTable(sql3);
                 string Totalsales = dt3.Rows[0].ItemArray[0].ToString();
                 string grossprofit = dt3.Rows[0].ItemArray[1].ToString();
@@ -111,7 +109,6 @@ namespace supershop.Report
 
                 string sqlPayment = " select SUM(payment_amount), SUM(dis), SUM(vat) , SUM(due_amount)  from sales_payment " +
                                   " where sales_time   >='" + ReportValue.StartDate + "' AND  sales_time <='" + ReportValue.EndDate + "' ";
-                DataAccess.ExecuteSQL(sqlPayment);
                 DataTable dtPayment = DataAccess.GetDataTable(sqlPayment);
 
                 string totalpaidbycustomer = dtPayment.Rows[0].ItemArray[0].ToString(); // total paid by customer with vat
@@ -134,7 +131,6 @@ namespace supershop.Report
                 {
                     string sqlReturn = " select SUM(Total) , SUM(disamt), SUM(vatamt)  from return_item " +
                         " where return_time   >='" + ReportValue.StartDate + "' AND  return_time <='" + ReportValue.EndDate + "' ";
-                    DataAccess.ExecuteSQL(sqlReturn);
                     DataTable dtReturn = DataAccess.GetDataTable(sqlReturn);
                     totalreturn = Convert.ToDouble(dtReturn.Rows[0].ItemArray[0].ToString());
                     totaldis = Convert.ToDouble(dtReturn.Rows[0].ItemArray[1].ToString());
@@ -226,7 +222,6 @@ namespace supershop.Report
                 //Expenses Start                
                 string sqlExpenses = " select SUM(Amount)   from tbl_expense " +
                                  " where Date   >='" + ReportValue.StartDate + "' AND  Date <='" + ReportValue.EndDate + "' ";
-                DataAccess.ExecuteSQL(sqlExpenses);
                 DataTable dtExpenses = DataAccess.GetDataTable(sqlExpenses);
 
                 double totalExpenses = Convert.ToDouble(dtExpenses.Rows[0].ItemArray[0].ToString());
@@ -243,9 +238,7 @@ namespace supershop.Report
                 dtgrdViewProfitLoss.Rows.Add(row);
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
 
@@ -260,9 +253,7 @@ namespace supershop.Report
                 dtgrdViewProfitLoss.Rows[12].Cells[2].Value = sumofOperationCostNOthercost;
                 dtgrdViewProfitLoss.Rows[14].Cells[2].Value = Netprofit;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
         
         //save as

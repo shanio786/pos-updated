@@ -37,7 +37,6 @@ namespace supershop
                 //Profit Chart
                 string sql5 = " select sales_time, SUM(profit * Qty) as Profit from sales_item " + 
                                 " where sales_time   like  '%" + date + "%' and status = 1  or status = 3 GROUP BY  sales_time ";
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 chartbarProfit.DataSource = dt5;
                 chartbarProfit.Visible = true;
@@ -49,7 +48,6 @@ namespace supershop
                 //Profit Pie chart 
                 string sql2 = "select  SUM(profit * Qty) as Profit , sales_time from sales_item " + 
                             " where sales_time   like  '%" + date + "%' and status = 1  or status = 3  GROUP BY  sales_time ";
-                DataAccess.ExecuteSQL(sql2);
                 DataTable dt2 = DataAccess.GetDataTable(sql2);
                 chartPieProfit.DataSource = dt2;
                 chartPieProfit.Visible = true;
@@ -60,7 +58,6 @@ namespace supershop
                 // Sales Pie chart
                 string sql3 = " select sales_time, SUM(total) as Total from sales_item where sales_time " + 
                                 "  like  '%" + date + "%' and status = 1  or status = 3  GROUP BY  sales_time ";
-                DataAccess.ExecuteSQL(sql3);
                 DataTable dt3 = DataAccess.GetDataTable(sql3);
                 chartPieSales.DataSource = dt3;
                 chartPieSales.Visible = true;
@@ -84,7 +81,6 @@ namespace supershop
             {
                 string sql5 = " select sales_time,  SUM(profit * Qty) as Profit from sales_item " +
                                " where sales_time   like  '%" + dtyearmonth.Text + "%' and status = 1  or status = 3 GROUP BY  sales_time"; 
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 chartbarProfit.DataSource = dt5;
                 chartbarProfit.Visible = true;
@@ -98,7 +94,6 @@ namespace supershop
                 string sql2 = "select   SUM(profit * Qty) as Profit, sales_time from sales_item " +
                                 " where sales_time   like  '%" + dtyearmonth.Text + "%' and status = 1  or status = 3 GROUP BY  sales_time";
 
-                DataAccess.ExecuteSQL(sql2);
                 DataTable dt2 = DataAccess.GetDataTable(sql2);
                 chartPieProfit.DataSource = dt2;
                 chartPieProfit.Visible = true;
@@ -109,7 +104,6 @@ namespace supershop
                 string sql3 = " select sales_time, SUM(total) as Total from sales_item " +
                                 " where sales_time   like  '%" + dtyearmonth.Text + "%' and status = 1  or status = 3 GROUP BY  sales_time";
 
-                DataAccess.ExecuteSQL(sql3);
                 DataTable dt3 = DataAccess.GetDataTable(sql3);
                 chartPieSales.DataSource = dt3;
                 chartPieSales.Visible = true;
@@ -138,7 +132,6 @@ namespace supershop
                // string sql3 = " Select   rollno as 'Class Roll' , stdname as 'Student Name' , SUM(point)as 'Total Marks',CAST(AVG(gpatb) AS DECIMAL(10,2)) as 'GPA' From markspostdb WHERE  classname ='" + textBox2.Text + "' and section = '" + textBox3.Text + "' and examterm = '" + textBox4.Text + "'  GROUP BY  rollno,stdname   ORDER by SUM(point) DESC ";
 
                 string sql5 = "select sales_time, SUM(profit * Qty) as Profit from sales_item where sales_time   like  '%" + dtyearmonth.Text + "%' GROUP BY  sales_time ";
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                // string pro = dt5.Rows[0].ItemArray[0].ToString();
 
@@ -235,10 +228,7 @@ namespace supershop
                 chartPieSales.Printing.PrintPreview();
 
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
    

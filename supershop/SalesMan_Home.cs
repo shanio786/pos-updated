@@ -187,9 +187,7 @@ namespace supershop
                                 "\n If File is not Appear Please Show hidden files; From the Folder Option  ", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void dockStyleLeftToolStripMenuItem_Click(object sender, EventArgs e)

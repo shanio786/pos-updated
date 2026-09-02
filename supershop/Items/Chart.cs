@@ -30,13 +30,11 @@ namespace supershop
             {
                 //Product Category
                 string sqlcate = "select   DISTINCT  category   from purchase ";
-                DataAccess.ExecuteSQL(sqlcate);
                 DataTable dtcate = DataAccess.GetDataTable(sqlcate);
                 combCategory.DataSource = dtcate;
                 combCategory.DisplayMember = "category";
 
                 string sql5 = "select * from purchase where category = '"+ combCategory.Text +"' ";
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 chart1.DataSource = dt5;
                 chart1.Visible = true;
@@ -52,9 +50,7 @@ namespace supershop
                 chart1.Series["Retail_price"].YValueMembers = "retail_price";
                 chart1.DataBind();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
            
         }
 
@@ -68,16 +64,12 @@ namespace supershop
                 // Print preview chart
                 chart1.Printing.PrintPreview();               
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void combCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
             string sql5 = "select * from purchase where category = '" + combCategory.Text + "' ";
-            DataAccess.ExecuteSQL(sql5);
             DataTable dt5 = DataAccess.GetDataTable(sql5);
             chart1.DataSource = dt5;
             chart1.Visible = true;

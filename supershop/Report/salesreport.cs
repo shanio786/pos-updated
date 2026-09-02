@@ -26,7 +26,6 @@ namespace supershop
         private bool SetupThePrinting()
         {
             string sql3 = "select * from tbl_terminallocation where Shopid = '" + UserInfo.Shopid + "'";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
             DateTime dt = DateTime.Now;
             string printdate = dt.ToString("MMMM dd, yyyy    hh:mm:ss tt");
@@ -92,13 +91,11 @@ namespace supershop
                 string sql = "select  sales_id as 'Rpt No' , sales_time as 'Date' , payment_amount as 'Total' , emp_id as 'Sold by',  dis as 'Dis' , " +
                                 " vat as 'TAX' ,  payment_type as 'Pay type' ,  due_amount as 'Due', c_id as 'Cust ID' , Comment as 'Comments' " +
                                 " from sales_payment where sales_time   like  '%" + dtDailyPaymentReport.Text + "%' order by sales_time";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt1 = DataAccess.GetDataTable(sql);
                 dtgrdViewSalesReport.DataSource = dt1;
                 dtgrdViewSalesReport.DefaultCellStyle.Font = new Font("Times New Roman", 8.5F);
 
                 string sql3 = "select SUM(payment_amount),  SUM(vat) , SUM(due_amount) , SUM(dis) from sales_payment  where sales_time like  '%" + dtDailyPaymentReport.Text + "%'";
-                DataAccess.ExecuteSQL(sql3);
                 DataTable dt3 = DataAccess.GetDataTable(sql3);
                 // label5.Text = "Total Sales= " + dt3.Rows[0].ItemArray[0].ToString();
                 //  toolStripStatusLabel1.Text = "Total Profit = " + dt3.Rows[0].ItemArray[1].ToString();
@@ -166,10 +163,7 @@ namespace supershop
                 //rep[4] = dt3.Rows[0].ItemArray[5].ToString();
                 dt1.Rows.Add(rep);
             }
-            catch
-            {
-                // MessageBox.Show("There is no Data in this date");
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
@@ -247,16 +241,12 @@ namespace supershop
                                  "and (status = 1 or status = 3) " +
                                  "order by sales_time";
 
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt1 = DataAccess.GetDataTable(sql);
                     dtgrdViewSalesReport.DataSource = dt1;
                                        
 
                 }
-                catch  
-                {
-                    //MessageBox.Show("Sorry\r\n" + exp.Message);
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
         }
 
@@ -303,7 +293,6 @@ namespace supershop
                                     " ((profit * Qty) * 1.00) as 'Profit'   , discount as 'Dis Rate', sales_id as 'Rpt.No' " +
                                     " from sales_item where sales_time BETWEEN '" + dtSalesItemStart.Text + "' AND    '" + dtSalesItemEND.Text + "' " +
                                     " and status != 2  Order  by sales_time";
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt1 = DataAccess.GetDataTable(sql);
                     dtgrdViewSalesReport.DataSource = dt1;
                     dtgrdViewSalesReport.DefaultCellStyle.Font = new Font("Trebuchet MS", 12.0F);
@@ -312,7 +301,6 @@ namespace supershop
                                     " from sales_item where sales_time BETWEEN '" + dtSalesItemStart.Text + "' AND    '" + dtSalesItemEND.Text + "' " +
                                     " and status != 2  Order  by sales_time";
                     // " from sales_item  where sales_time   >='" + dtSalesItemStart.Text + "' AND  sales_time <='" + dtSalesItemEND.Text + "' and status != 2    ";
-                    DataAccess.ExecuteSQL(sql3);
                     DataTable dt3 = DataAccess.GetDataTable(sql3);
 
                     //double sum = 0;
@@ -388,10 +376,7 @@ namespace supershop
                     repdt[1] = "To : " + dtSalesItemEND.Text;
                     dt1.Rows.Add(repdt);
                 }
-                catch
-                {
-                    // MessageBox.Show("There is no Data in this date");
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
             
         }
@@ -412,14 +397,12 @@ namespace supershop
                     string sql = "select   sales_time as 'Date' , SUM(payment_amount) as 'Total' , SUM(dis) as 'Discount' , SUM(vat) as 'TAX'  ,  " +
                                 "SUM(due_amount)  as 'Due'  from sales_payment where sales_time BETWEEN '" + dtStartDate.Text + "' AND    '" + dtEndDate.Text + "' " + 
                                 " GROUP BY  sales_time  Order  by sales_time"; //order by salesdate
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt1 = DataAccess.GetDataTable(sql);
                     dtgrdViewSalesReport.DataSource = dt1;
                     dtgrdViewSalesReport.DefaultCellStyle.Font = new Font("Times New Roman", 13.0F);
 
                     string sql3 = "select SUM(payment_amount), SUM(vat) , SUM(due_amount), SUM(dis)  from sales_payment "+
                                   " where sales_time   >='" + dtStartDate.Text + "' AND  sales_time <='" + dtEndDate.Text + "' ";
-                    DataAccess.ExecuteSQL(sql3);
                     DataTable dt3 = DataAccess.GetDataTable(sql3);                 
  
 
@@ -485,10 +468,7 @@ namespace supershop
                     //rep[4] = dt3.Rows[0].ItemArray[5].ToString();
                     dt1.Rows.Add(repdt2);
                 }
-                catch
-                {
-                    // MessageBox.Show("There is no Data in this date");
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
         }
                 
@@ -499,10 +479,7 @@ namespace supershop
             {
                 e.Column.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-            catch
-            {
-                
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
           
         }
  
@@ -522,7 +499,6 @@ namespace supershop
                     string sql = "select  return_time as 'Date' , itemName as 'itemName', RetailsPrice  as 'Price', Qty,  Total , custno as CustID, " + 
                                 " SoldInvoiceNo as 'Receipt No' , emp as 'Return by'  from return_item where return_time " + 
                                 " BETWEEN '" + dtReturnStartDate.Text + "' AND    '" + dtReturnEndDate.Text + "' Order  by return_time";                 
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt1 = DataAccess.GetDataTable(sql);
                     dtgrdViewSalesReport.DataSource = dt1;
                     dtgrdViewSalesReport.DefaultCellStyle.Font = new Font("Times New Roman", 13.0F);
@@ -531,7 +507,6 @@ namespace supershop
 
                     string sql3 = "select SUM(Total), SUM(disamt), SUM(vatamt) from return_item " +
                                   " where return_time   >='" + dtReturnStartDate.Text + "' AND  return_time <='" + dtReturnEndDate.Text + "' ";
-                    DataAccess.ExecuteSQL(sql3);
                     DataTable dt3 = DataAccess.GetDataTable(sql3);
 
                     DataRow dr = dt1.NewRow();
@@ -576,10 +551,7 @@ namespace supershop
                     dt1.Rows.Add(repdt);
                    
                 }
-                catch
-                {
-                    // MessageBox.Show("There is no Data in this date");
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
         }
 

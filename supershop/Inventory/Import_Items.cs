@@ -169,9 +169,7 @@ namespace supershop
                 p.WaitForInputIdle();
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
     }
 }

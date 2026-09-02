@@ -35,7 +35,6 @@ namespace supershop.User_mgt
             txtYear.Text = thisYear;
             cbmonth.Text = thisMonth;
             string sql5 = "select Name from usermgt";
-            DataAccess.ExecuteSQL(sql5);
             DataTable dt5 = DataAccess.GetDataTable(sql5);
             cbUserName.DataSource = dt5;
             cbUserName.DisplayMember = "Name";
@@ -69,7 +68,6 @@ namespace supershop.User_mgt
         {
             string sql = " SELECT user_name as Name , pay_month AS [Pay Month], pay_year as [Pay Year],pay_date as [Pay Date],leaves as [Leaves],basic_pay as [Basic Salary],bouns as [Bouns],total_salary as [Total Salary], deducations as [Deducations],net_amount as [Net Amount],paid_amount as [Paid Amount],bal_amount as [Balance],pay_status as [Status] FROM tbl_payroll" +
                         " where pay_month = '" + cbmonth.Text + "' and pay_year = '"+txtYear.Text+"'";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             dataGridView1.DataSource = dt1;
         }
@@ -95,7 +93,7 @@ namespace supershop.User_mgt
                 getdata();
                 
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
            
         }
 
@@ -115,7 +113,6 @@ namespace supershop.User_mgt
             try
             {
                 string sqlSal = " select basic_pay,paid_amount,deducations,net_amount,bouns,pay_status,bal_amount from tbl_payroll where (user_name = '" + cbUserName.Text + "')and(pay_month = '" + cbmonth.Text + "')and(pay_year = '" + txtYear.Text + "')"; // 
-                DataAccess.ExecuteSQL(sqlSal);
                 DataTable dtVat = DataAccess.GetDataTable(sqlSal);
                 // txtbais.Text = dtVat.Rows[0].ItemArray[0].ToString();
 
@@ -146,7 +143,7 @@ namespace supershop.User_mgt
                 { txtbalamnt.Text = txtNetSal.Text; }
 
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
             try
             {
                 sql5 = "select Count(att_date) from userattendence where (Name = '" + cbUserName.Text + "')and(att_month = '" + cbmonth.Text + "')and(att_year = '" + txtYear.Text + "')and(att_status = 'Absent')";
@@ -175,7 +172,7 @@ namespace supershop.User_mgt
                     txtNetSal.Text = Convert.ToString(net);
                 }
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
            
         }
 
@@ -192,7 +189,7 @@ namespace supershop.User_mgt
             {
                 txtDedcut.Text = "0";
                 txtBouns.Text = "0";
-            } catch (Exception) { }
+            } catch (Exception exLog) { Logger.Error(exLog); }
 
             if (bounsValue == "")
                 bounsValue = "0";
@@ -205,20 +202,20 @@ namespace supershop.User_mgt
                     net = net + Convert.ToDouble(dedcutValue);
                     txtTotalPay.Text = Convert.ToString(net);
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
             try
             {
                 Double netsal = Convert.ToDouble(txtTotalPay.Text) - Convert.ToDouble(dedcutValue);
                 txtNetSal.Text = Convert.ToString(netsal);
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
             try
             {
                 Double bal = Convert.ToDouble(txtbais.Text) - (Convert.ToDouble(txtAdvAmnt.Text) + Convert.ToDouble(txtPaidAmnt.Text));
                 Double balamnt = bal + Convert.ToDouble(bounsValue)- Convert.ToDouble(dedcutValue);
                 txtbalamnt.Text = Convert.ToString(balamnt);
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtBalAmnt_TextChanged(object sender, EventArgs e)
@@ -236,8 +233,7 @@ namespace supershop.User_mgt
                     txtTotalPay.Text = Convert.ToString(net);
                     
                 }
-                catch (Exception)
-                { }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
             else
             {
@@ -247,8 +243,7 @@ namespace supershop.User_mgt
                     txtTotalPay.Text = Convert.ToString(net);
                     
                 }
-                catch (Exception)
-                { }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
            
         }
@@ -271,16 +266,14 @@ namespace supershop.User_mgt
                 bounsValue = Convert.ToString(totalBouns);
 
             }
-            catch (Exception)
-            { }
+            catch (Exception exLog) { Logger.Error(exLog); }
             try
             {
                 Double totalDeduct = Convert.ToDouble(dedcutValue) + Convert.ToDouble(txtDedcut.Text);
                 dedcutValue = Convert.ToString(totalDeduct);
 
             }
-            catch (Exception)
-            { }
+            catch (Exception exLog) { Logger.Error(exLog); }
             string paystatus = "";
             string advpaid = "";
             if (Convert.ToDouble(txtbalamnt.Text) == 0)
@@ -393,8 +386,7 @@ namespace supershop.User_mgt
                 txtNetSal.Text = Convert.ToString(net);
 
             }
-            catch (Exception)
-            { }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtNetSal_TextChanged(object sender, EventArgs e)
@@ -414,7 +406,6 @@ namespace supershop.User_mgt
                 panel1.Visible = true;
                 string sql = " SELECT adv_date as [Date],adv_amount as [Amount],bal_amnt as [Balance Amount] FROM tbl_adv_sal" +
                          " where user_name = '" + cbUserName.Text + "' and adv_month = '" + cbmonth.Text + "' and adv_year = '" + txtYear.Text + "'";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt1 = DataAccess.GetDataTable(sql);
                 dataGridView2.DataSource = dt1;
             }

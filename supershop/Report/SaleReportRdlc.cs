@@ -38,7 +38,6 @@ namespace supershop.Report
                      " from sales_payment , storeconfig " +
                      " where sales_payment.sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' " +
                      "  Order  by sales_payment.sales_time";
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt = DataAccess.GetDataTable(sql);
 
                     ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
@@ -56,7 +55,6 @@ namespace supershop.Report
                      " where sales_payment.sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' " +
                      " AND sales_payment.emp_id = '" + ReportValue.emp + "' " +
                      "  Order  by sales_payment.sales_time";
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt = DataAccess.GetDataTable(sql);
 
                     ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
@@ -74,7 +72,6 @@ namespace supershop.Report
                      " where sales_payment.sales_time BETWEEN '" + ReportValue.StartDate + "' AND    '" + ReportValue.EndDate + "' " +
                      " AND sales_payment.Shopid = '" + ReportValue.Terminal + "' " +
                      "  Order  by sales_payment.sales_time";
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt = DataAccess.GetDataTable(sql);
 
                     ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
@@ -92,7 +89,6 @@ namespace supershop.Report
                      " where sales_payment.sales_time BETWEEN '" + ReportValue.StartDate + "'  AND    '" + ReportValue.EndDate + "' " +
                      " AND sales_payment.emp_id = '" + ReportValue.emp + "' AND sales_payment.Shopid = '" + ReportValue.Terminal + "' " +
                      "  Order  by sales_payment.sales_time";
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt = DataAccess.GetDataTable(sql);
 
                     ReportDataSource reportDSDetail = new ReportDataSource("DataSet1", dt);
@@ -105,9 +101,7 @@ namespace supershop.Report
                // this.reportViewer1.ZoomPercent = 35;
                 this.reportViewer1.RefreshReport(); 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
     }

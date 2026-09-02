@@ -39,7 +39,6 @@ namespace supershop
                          " (payment_amount - due_amount) as 'Paid Amount' ,  payment_type as 'Payment Type' , " + 
                          "  due_amount as Due, emp_id as 'Sold by' ,   C_id  as CustID , Comment as 'Cust Name/Comment' " + 
                          " from sales_payment where due_amount !='0'  ";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             datagridDueList.DataSource = dt1;
             datagridDueList.Columns[5].DefaultCellStyle.ForeColor = Color.DarkViolet;
@@ -117,10 +116,7 @@ namespace supershop
                     mkc.Show();
 
                 }
-                catch
-                {
-
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
             else if (datagridDueList.CurrentCell.ColumnIndex == 1)
             {
@@ -147,7 +143,6 @@ namespace supershop
        " (payment_amount - due_amount) as 'Paid Amount' , payment_type as 'Payment Type' , " +
        "  due_amount as Due, emp_id as 'Sold by' ,    C_id  as Contact , Comment as 'Cust Name/Comment' " +
        "  from sales_payment where  due_amount !='0'";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt2 = DataAccess.GetDataTable(sql);
                 datagridDueList.DataSource = dt2;
                 return;
@@ -162,9 +157,7 @@ namespace supershop
                                      "  due_amount as Due, emp_id as 'Sold by' ,    C_id  as Contact , Comment as 'Cust Name/Comment' " +
                                      "  from sales_payment where Comment like '" + txtsearch.Text + "%' and due_amount !='0'";               
                     }
-                    catch
-                    {
-                    }
+                    catch (Exception exLog) { Logger.Error(exLog); }
                 }
                 else
                 {
@@ -177,12 +170,9 @@ namespace supershop
                                 "  from sales_payment where sales_id = '" + txtsearch.Text + "' and due_amount !='0'";
 
                 }
-                catch
-                {
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
 
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             datagridDueList.DataSource = dt1;
             invoice_total();
@@ -196,13 +186,10 @@ namespace supershop
                             " (payment_amount - due_amount) as 'Paid Amount' ,  payment_type as 'Payment Type' ,  " + 
                             " due_amount as Due, emp_id as 'Sold by' ,    C_id  as Contact , Comment   " + 
                             " from sales_payment where sales_time = '" + dateTimeDue.Text + "' and due_amount !='0'  ";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt1 = DataAccess.GetDataTable(sql);
                 datagridDueList.DataSource = dt1;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
      

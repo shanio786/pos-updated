@@ -34,7 +34,6 @@ namespace supershop
         {             
             // // Sale Info
             string sqlSale = "select * from tbl_saleInfo  where InvoiceNO  = '" + lblInvoiceNo.Text + "' ";
-            DataAccess.ExecuteSQL(sqlSale);
             DataTable dtsqlSale = DataAccess.GetDataTable(sqlSale);
             lblSalesDate.Text = dtsqlSale.Rows[0].ItemArray[10].ToString();
             lblShippingfee.Text = dtsqlSale.Rows[0].ItemArray[8].ToString();
@@ -43,7 +42,6 @@ namespace supershop
 
             // // Customer Info
             string sqlCmd = "select * from tbl_customer  where ID  = '" + lblcustid.Text + "' ";
-            DataAccess.ExecuteSQL(sqlCmd);
             DataTable dt = DataAccess.GetDataTable(sqlCmd);
             lblCustomer.Text = dt.Rows[0].ItemArray[1].ToString();
             lblCustAddress.Text = dt.Rows[0].ItemArray[4].ToString() + " , " + dt.Rows[0].ItemArray[5].ToString();
@@ -59,17 +57,14 @@ namespace supershop
            
                 string sql = "select  itemName 'Products' , Retailsprice 'Price' ," +
                             " Qty 'Quantity', Total  'Total'    from sales_item where sales_id = '" + lblInvoiceNo.Text + "' ";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
                 dgrvSalesInvoice.DataSource = dt;
 
 
                 string sql3 = "select SUM(total)    from sales_item  where sales_id = '" + lblInvoiceNo.Text + "'  ";
-                DataAccess.ExecuteSQL(sql3);
                 DataTable dt3 = DataAccess.GetDataTable(sql3);
 
                 string sqltbl = "select *  from sales_payment where sales_id = '" + lblInvoiceNo.Text + "' and  TrxType = 'Inventory' ";
-                DataAccess.ExecuteSQL(sqltbl);
                 DataTable dttbl = DataAccess.GetDataTable(sqltbl);
 
                 DataRow dr = dt.NewRow();
@@ -132,7 +127,6 @@ namespace supershop
         private void btnPrint_Click(object sender, EventArgs e)
         {
             string sql3 = "select * from tbl_terminalLocation where Shopid = '" + UserInfo.Shopid + "'";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
 
             DateTime dt = DateTime.Now;

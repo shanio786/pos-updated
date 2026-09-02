@@ -25,7 +25,6 @@ namespace supershop.Inventory
         private bool SetupThePrinting()
         {
             string sql3 = "select * from tbl_terminalLocation where Shopid = '" + UserInfo.Shopid + "'";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
 
             DateTime dt = DateTime.Now;
@@ -41,7 +40,6 @@ namespace supershop.Inventory
 
             // // Biller Info
             string sqlCmd = "select * from tbl_saleInfo where InvoiceNo = '" + lblInvoiceNo.Text + "' ";
-            DataAccess.ExecuteSQL(sqlCmd);
             DataTable dtSP = DataAccess.GetDataTable(sqlCmd);            
             string Bnam = "Bill To \n" + dtSP.Rows[0].ItemArray[3].ToString();
 
@@ -123,29 +121,24 @@ namespace supershop.Inventory
                 {
                     string InvoiceNo = lblInvoiceNo.Text;
                     string sql = "select itemName as Items ,  RetailsPrice as Price , Qty  , Total   from sales_item where (sales_id = '" + InvoiceNo + "')";
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt1 = DataAccess.GetDataTable(sql);
                     datagrdSalesInvoice.DataSource = dt1;
 
                     //Total calculation
                     string sql3 = "select SUM(Total)   from sales_item  where sales_id = '" + InvoiceNo + "'";
-                    DataAccess.ExecuteSQL(sql3);
                     DataTable dt3 = DataAccess.GetDataTable(sql3);
                     /////label5.Text = "Total : " + dt3.Rows[0].ItemArray[0].ToString();
 
                     string sql6 = "select * from sales_payment  where (sales_id = '" + InvoiceNo + "')";
-                    DataAccess.ExecuteSQL(sql6);
                     DataTable dt6 = DataAccess.GetDataTable(sql6);
 
                     //Invoice  Shippingfee 
                     string sqlSaleinfo = "select ShippingFee from tbl_saleInfo  where (InvoiceNo = '" + InvoiceNo + "')";
-                    DataAccess.ExecuteSQL(sqlSaleinfo);
                     DataTable dtSaleinfo = DataAccess.GetDataTable(sqlSaleinfo);
 
 
                     // Header info
                     string sqlTitle = "select * from tbl_terminalLocation where Shopid = '" + UserInfo.Shopid + "'";
-                    DataAccess.ExecuteSQL(sqlTitle);
                     DataTable dtTitle = DataAccess.GetDataTable(sqlTitle); 
                     string Ph           = dtTitle.Rows[0].ItemArray[4].ToString();
                     string web          = dtTitle.Rows[0].ItemArray[6].ToString();

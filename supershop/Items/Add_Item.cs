@@ -38,7 +38,6 @@ namespace supershop
             string sql = "select product_id, product_name, product_quantity, cost_price , retail_price, category ,  " +
                         " supplier, imagename , discount, Shopid , taxapply , status " + 
                         " from purchase where product_id = '" + lblItemcode.Text + "'";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
 
             txtProductCode.Text     = dt1.Rows[0].ItemArray[0].ToString();
@@ -79,7 +78,6 @@ namespace supershop
         public void Bindshopbranch()
         {
             string sql5 = "select   BranchName , Shopid from tbl_terminalLocation";
-            DataAccess.ExecuteSQL(sql5);
             DataTable dt5 = DataAccess.GetDataTable(sql5);
             cmboShopid.DataSource = dt5;
             cmboShopid.DisplayMember = "Branchname";
@@ -104,7 +102,6 @@ namespace supershop
 
                 //Supplier Info
                 string sqlCust = "select   DISTINCT  *   from tbl_customer where PeopleType = 'Supplier'";
-                DataAccess.ExecuteSQL(sqlCust);
                 DataTable dtCust = DataAccess.GetDataTable(sqlCust);
                 cmbSupplier.DataSource = dtCust;
                 cmbSupplier.DisplayMember = "Name";
@@ -112,7 +109,6 @@ namespace supershop
 
                 //Category list
                 string sqlcate = "select DISTINCT   category_name from tbl_category";
-                DataAccess.ExecuteSQL(sqlcate);
                 DataTable dtcate = DataAccess.GetDataTable(sqlcate);
                 ComboCategory.DataSource = dtcate;
                 ComboCategory.DisplayMember = "category_name";
@@ -129,9 +125,7 @@ namespace supershop
                 }             
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
         #endregion
@@ -423,9 +417,7 @@ namespace supershop
                 //using System.Text.RegularExpressions;
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtProductQty_KeyPress(object sender, KeyPressEventArgs e)
@@ -448,9 +440,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         //Purchase history Qty
@@ -474,9 +464,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtCostPrice_KeyPress(object sender, KeyPressEventArgs e)
@@ -499,9 +487,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtSalesPrice_KeyPress(object sender, KeyPressEventArgs e)
@@ -524,9 +510,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtdiscount_KeyPress(object sender, KeyPressEventArgs e)
@@ -549,9 +533,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
         #endregion
         
@@ -562,7 +544,6 @@ namespace supershop
             try
             {
                 string sqlitemcode = " select  product_id from   purchase where product_id = '" + txtProductCode.Text + "' ";
-                DataAccess.ExecuteSQL(sqlitemcode);
                 DataTable dtitemcode = DataAccess.GetDataTable(sqlitemcode);
                 if (dtitemcode.Rows.Count > 0)
                 {
@@ -581,9 +562,7 @@ namespace supershop
 
                 }
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         #region Page links
@@ -681,9 +660,7 @@ namespace supershop
                 }
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         #endregion

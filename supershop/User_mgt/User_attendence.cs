@@ -28,7 +28,6 @@ namespace supershop.User_mgt
             thisYear = dt.ToString("yyyy");
 
             string sql5 = "select Name from usermgt";
-            DataAccess.ExecuteSQL(sql5);
             DataTable dt5 = DataAccess.GetDataTable(sql5);
             cbUserName.DataSource = dt5;
             cbUserName.DisplayMember = "Name";
@@ -108,7 +107,6 @@ namespace supershop.User_mgt
         {
             string sql = " SELECT att_date as Date , Name AS [User Name], intime as [In Time],outtime as [Out Time],att_status as Status FROM userattendence " +
                         " where att_date = '"+ dtSearch.Value.ToShortDateString()+"'";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             dataGridView1.DataSource = dt1;
         }
@@ -116,7 +114,6 @@ namespace supershop.User_mgt
         {
             string sql = " SELECT att_date as Date , Name AS [User Name], intime as [In Time],outtime as [Out Time],att_status as Status FROM userattendence" +
                         " where att_date = '" + dtSearch.Value.ToShortDateString() + "' and Name = '"+ empName + "'";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             dataGridView1.DataSource = dt1;
         }
@@ -173,7 +170,6 @@ namespace supershop.User_mgt
         {
             string sql = " SELECT att_date as Date , Name AS [User Name], intime as [In Time],outtime as [Out Time],att_status as Status FROM userattendence" +
                         " where att_date >= '" + dtFrom.Value.ToShortDateString() + "' and att_date <= '" + dtTo.Value.ToShortDateString() + "' and Name = '" + cbEmpMnthly.Text + "'";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             dataGridView1.DataSource = dt1;
         }
@@ -183,26 +179,19 @@ namespace supershop.User_mgt
             try
             {
 
-                DataAccess DataAccess = new DataAccess();
-                SqlConnection cnn;
-                cnn = DataAccess.OpenDBConn();
                 string sql = "";
+                string dFrom = dtFrom.Value.ToShortDateString();
+                string dTo = dtTo.Value.ToShortDateString();
                 
-                sql = " SELECT Count(att_date) FROM userattendence" +
-                         " where att_status = 'Present' and att_date >= '" + dtFrom.Value.ToShortDateString() + "' and att_date <= '" + dtTo.Value.ToShortDateString() + "' and Name = '" + cbEmpMnthly.Text + "'";
-                string presntDays =  DataAccess.ExecuteSQLScaler(sql);
+                sql = " SELECT Count(att_date) FROM userattendence where att_status = 'Present' and att_date >= @f and att_date <= @t and Name = @n";
+                string presntDays = DataAccess.ExecuteSQLScaler(sql, DataAccess.P("@f", dFrom), DataAccess.P("@t", dTo), DataAccess.P("@n", cbEmpMnthly.Text));
 
-                sql = " SELECT Count(att_date) FROM userattendence" +
-                        " where att_status = 'Absent' and att_date >= '" + dtFrom.Value.ToShortDateString() + "' and att_date <= '" + dtTo.Value.ToShortDateString() + "' and Name = '" + cbEmpMnthly.Text + "'";
-                string absentDays = DataAccess.ExecuteSQLScaler(sql);
+                sql = " SELECT Count(att_date) FROM userattendence where att_status = 'Absent' and att_date >= @f and att_date <= @t and Name = @n";
+                string absentDays = DataAccess.ExecuteSQLScaler(sql, DataAccess.P("@f", dFrom), DataAccess.P("@t", dTo), DataAccess.P("@n", cbEmpMnthly.Text));
 
-                sql = " SELECT att_date ,Name, intime ,outtime ,att_status FROM userattendence" +
-                       " where att_date >= '" + dtFrom.Value.ToShortDateString() + "' and att_date <= '" + dtTo.Value.ToShortDateString() + "' and Name = '" + cbEmpMnthly.Text + "'";
-
-                SqlCommand cmd = new SqlCommand(sql,cnn);
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataSet ds = new DataSet();
-                da.Fill(ds, "DSAttandence");
+                sql = " SELECT att_date ,Name, intime ,outtime ,att_status FROM userattendence where att_date >= @f and att_date <= @t and Name = @n";
+                DataSet ds = DataAccess.GetDataSet(sql, DataAccess.P("@f", dFrom), DataAccess.P("@t", dTo), DataAccess.P("@n", cbEmpMnthly.Text));
+                ds.Tables[0].TableName = "DSAttandence";
                 User_mgt.attendenceRPT exprpr = new User_mgt.attendenceRPT();
                 exprpr.SetDataSource(ds.Tables[0]);
                 ReportViwer rp = new ReportViwer();

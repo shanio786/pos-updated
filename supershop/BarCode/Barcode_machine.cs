@@ -30,10 +30,7 @@ namespace supershop.BarCode
                 string barcodeType = (sender as ComboBox).SelectedItem.ToString();
                 this.barCodeControl1.Type = (BarCodeType)Enum.Parse(typeof(BarCodeType), barcodeType);
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void comboBoxText_SelectedIndexChanged(object sender, EventArgs e)
@@ -65,10 +62,7 @@ namespace supershop.BarCode
                     this.barCodeControl1.Data2D = (sender as TextBox).Text;
                 }
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void cmbitems_SelectedIndexChanged(object sender, EventArgs e)
@@ -76,7 +70,6 @@ namespace supershop.BarCode
             try
             {
                 string sql5 = "select product_id , product_name , retail_price  from purchase where product_id = '" + cmbitems.Text + "' ";
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 textBoxText.Text = dt5.Rows[0].ItemArray[0].ToString();
                 txttoptext.Text = dt5.Rows[0].ItemArray[1].ToString() + "\nIngredients:";
@@ -89,10 +82,7 @@ namespace supershop.BarCode
                 
 
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
 
@@ -108,10 +98,7 @@ namespace supershop.BarCode
                 }
                 this.barCodeControl1.BarHeight = validHeight;
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void textBoxSize_TextChanged(object sender, EventArgs e)
@@ -132,9 +119,7 @@ namespace supershop.BarCode
                 }
                 this.barCodeControl1.Font = new Font(fontName, validSize);
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
 
@@ -257,15 +242,12 @@ namespace supershop.BarCode
             try
             {
                 string sql5 = "select    product_id  from purchase ";
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 cmbitems.DataSource = dt5;
                 cmbitems.DisplayMember = "product_id";
                  
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
       

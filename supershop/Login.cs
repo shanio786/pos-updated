@@ -27,121 +27,83 @@ namespace supershop
         //Log in action 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            //sellomat_Entities _context = new sellomat_Entities();
-            //var license = _context.tbl_userlicense.SingleOrDefault(c => c.Id == 2);
-            //var dtm = license.ToDate;
-            ////LicenseKeyModule lkm = new LicenseKeyModule();
-            ////DateTime dtm = new DateTime(2020, 12, 30);
-            //var a = DateTime.Now;
-            //if (dtm <= a)
-            //{
-            //    MessageBox.Show("License Expired");
-            //    LicenseForm lf = new LicenseForm();
-            //    lf.Show();
-            //    this.Close();
-            //}
-            //else
-            //{
             if (txtUserName.Text == "")
             {
-                //MessageBox.Show("");
                 MessageBox.Show("Please insert User Name", "Not match", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtUserName.Focus();
-                
+                return;
             }
-            else if ( txtPassword.Text == "")
+            if (txtPassword.Text == "")
             {
                 MessageBox.Show("Please  insert Password", "Not match", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtPassword.Focus();               
+                txtPassword.Focus();
+                return;
             }
-            else
+
+            try
             {
-                try
+                DataTable dt = DataAccess.GetDataTable(
+                    "SELECT id, Username, password, usertype, Shopid FROM usermgt WHERE Username = @u",
+                    DataAccess.P("@u", txtUserName.Text.Trim()));
+
+                if (dt.Rows.Count == 0 || !PasswordHasher.Verify(txtPassword.Text, Convert.ToString(dt.Rows[0]["password"])))
                 {
-                    string tkhan = "Select Username , password , usertype, Shopid  from  usermgt  " + 
-                                    " where Username   = '" + txtUserName.Text + "' and password = '" + txtPassword.Text + "'";                    
-                    DataTable dt = DataAccess.GetDataTable(tkhan);
-
-                    string username = dt.Rows[0].ItemArray[0].ToString();
-                    string password = dt.Rows[0].ItemArray[1].ToString();
-                    string usertype = dt.Rows[0].ItemArray[2].ToString();
-                    string Shopid = dt.Rows[0].ItemArray[3].ToString();
-
-                    if (txtUserName.Text == username && txtPassword.Text == password)  
-                    {
-                        if (usertype == "1")   //usertype usertype
-                        {
-                            UserInfo.UserName = txtUserName.Text;
-			                UserInfo.usertype = "1"; // 1= admin
-                            UserInfo.Shopid = Shopid;
-                             workRecords();
-                            Home go = new Home();
-                            go.Show();
-                            this.Hide();
-                            
-                        }
-                        if (usertype == "2")
-                        {
-                            UserInfo.UserName = txtUserName.Text;
-		                    UserInfo.usertype = "2"; //2 = Manager
-                            UserInfo.Shopid = Shopid;
-                            workRecords();
-                            Manager_Home go = new Manager_Home(); 
-                            go.Show();
-                            this.Hide();
-                        }
-
-                        if (usertype == "3")
-                        {
-                            UserInfo.UserName = txtUserName.Text;
-                            UserInfo.usertype = "3"; //3 = salesman
-                            UserInfo.Shopid = Shopid;
-                            workRecords();
-                            SalesMan_Home go = new SalesMan_Home();
-                            go.Show();
-                            this.Hide();
-                        }
-                        if (usertype == "0") // Block user
-                        {
-
-                            MessageBox.Show("\n This user (" + txtUserName.Text + ") has been blocked. \n Please contact to administrator.", "Block - Inactive", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                        }
-                    }
-                    else
-                    {
-                       // MessageBox.Show("Username or Password not match", "Not match", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                        lblmsg.Visible = true;
-                        lblmsg.Text = "Username or Password does not match";
-
-                    }
-                }
-                catch //(Exception exe)
-                {
-                   // MessageBox.Show(exe.Message);
-                   // MessageBox.Show("User ID not exist   \n\n " + exe.Message, "Not match", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                   // MessageBox.Show("User ID or Password not match", "Not match", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     lblmsg.Visible = true;
                     lblmsg.Text = "Username or Password does not match";
-
+                    return;
                 }
-              
-            }
-                //pictureBox2.Visible = true;
-                //prg();
-            //}
-        }
 
+                string username = Convert.ToString(dt.Rows[0]["Username"]);
+                string stored   = Convert.ToString(dt.Rows[0]["password"]);
+                string usertype = Convert.ToString(dt.Rows[0]["usertype"]);
+                string shopid   = Convert.ToString(dt.Rows[0]["Shopid"]);
+
+                // upgrade an old plain-text password to a hash on first successful login
+                if (!PasswordHasher.IsHashed(stored))
+                {
+                    DataAccess.ExecuteSQL("UPDATE usermgt SET password = @p WHERE id = @id",
+                        DataAccess.P("@p", PasswordHasher.Hash(txtPassword.Text)), DataAccess.P("@id", dt.Rows[0]["id"]));
+                }
+
+                if (usertype == "0") // Blocked user
+                {
+                    MessageBox.Show("\n This user (" + username + ") has been blocked. \n Please contact to administrator.", "Block - Inactive", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    return;
+                }
+
+                UserInfo.Userid   = Convert.ToString(dt.Rows[0]["id"]);
+                UserInfo.UserName = username;
+                UserInfo.usertype = usertype; // 1 = admin, 2 = manager, 3 = salesman
+                UserInfo.Shopid   = shopid;
+                workRecords();
+
+                Form home;
+                if (usertype == "1")      home = new Home();
+                else if (usertype == "2") home = new Manager_Home();
+                else if (usertype == "3") home = new SalesMan_Home();
+                else
+                {
+                    MessageBox.Show("Unknown user type '" + usertype + "'. Please contact the administrator.", "Login", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    return;
+                }
+                home.Show();
+                this.Hide();
+            }
+            catch (Exception ex)
+            {
+                Logger.Show(ex, "Login failed because of a database error.");
+            }
+        }
 
         public void workRecords()
         {
-            string logdate = DateTime.Now.ToString("yyyy-MM-dd");
-            string logtime = DateTime.Now.ToString("HH:mm:ss");
-            string logdatetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-            string sqlLogIn = " insert into tbl_workrecords (Username, datatype, logdate, logtime, logdatetime) " +
-                                 " values ('" + UserInfo.UserName + "' , 'IN' , '" + logdate + "' , " +
-                                  " '" + logtime + "' , '" + logdatetime + "'  )";
-            DataAccess.ExecuteSQL(sqlLogIn);
+            DateTime now = DateTime.Now;
+            DataAccess.ExecuteSQL(
+                " insert into tbl_workrecords (Username, datatype, logdate, logtime, logdatetime) values (@u, 'IN', @d, @t, @dt)",
+                DataAccess.P("@u", UserInfo.UserName),
+                DataAccess.P("@d", now.ToString("yyyy-MM-dd")),
+                DataAccess.P("@t", now.ToString("HH:mm:ss")),
+                DataAccess.P("@dt", now.ToString("yyyy-MM-dd HH:mm:ss")));
         }
 
         private void label3_Click(object sender, EventArgs e)

@@ -45,7 +45,6 @@ namespace supershop
                             " INNER JOIN tbl_customer c " +
                             " ON  sp.c_id  = c.ID " +
                             " Where sp.sales_id  = '" + toolsaleno.Text + "'  ";         
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
 
                 ReportDataSource reportDSDetail = new ReportDataSource("POSPRINTDataSet", dt);
@@ -78,9 +77,7 @@ namespace supershop
                 }
               
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void btnPrintDialog_Click(object sender, EventArgs e)
@@ -107,9 +104,7 @@ namespace supershop
             {
                 prgressbar();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void btnstopPrint_Click(object sender, EventArgs e)

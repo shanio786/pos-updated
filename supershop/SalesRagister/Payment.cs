@@ -40,7 +40,6 @@ namespace supershop
             {
                 //Customer Info
                 string sqlCust = "select   DISTINCT  *   from tbl_customer where PeopleType = 'Customer'";
-                DataAccess.ExecuteSQL(sqlCust);
                 DataTable dtCust = DataAccess.GetDataTable(sqlCust);
                 ComboCustID.DataSource = dtCust;
                 ComboCustID.DisplayMember = "Name";
@@ -52,9 +51,7 @@ namespace supershop
                 //this.dgrvSalesItemList.Columns.Add("Total", "Total");
                 //this.dgrvSalesItemList.Columns.Add("ID", "ID");
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         //paid amount Input Operation
@@ -112,9 +109,7 @@ namespace supershop
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
 
         #region Data save
@@ -143,7 +138,6 @@ namespace supershop
                 // Profit = (Retail_priceAfterDiscount * QTY )   - (cost_price * qty);  ---( 47.53 * 1 ) - ( 45 * 1) = 2.53
 
                 string sqlprofit = "Select cost_price , discount  from  purchase  where product_id  = '" + itemid + "'";
-                DataAccess.ExecuteSQL(sqlprofit);
                 DataTable dt1 = DataAccess.GetDataTable(sqlprofit);
 
                 double cost_price   = Convert.ToDouble(dt1.Rows[0].ItemArray[0].ToString());
@@ -173,7 +167,6 @@ namespace supershop
 
                     // Update Quantity
                     string sqlupdateQty = "select product_quantity  from purchase where product_id = '" + itemids + "'";
-                    DataAccess.ExecuteSQL(sqlupdateQty);
                     DataTable dtUqty = DataAccess.GetDataTable(sqlupdateQty);
                     double product_quantity = Convert.ToDouble(dtUqty.Rows[0].ItemArray[0].ToString())  -  qtyupdate ;
 
@@ -297,13 +290,10 @@ namespace supershop
             try
             {
                 string sqlCmd = "Select ID from  tbl_customer  where Name  = '" + ComboCustID.Text + "'";
-                DataAccess.ExecuteSQL(sqlCmd);
                 DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
                 lblCustID.Text = dt1.Rows[0].ItemArray[0].ToString();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         //Invoice Id Auto increment
@@ -326,10 +316,7 @@ namespace supershop
                   //  prgressbar();
                 }
             }
-            catch
-            {
-
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
          

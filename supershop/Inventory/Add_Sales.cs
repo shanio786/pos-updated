@@ -47,7 +47,6 @@ namespace supershop.Inventory
         public void customerComboboxDataBind()
         {
             string sqlCmd = "select DISTINCT Name   from tbl_customer where peopleType = 'Customer'";
-            DataAccess.ExecuteSQL(sqlCmd);
             DataTable dt5 = DataAccess.GetDataTable(sqlCmd);
             CmbCustomer.DataSource = dt5;
             CmbCustomer.DisplayMember = "Name";
@@ -60,7 +59,6 @@ namespace supershop.Inventory
         public void BillerComboBoxDataBind()
         {
             string sqlCmd = "select DISTINCT Name   from tbl_customer where peopleType = 'Biller'";
-            DataAccess.ExecuteSQL(sqlCmd);
             DataTable dt5 = DataAccess.GetDataTable(sqlCmd);
             CmbBiller.DataSource = dt5;
             CmbBiller.DisplayMember = "Name";
@@ -160,9 +158,7 @@ namespace supershop.Inventory
                 }
                 txtBarcodeReaderBox.Text = UserInfo.invoiceNo;        
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
             
         }
 
@@ -181,7 +177,6 @@ namespace supershop.Inventory
                 // " ORDER BY RAND() LIMIT 12 "; // MySQL
                 //  " ORDER BY NEWID() "; // SQL server and use -- top 12 after select  
 
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
                 if (dt.Rows.Count > 0)
                 {
@@ -356,7 +351,6 @@ namespace supershop.Inventory
                             " ELSE '0.00'  " +
                             " END 'tax amt' , product_id as ID , discount , taxapply " +
                             " FROM  purchase  where product_id = '" + txtBarcodeReaderBox.Text + "'  and product_quantity >= 1 ";
-                    DataAccess.ExecuteSQL(sql);
                     DataTable dt = DataAccess.GetDataTable(sql);
 
                     string ItemsName = dt.Rows[0].ItemArray[0].ToString();
@@ -429,10 +423,7 @@ namespace supershop.Inventory
 
                 }
 
-                catch
-                {
-                    //MessageBox.Show("sorry");
-                }
+                catch (Exception exLog) { Logger.Error(exLog); }
             }
         }
 
@@ -577,9 +568,7 @@ namespace supershop.Inventory
                     }
                 }
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
 
@@ -775,10 +764,7 @@ namespace supershop.Inventory
                     txtinvoiceNo.Text = Convert.ToString(id);
                 }
             }
-            catch
-            {
-
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
 
         #region Request to submit
@@ -805,7 +791,6 @@ namespace supershop.Inventory
                 // Profit = (Retail_priceAfterDiscount * QTY )   - (cost_price * qty);  ---( 47.53 * 1 ) - ( 45 * 1) = 2.53
 
                 string sqlprofit = "Select cost_price , discount from  purchase  where product_id  = '" + itemid + "'";
-                DataAccess.ExecuteSQL(sqlprofit);
                 DataTable dt1 = DataAccess.GetDataTable(sqlprofit);
 
                 double cost_price = Convert.ToDouble(dt1.Rows[0].ItemArray[0].ToString());
@@ -834,7 +819,6 @@ namespace supershop.Inventory
 
                     // Update Quantity
                     string sqlupdateQty = "select product_quantity  from purchase where product_id = '" + itemids + "'";
-                    DataAccess.ExecuteSQL(sqlupdateQty);
                     DataTable dtUqty = DataAccess.GetDataTable(sqlupdateQty);
                     double product_quantity = Convert.ToDouble(dtUqty.Rows[0].ItemArray[0].ToString()) - qtyupdate;
 
@@ -961,10 +945,7 @@ namespace supershop.Inventory
                     txtinvoiceNo.Text = Convert.ToString(id);
                 }
             }
-            catch
-            {
-
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
 
         private void ClearForm2()
@@ -1012,13 +993,10 @@ namespace supershop.Inventory
             try
             {
                 string sqlCmd = "Select ID from  tbl_customer  where Name  = '" + CmbCustomer.Text + "'";
-                DataAccess.ExecuteSQL(sqlCmd);
                 DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
                 lblCustID.Text = dt1.Rows[0].ItemArray[0].ToString();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
         #endregion
@@ -1034,9 +1012,7 @@ namespace supershop.Inventory
                 DiscountCalculation();
                 vatcal();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtDiscountRate_KeyPress(object sender, KeyPressEventArgs e)
@@ -1059,9 +1035,7 @@ namespace supershop.Inventory
                 e.Handled = ignoreKeyPress;
                 //using System.Text.RegularExpressions;
             }
-            catch
-            {
-            } 
+            catch (Exception exLog) { Logger.Error(exLog); } 
         }
 
         private void txtRSDisc_TextChanged(object sender, EventArgs e)
@@ -1073,7 +1047,7 @@ namespace supershop.Inventory
                 txtDiscountRate.Text = Convert.ToString(Math.Round(res, 2));
                 //  lbloveralldiscount.Text = lblTotalDisCount.Text;
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtSearchItem_KeyDown(object sender, KeyEventArgs e)
@@ -1123,7 +1097,7 @@ namespace supershop.Inventory
                 txtBarcodeReaderBox.Text = a;
 
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void lst_items_Click_1(object sender, EventArgs e)
@@ -1139,7 +1113,7 @@ namespace supershop.Inventory
                 txtBarcodeReaderBox.Text = a;
 
             }
-            catch (Exception) { }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
     }
 }

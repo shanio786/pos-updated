@@ -30,7 +30,6 @@ namespace supershop.User_mgt
         public void loadData()
         {
             string sql3 = "select * from usermgt where Username = '" + lblUserName.Text + "'";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
 
             txtuid.Text     = dt1.Rows[0].ItemArray[0].ToString();

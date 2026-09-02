@@ -35,7 +35,6 @@ namespace supershop.Report
             string sql = " update sales_item set " +
                            " status = 1 " +
                            " where sales_id  = '" + lblOrder.Text + "' ";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             MessageBox.Show("Order completed \n Wait 10 s for Refresh Display ");
             this.Hide();

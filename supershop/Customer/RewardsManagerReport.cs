@@ -29,9 +29,7 @@ namespace supershop.Customer
                 dtEndDate.Format = DateTimePickerFormat.Custom;
                 dtEndDate.CustomFormat = "yyyy-MM-dd";
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
 
@@ -39,12 +37,10 @@ namespace supershop.Customer
         {
            // string sqlCmd = "SELECT cc.ID TrxID,  cc.Date, Customers.ID, Customers.Name, Customers.Phone as Mobile, Customers.EmailAddress, cc.OrderID,  cc.Credit , cc.Description FROM tbl_CustCredit  cc LEFT JOIN tbl_customer Customers ON CC.CustID=Customers.ID"; 
             string sqlCmd = "SELECT * from vw_custcreditreport    order by TrxID  desc";
-            DataAccess.ExecuteSQL(sqlCmd);
             DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
             dtGrdvCustomerDetails.DataSource = dt1;
 
             string sqlSUM = "SELECT   Sum(Credit) as CreditSum from vw_custcreditreport ";
-            DataAccess.ExecuteSQL(sqlSUM);
             DataTable dtSUM = DataAccess.GetDataTable(sqlSUM);
 
             DataRow dr = dt1.NewRow();
@@ -62,13 +58,11 @@ namespace supershop.Customer
             try
             {
                 string sqlCmd = "Select * from  vw_custcreditreport  where Name  like  '%" + txtCustomerSearch.Text + "%' or CustID like  '%" + txtCustomerSearch.Text + "%'    or OrderID  like  '%" + txtCustomerSearch.Text + "%'    order by TrxID  desc"; 
-                DataAccess.ExecuteSQL(sqlCmd);
                 DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
                 dtGrdvCustomerDetails.DataSource = dt1;
 
 
                 string sqlSUM = "SELECT   Sum(Credit) as CreditSum from vw_custcreditreport  where Name  like  '%" + txtCustomerSearch.Text + "%' or CustID like  '%" + txtCustomerSearch.Text + "%'    or OrderID  like  '%" + txtCustomerSearch.Text + "%' ";                 
-                DataAccess.ExecuteSQL(sqlSUM);
                 DataTable dtSUM = DataAccess.GetDataTable(sqlSUM);
 
                 DataRow dr = dt1.NewRow();
@@ -80,9 +74,7 @@ namespace supershop.Customer
                 CreditTotal[5] = dtSUM.Rows[0].ItemArray[0].ToString();
                 dt1.Rows.Add(CreditTotal);
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void dtEndDate_ValueChanged(object sender, EventArgs e)
@@ -96,13 +88,11 @@ namespace supershop.Customer
             try
             {
                 string sqlCmd = "Select * from  vw_custcreditreport  where  Date BETWEEN '" + StartDate + "' AND    '" + EndDate + "'    Order  by  TrxID desc";
-                DataAccess.ExecuteSQL(sqlCmd);
                 DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
                 dtGrdvCustomerDetails.DataSource = dt1;
 
 
                 string sqlSUM = "SELECT   Sum(Credit) as CreditSum from vw_custcreditreport   where  Date BETWEEN '" + StartDate + "' AND    '" + EndDate + "'";
-                DataAccess.ExecuteSQL(sqlSUM);
                 DataTable dtSUM = DataAccess.GetDataTable(sqlSUM);
 
                 DataRow dr = dt1.NewRow();
@@ -114,9 +104,7 @@ namespace supershop.Customer
                 CreditTotal[5] = dtSUM.Rows[0].ItemArray[0].ToString();
                 dt1.Rows.Add(CreditTotal);
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void btnAddNewCustLink_Click(object sender, EventArgs e)
@@ -136,7 +124,6 @@ namespace supershop.Customer
         private bool SetupThePrinting()
         {
             string sql3 = "select * from storeconfig";
-            DataAccess.ExecuteSQL(sql3);
             DataTable dt1 = DataAccess.GetDataTable(sql3);
             DateTime dt = DateTime.Now;
             string s = dt.ToString("MMMM dd, yyyy    hh:mm:ss tt");

@@ -35,7 +35,6 @@ namespace supershop.Items
                         " ELSE   (retail_price * product_quantity)  - (((retail_price * product_quantity) * discount) / 100.00)       " +
                         " END 'after tax Gross total'  , product_id as ID " +
                         " FROM  purchase    where product_id in (5656,80045332,8940000000034, 89234500012 ,8940000000027)";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             dgrvSalesItemList.DataSource = dt1;
             

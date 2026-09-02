@@ -26,7 +26,6 @@ namespace supershop.Expenses
         public void Expensebind()
         {
             string sql = " select  ID, Date , ReferenceNo as 'Refer No' , Category ,	Amount , Note ,	Createdby as 'Posted by', Attachment , fileextension from tbl_expense ";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             datagridExpenses.DataSource = dt1;
             lblRow.Text = datagridExpenses.RowCount.ToString() + " Records Found";            
@@ -73,9 +72,7 @@ namespace supershop.Expenses
                 datagridExpenses.Columns[8].Visible = false;
                 txtSearch.Focus();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void datagridExpenses_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -118,16 +115,13 @@ namespace supershop.Expenses
                 }
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             string sql = " select  ID, Date , ReferenceNo as 'Refer No' , Category ,	Amount , Note ,	Createdby as 'Posted by', Attachment , fileextension from tbl_expense " +
                           " Where ReferenceNo like '" + txtSearch.Text + "%'  or Note like   '%" + txtSearch.Text + "%' or Createdby like '" + txtSearch.Text + "%'  ";
-            DataAccess.ExecuteSQL(sql);
             DataTable dt1 = DataAccess.GetDataTable(sql);
             datagridExpenses.DataSource = dt1;
             lblRow.Text = datagridExpenses.RowCount.ToString() + " Records Found";

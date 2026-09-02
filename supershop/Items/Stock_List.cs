@@ -31,11 +31,9 @@ namespace supershop
                 string sql = " select  *  from  vw_itemdisplay_sr    where  ( product_name like '" + value + "%') " +
                 " OR ( product_id like '" + value + "%' ) " +
                 " OR (category like '" + value + "%' )  ";
-             DataAccess.ExecuteSQL(sql);
                 DataTable dm = DataAccess.GetDataTable(sql);
                 lblRows.Text =  "Total Rows " + dm.Rows.Count.ToString() + " Found";  
 
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt = DataAccess.GetDataTable(sql);
                 if (dt.Rows.Count > 0)
                 {
@@ -190,7 +188,6 @@ namespace supershop
             {
                 //Product Category
                 string sql5 = "select   DISTINCT  category   from purchase ";
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 combCategory.DataSource = dt5;
                 combCategory.DisplayMember = "category";
@@ -198,9 +195,7 @@ namespace supershop
                 //ItemList_with_images("");
                 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
         #endregion
 

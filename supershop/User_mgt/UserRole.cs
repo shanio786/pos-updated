@@ -22,12 +22,10 @@ namespace supershop
         {
 
                 string sql = "SELECT  * FROM  MNU_USERROLE where UID = '" + lbluid.Text + "'";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt1 = DataAccess.GetDataTable(sql);           
                 if (dt1.Rows.Count > 0) // if Exist 
                 {
                     string sql4 = "SELECT  * FROM  vw_pagerole where UID = '" + lbluid.Text + "' ";
-                    DataAccess.ExecuteSQL(sql4);
                     DataTable dt4 = DataAccess.GetDataTable(sql4);
                     dataGridView1.DataSource = dt4;
                     this.dataGridView1.Refresh();
@@ -38,7 +36,6 @@ namespace supershop
                 {
 
                     string sql3 = "SELECT  * FROM  vw_newpagerole ";
-                    DataAccess.ExecuteSQL(sql3);
                     DataTable dt3 = DataAccess.GetDataTable(sql3);
                     dataGridView1.DataSource = dt3;
                 }       

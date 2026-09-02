@@ -126,14 +126,11 @@ namespace supershop.BarCode
             {
                 //Product Code Databind from Database
                 string sql5 = "select   product_name, product_id, retail_price   from purchase";
-                DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                 cmboProductCode.DataSource = dt5;
                 cmboProductCode.DisplayMember = "product_id";
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void lnkAdvanceBC_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

@@ -50,15 +50,12 @@ namespace supershop
             {
                 //Bind store info 
                 string sql3 = "select * from storeconfig";
-                DataAccess.ExecuteSQL(sql3);
                 DataTable dt1 = DataAccess.GetDataTable(sql3);
 
                 companynamelabel.Text = dt1.Rows[0].ItemArray[1].ToString();
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void purchaseProductToolStripMenuItem_Click(object sender, EventArgs e)
@@ -182,9 +179,7 @@ namespace supershop
                 // DateTime today = DateTime.Today;
                 DatetimertoolStripMenu.Text = DateTime.Now.ToString("hh:mm:ss tt");
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         } 
 
 
@@ -488,9 +483,7 @@ namespace supershop
 
 
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
 
@@ -535,9 +528,7 @@ namespace supershop
               //File.Copy(sourceFile, destFileFileName);
          
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
 
         }
 

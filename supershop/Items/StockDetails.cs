@@ -25,7 +25,6 @@ namespace supershop.Items
                 string sql = " select  product_id as 'Item Code' , product_name as 'Item Name' , product_quantity as 'Quantity',  " +
                              " cost_price as 'Buy Price' ,((cost_price * product_quantity) * 1.00) as 'Total', retail_price as 'Sales Price' ,   category as 'Category' , supplier as 'Supplier'   " +
                              " from purchase where product_quantity>=0 order by product_quantity";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt1 = DataAccess.GetDataTable(sql);
                 datagridItemList.DataSource = dt1;
                lblRow.Text = "Total item :" + datagridItemList.Rows.Count.ToString();
@@ -38,9 +37,7 @@ namespace supershop.Items
                 //~ }
                 //~ lblRow.Text  = totalqty.ToString();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
@@ -51,14 +48,11 @@ namespace supershop.Items
                 string sql = " select  product_id as 'Item Code' , product_name as 'Item Name' , product_quantity as 'Quantity',  " +
                              " cost_price as 'Buy Price' , retail_price as 'Sales Price' , ((cost_price * product_quantity) * 1.00) as 'Total',  category as 'Category' , supplier as 'Supplier'   " +
                              " from purchase where product_id like  '" + txtSearch.Text + "%' or product_name like '" + txtSearch.Text + "%'";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt1 = DataAccess.GetDataTable(sql);
                 datagridItemList.DataSource = dt1;
                 lblRow.Text = "Total item :" + datagridItemList.Rows.Count.ToString();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void datagridItemList_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
@@ -161,14 +155,11 @@ namespace supershop.Items
                 string sql = " select  product_id as 'Item Code' , product_name as 'Item Name' , product_quantity as 'Quantity',  " +
                              " cost_price as 'Buy Price' , retail_price as 'Sales Price' , ((cost_price * product_quantity) * 1.00) as 'Total',  category as 'Category' , supplier as 'Supplier'   " +
                              " from purchase where category like  '" + txtSearchByCategory.Text + "%' or supplier like '" + txtSearchByCategory.Text + "%'";
-                DataAccess.ExecuteSQL(sql);
                 DataTable dt1 = DataAccess.GetDataTable(sql);
                 datagridItemList.DataSource = dt1;
                 lblRow.Text = "Total item :" + datagridItemList.Rows.Count.ToString();
             }
-            catch
-            {
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void label4_Click(object sender, EventArgs e)
