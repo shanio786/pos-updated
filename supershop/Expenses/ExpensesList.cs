@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,20 +23,31 @@ namespace supershop.Expenses
             go.MdiParent = this.ParentForm;
             go.Show();
         }
+
+        const string SelectExpenses =
+            " select ID, Date, ReferenceNo as 'Refer No', Category, Amount, Note, Createdby as 'Posted by', Attachment, fileextension from tbl_expense ";
+
         public void Expensebind()
         {
-            string sql = " select  ID, Date , ReferenceNo as 'Refer No' , Category ,	Amount , Note ,	Createdby as 'Posted by', Attachment , fileextension from tbl_expense ";
-            DataTable dt1 = DataAccess.GetDataTable(sql);
+            DataTable dt1 = DataAccess.GetDataTable(SelectExpenses);
             datagridExpenses.DataSource = dt1;
-            lblRow.Text = datagridExpenses.RowCount.ToString() + " Records Found";            
+            ShowTotals();
+        }
 
+        // Row count and amount total for whatever is currently in the grid
+        private void ShowTotals()
+        {
+            lblRow.Text = datagridExpenses.RowCount.ToString() + " Records Found";
+
+            // Looked up by column name: the button columns shift the numeric indexes after the first bind
             double sum = 0;
-            for (int i = 0; i < datagridExpenses.Rows.Count; ++i)
+            foreach (DataGridViewRow row in datagridExpenses.Rows)
             {
-                sum += Convert.ToDouble(datagridExpenses.Rows[i].Cells[4].Value);
+                object v = row.Cells["Amount"].Value;
+                if (v != null && v != DBNull.Value)
+                    sum += Convert.ToDouble(v);
             }
-            lblSum.Text = "Total amount: " + sum.ToString(); 
-
+            lblSum.Text = "Total amount: " + sum.ToString();
         }
 
         private void ExpensesList_Load(object sender, EventArgs e)
@@ -52,7 +63,6 @@ namespace supershop.Expenses
                 View.Name = "View";
                 View.ToolTipText = "View this attachment";
                 View.UseColumnTextForButtonValue = true;
-                
 
                 DataGridViewButtonColumn del = new DataGridViewButtonColumn();
                 datagridExpenses.Columns.Add(del);
@@ -84,12 +94,11 @@ namespace supershop.Expenses
                 {
                     foreach (DataGridViewRow row in datagridExpenses.SelectedRows)
                     {
-
-                        Expenses.ViewDoc mkc = new Expenses.ViewDoc(row.Cells[9].Value.ToString(), row.Cells[10].Value.ToString());                     
+                        Expenses.ViewDoc mkc = new Expenses.ViewDoc(row.Cells[9].Value.ToString(), row.Cells[10].Value.ToString());
                         mkc.ShowDialog();
                     }
-                }            
-                // Delete category  
+                }
+                // Delete expense
                 if (e.ColumnIndex == datagridExpenses.Columns["del"].Index && e.RowIndex >= 0)
                 {
                     foreach (DataGridViewRow rowdel in datagridExpenses.SelectedRows)
@@ -98,10 +107,8 @@ namespace supershop.Expenses
 
                         if (result == DialogResult.Yes)
                         {
+                            DataAccess.ExecuteSQL("delete from tbl_expense where ID = @id", DataAccess.P("@id", rowdel.Cells[2].Value));
 
-                            string sqldel = " delete from tbl_expense     where ID = '" + rowdel.Cells[2].Value.ToString() + "'";
-                            DataAccess.ExecuteSQL(sqldel);
-                           
                             if (rowdel.Cells[9].Value.ToString() != string.Empty)
                             {
                                 string path = Application.StartupPath + @"\ExpenseAttachment\";
@@ -109,35 +116,29 @@ namespace supershop.Expenses
                             }
                             MessageBox.Show("Deleted");
                             Expensebind();
-                           
                         }
                     }
                 }
-
             }
-            catch (Exception exLog) { Logger.Error(exLog); }
+            catch (Exception exLog) { Logger.Show(exLog, "Could not delete expense"); }
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            string sql = " select  ID, Date , ReferenceNo as 'Refer No' , Category ,	Amount , Note ,	Createdby as 'Posted by', Attachment , fileextension from tbl_expense " +
-                          " Where ReferenceNo like '" + txtSearch.Text + "%'  or Note like   '%" + txtSearch.Text + "%' or Createdby like '" + txtSearch.Text + "%'  ";
-            DataTable dt1 = DataAccess.GetDataTable(sql);
-            datagridExpenses.DataSource = dt1;
-            lblRow.Text = datagridExpenses.RowCount.ToString() + " Records Found";
-
-            double sum = 0;
-            for (int i = 0; i < datagridExpenses.Rows.Count; ++i)
+            try
             {
-                sum += Convert.ToDouble(datagridExpenses.Rows[i].Cells[6].Value);
+                string sql = SelectExpenses +
+                             " where ReferenceNo like @q + '%' or Note like '%' + @q + '%' or Createdby like @q + '%'";
+                DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@q", txtSearch.Text));
+                datagridExpenses.DataSource = dt1;
+                ShowTotals();
             }
-            lblSum.Text = "Total amount: " + sum.ToString(); 
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             new Expenses.ExpReportForm().ShowDialog();
-
         }
     }
 }

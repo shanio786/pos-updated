@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,13 +11,12 @@ namespace supershop.Items
 {
     public partial class Add_Category : Form
     {
-
         public Add_Category()
         {
             InitializeComponent();
         }
-	
-	protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape)
                 this.Close();
@@ -26,15 +25,14 @@ namespace supershop.Items
 
         public string categoryID
         {
-            set { lblID.Text = value;} 
-            get{return lblID.Text;}
+            set { lblID.Text = value; }
+            get { return lblID.Text; }
         }
         public string categoryName
         {
             set { txtCategoryName.Text = value; btnSave.Text = "Update"; }
             get { return txtCategoryName.Text; }
         }
-
 
         private void lnkCategory_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -57,40 +55,36 @@ namespace supershop.Items
         {
             try
             {
-                 if (txtCategoryName.Text == "") 
-                 { 
-                     MessageBox.Show("Please Fill  Category Name"); 
-                     txtCategoryName.Focus(); 
-                 }
+                if (txtCategoryName.Text == "")
+                {
+                    MessageBox.Show("Please Fill  Category Name");
+                    txtCategoryName.Focus();
+                }
                 else
-                 {
-                     if (lblID.Text == "-")
-                     {
-                         string sqlCmd = " insert into tbl_category (category_name)  values ('" + txtCategoryName.Text + "'  )";
-                         DataAccess.ExecuteSQL(sqlCmd);
-                         txtCategoryName.Text = "";
-                         lblMsg.Visible = true;
-                         lblMsg.Text = "Successfully saved";
-
-                     }
-                     else  //Update 
-                     {
-                         string sqlUpdateCmd = " update tbl_category set category_name = '" + txtCategoryName.Text + "'   where ID = '" + lblID.Text + "'";
-                         DataAccess.ExecuteSQL(sqlUpdateCmd);
-                         // lblMsg.Visible = true;
-                         // lblMsg.Text = "Successfully Updated";
-                         this.Hide();
-                         Items.Categories mkc = new Items.Categories();
-                         mkc.MdiParent = this.ParentForm;
-                         mkc.Show();
-                     }
-                 }         
-
-
+                {
+                    if (lblID.Text == "-")
+                    {
+                        DataAccess.ExecuteSQL("insert into tbl_category (category_name) values (@name)",
+                            DataAccess.P("@name", txtCategoryName.Text));
+                        txtCategoryName.Text = "";
+                        lblMsg.Visible = true;
+                        lblMsg.Text = "Successfully saved";
+                    }
+                    else  //Update 
+                    {
+                        DataAccess.ExecuteSQL("update tbl_category set category_name = @name where ID = @id",
+                            DataAccess.P("@name", txtCategoryName.Text),
+                            DataAccess.P("@id", Convert.ToInt64(lblID.Text)));
+                        this.Hide();
+                        Items.Categories mkc = new Items.Categories();
+                        mkc.MdiParent = this.ParentForm;
+                        mkc.Show();
+                    }
+                }
             }
             catch (Exception exp)
             {
-                MessageBox.Show("Sorry\r\n this id already added \n\n " + exp.Message);
+                Logger.Show(exp, "Could not save category");
             }
         }
     }

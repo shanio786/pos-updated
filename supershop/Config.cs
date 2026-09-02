@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,9 +15,7 @@ namespace supershop
         public Config()
         {
             InitializeComponent();
-           // txtTrVAT.CharacterCasing = CharacterCasing.Upper;
         }
-
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -29,8 +27,8 @@ namespace supershop
         //bind terminal
         public void terminallist()
         {
-            string sqlterminallist = "select Shopid as 'ID', Branchname	 ,Location ,Phone ,  " + 
-                                     " VAT as 'TAX %' ,Dis as 'Discount %'    from tbl_terminallocation";
+            string sqlterminallist = "select Shopid as 'ID', Branchname, Location, Phone, " +
+                                     " VAT as 'TAX %', Dis as 'Discount %' from tbl_terminallocation";
             DataTable dtterminallist = DataAccess.GetDataTable(sqlterminallist);
             dtgrdViewTerminallist.DataSource = dtterminallist;
         }
@@ -39,7 +37,7 @@ namespace supershop
         {
             try
             {
-                //Bind store info 
+                //Bind store info
                 string sql3 = "select * from storeconfig";
                 DataTable dt1 = DataAccess.GetDataTable(sql3);
 
@@ -53,57 +51,66 @@ namespace supershop
                 txtDiscountRate.Text = dt1.Rows[0].ItemArray[7].ToString();
                 txtFootermsg.Text = dt1.Rows[0].ItemArray[8].ToString();
 
-                txtTrweb.Text = dt1.Rows[0].ItemArray[5].ToString();               
+                txtTrweb.Text = dt1.Rows[0].ItemArray[5].ToString();
                 txtTrFootermsg.Text = dt1.Rows[0].ItemArray[8].ToString();
                 terminallist();
                 dtgrdViewTerminallist.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
 
-                if (lblShopID.Text == "-")
-                {
-                    btnAddnew.Visible = false ;
-                    lnkDelete.Visible = false;
-                }
-                else
-                {
-                    btnAddnew.Visible = true;
-                    lnkDelete.Visible = true;
-                }
+                bool hasTerminal = (lblShopID.Text != "-");
+                btnAddnew.Visible = hasTerminal;
+                lnkDelete.Visible = hasTerminal;
             }
             catch (Exception exLog) { Logger.Error(exLog); }
-          
         }
 
         private void bntSave_Click(object sender, EventArgs e)
         {
             if (txtCompanyName.Text == "" || txtCompanyAddress.Text == "" || txtPhone.Text == "" || txtVATRate.Text == "" || txtDiscountRate.Text == "")
             {
-                // MessageBox.Show("You are Not able to Update");
                 MessageBox.Show("You are Not able to Update", "Button3 Title", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {
                 try
                 {
-                    
-                    string sql = "update storeconfig set companyname= '" + txtCompanyName.Text + "', companyaddress = '" + txtCompanyAddress.Text + "', " + 
-                        " companyphone = '" + txtPhone.Text + "', vatno = '" + txtVatRegiNo.Text + "' , web = '" + txtWebSite.Text + "' ,    " +
-                         " vatrate = '" + txtVATRate.Text + "', disrate = '" + txtDiscountRate.Text + "' , footermsg = '" + txtFootermsg.Text + "'   " +
-                        "  where id = '" + lblid.Text + "'";
-                    DataAccess.ExecuteSQL(sql);
+                    decimal vatrate = Convert.ToDecimal(txtVATRate.Text);
+                    decimal disrate = Convert.ToDecimal(txtDiscountRate.Text);
 
-                    string sql2 = "update tbl_terminallocation set Branchname = '" + txtCompanyName.Text + "', Location = '" + txtCompanyAddress.Text + "', " +
-                        "Phone = '" + txtPhone.Text + "', VAT = '" + txtVATRate.Text + "' , Web = '" + txtWebSite.Text + "' ,    " +
-                        " Dis = '" + txtDiscountRate.Text + "', VATRegiNo = '" + txtVatRegiNo.Text + "' , Footermsg = '" + txtFootermsg.Text + "'   " +
-                        " , CompanyName = '" + txtCompanyName.Text + "'  where Shopid = 'MTQC02' ";
-                    DataAccess.ExecuteSQL(sql2);
+                    // Store info and the main terminal row are kept in step, so both updates commit together
+                    DataAccess.RunInTransaction(delegate(DataAccess.DbTransaction tx)
+                    {
+                        tx.Execute("update storeconfig set companyname = @name, companyaddress = @address, companyphone = @phone, " +
+                                   " vatno = @vatno, web = @web, vatrate = @vatrate, disrate = @disrate, footermsg = @footer " +
+                                   " where id = @id",
+                            DataAccess.P("@name", txtCompanyName.Text),
+                            DataAccess.P("@address", txtCompanyAddress.Text),
+                            DataAccess.P("@phone", txtPhone.Text),
+                            DataAccess.P("@vatno", txtVatRegiNo.Text),
+                            DataAccess.P("@web", txtWebSite.Text),
+                            DataAccess.P("@vatrate", vatrate),
+                            DataAccess.P("@disrate", disrate),
+                            DataAccess.P("@footer", txtFootermsg.Text),
+                            DataAccess.P("@id", Convert.ToInt32(lblid.Text)));
+
+                        tx.Execute("update tbl_terminallocation set Branchname = @name, Location = @address, Phone = @phone, " +
+                                   " VAT = @vatrate, Web = @web, Dis = @disrate, VATRegiNo = @vatno, Footermsg = @footer, " +
+                                   " CompanyName = @name where Shopid = 'MTQC02'",
+                            DataAccess.P("@name", txtCompanyName.Text),
+                            DataAccess.P("@address", txtCompanyAddress.Text),
+                            DataAccess.P("@phone", txtPhone.Text),
+                            DataAccess.P("@vatrate", vatrate),
+                            DataAccess.P("@web", txtWebSite.Text),
+                            DataAccess.P("@disrate", disrate),
+                            DataAccess.P("@vatno", txtVatRegiNo.Text),
+                            DataAccess.P("@footer", txtFootermsg.Text));
+                    });
 
                     lblmsg.Text = "Configuation has been Saved";
                     lblmsg.Visible = true;
-
                 }
                 catch (Exception exp)
                 {
-                    MessageBox.Show("Sorry\r\n You have to Check the Data" + exp.Message);
+                    Logger.Show(exp, "Could not save configuration");
                 }
             }
         }
@@ -131,9 +138,8 @@ namespace supershop
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
             }
-            catch (Exception exLog) { Logger.Error(exLog); } 
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void txtDiscountRate_KeyPress(object sender, KeyPressEventArgs e)
@@ -154,9 +160,8 @@ namespace supershop
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
             }
-            catch (Exception exLog) { Logger.Error(exLog); } 
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         // Click terminal list and move to add and update
@@ -164,16 +169,17 @@ namespace supershop
         {
             try
             {
+                if (e.RowIndex < 0) return;
                 DataGridViewRow row = dtgrdViewTerminallist.Rows[e.RowIndex];
-                string terminalid = row.Cells[0].Value.ToString();
+                string terminalid = Convert.ToString(row.Cells[0].Value);
 
+                string sqlterminallist = "select Shopid, Branchname, Location, Phone, Email, " +
+                                         " Web, VAT, Dis, VATRegiNo, Footermsg from tbl_terminalLocation " +
+                                         " where Shopid = @shopid";
+                DataTable dtterminallist = DataAccess.GetDataTable(sqlterminallist, DataAccess.P("@shopid", terminalid));
+                if (dtterminallist.Rows.Count == 0) return;
 
-                string sqlterminallist = "select Shopid  , Branchname , Location ,Phone , Email , " +
-                                         " Web, VAT , Dis , VATRegiNo , Footermsg    from tbl_terminalLocation " +
-                                         " where Shopid = '" + terminalid + "' ";
-                DataTable dtterminallist = DataAccess.GetDataTable(sqlterminallist);
-
-                lblShopID.Text          = dtterminallist.Rows[0].ItemArray[0].ToString(); 
+                lblShopID.Text          = dtterminallist.Rows[0].ItemArray[0].ToString();
                 txtterminalname.Text    = dtterminallist.Rows[0].ItemArray[1].ToString();
                 txtTerminaladdress.Text = dtterminallist.Rows[0].ItemArray[2].ToString();
                 txtTerminalPhone.Text   = dtterminallist.Rows[0].ItemArray[3].ToString();
@@ -189,51 +195,67 @@ namespace supershop
                 lbltrmsg.Visible = false;
             }
             catch (Exception exLog) { Logger.Error(exLog); }
-       
-                       
         }
-      
+
         private void bntTrSave_Click(object sender, EventArgs e)
         {
             try
             {
                 if (txtterminalname.Text == "" || txtTerminaladdress.Text == "" || txtTerminalPhone.Text == "" || txtTrVAT.Text == "" || txtTrDis.Text == "")
-                {                     
+                {
                     MessageBox.Show("Please fill Terminal info", "Button3 Title", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 else
                 {
+                    decimal vat = Convert.ToDecimal(txtTrVAT.Text);
+                    decimal dis = Convert.ToDecimal(txtTrDis.Text);
+
                     //Add new Terminal Info
                     if (lblShopID.Text == "-")
                     {
                         string Shopid = txtterminalname.Text.Substring(0, 2) + txtTrVATregino.Text.Substring(0, 2);
-                        string sqlinsert = " insert into tbl_terminallocation  (Shopid, CompanyName, Branchname , Location ,Phone , Email ,  Web, VAT , Dis , VATRegiNo , Footermsg ) " +
-                                           " values ('" + Shopid + "' , '" + txtCompanyName.Text + "' , '" + txtterminalname.Text + "' , " +
-                                            " '" + txtTerminaladdress.Text + "' , '" + txtTerminalPhone.Text + "' , '" + txtTremail.Text + "' ," + 
-                                            " '" + txtTrweb.Text + "',  '" + txtTrVAT.Text + "', " +
-                                            " '" + txtTrDis.Text + "' , '" + txtTrVATregino.Text + "',  '" + txtTrFootermsg.Text + "')";
-                        DataAccess.ExecuteSQL(sqlinsert);
+                        DataAccess.ExecuteSQL(" insert into tbl_terminallocation (Shopid, CompanyName, Branchname, Location, Phone, Email, Web, VAT, Dis, VATRegiNo, Footermsg) " +
+                                              " values (@shopid, @company, @branch, @location, @phone, @email, @web, @vat, @dis, @vatno, @footer)",
+                            DataAccess.P("@shopid", Shopid),
+                            DataAccess.P("@company", txtCompanyName.Text),
+                            DataAccess.P("@branch", txtterminalname.Text),
+                            DataAccess.P("@location", txtTerminaladdress.Text),
+                            DataAccess.P("@phone", txtTerminalPhone.Text),
+                            DataAccess.P("@email", txtTremail.Text),
+                            DataAccess.P("@web", txtTrweb.Text),
+                            DataAccess.P("@vat", vat),
+                            DataAccess.P("@dis", dis),
+                            DataAccess.P("@vatno", txtTrVATregino.Text),
+                            DataAccess.P("@footer", txtTrFootermsg.Text));
                         lbltrmsg.Text = "Submitted a new Terminal";
                         lbltrmsg.Visible = true;
                         terminallist();
                         tabControl1.SelectedTab = tabterminallist;
                     }
-                    else // Update selected 
+                    else // Update selected
                     {
-                        string sql = "update tbl_terminallocation set Branchname = '" + txtterminalname.Text + "', Location = '" + txtTerminaladdress.Text + "', " +
-                        " Email = '" + txtTremail.Text + "' , Phone = '" + txtTerminalPhone.Text + "', VAT = '" + txtTrVAT.Text + "' , Web = '" + txtTrweb.Text + "' ,    " +
-                        " Dis = '" + txtTrDis.Text + "', VATRegiNo = '" + txtTrVATregino.Text + "' , Footermsg = '" + txtTrFootermsg.Text + "'   " +
-                        " , CompanyName = '" + txtCompanyName.Text + "'  where Shopid = '" + lblShopID.Text + "' ";
-                        DataAccess.ExecuteSQL(sql);
+                        DataAccess.ExecuteSQL("update tbl_terminallocation set Branchname = @branch, Location = @location, Email = @email, " +
+                                              " Phone = @phone, VAT = @vat, Web = @web, Dis = @dis, VATRegiNo = @vatno, Footermsg = @footer, " +
+                                              " CompanyName = @company where Shopid = @shopid",
+                            DataAccess.P("@branch", txtterminalname.Text),
+                            DataAccess.P("@location", txtTerminaladdress.Text),
+                            DataAccess.P("@email", txtTremail.Text),
+                            DataAccess.P("@phone", txtTerminalPhone.Text),
+                            DataAccess.P("@vat", vat),
+                            DataAccess.P("@web", txtTrweb.Text),
+                            DataAccess.P("@dis", dis),
+                            DataAccess.P("@vatno", txtTrVATregino.Text),
+                            DataAccess.P("@footer", txtTrFootermsg.Text),
+                            DataAccess.P("@company", txtCompanyName.Text),
+                            DataAccess.P("@shopid", lblShopID.Text));
                         lbltrmsg.Text = "Terminal info has been Saved";
                         lbltrmsg.Visible = true;
                         terminallist();
                         tabControl1.SelectedTab = tabterminallist;
                     }
                 }
-             
             }
-            catch (Exception exLog) { Logger.Error(exLog); }
+            catch (Exception exLog) { Logger.Show(exLog, "Could not save terminal info"); }
         }
 
         // Prevent String value
@@ -255,9 +277,8 @@ namespace supershop
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
             }
-            catch (Exception exLog) { Logger.Error(exLog); } 
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         // Prevent String value
@@ -279,9 +300,8 @@ namespace supershop
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
             }
-            catch (Exception exLog) { Logger.Error(exLog); } 
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
         private void btnAddnew_Click(object sender, EventArgs e)
@@ -296,7 +316,7 @@ namespace supershop
 
         private void helplnk_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            parameter.helpid = "config";  
+            parameter.helpid = "config";
             HelpPage go = new HelpPage();
             go.MdiParent = this.ParentForm;
             go.Show();
@@ -308,31 +328,25 @@ namespace supershop
 
             if (result == DialogResult.Yes)
             {
-
                 if (lblShopID.Text == "-")
                 {
-                    // MessageBox.Show("You are Not able to Update");
                     MessageBox.Show("You are Not able to Delete", "Button3 Title", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 else
                 {
                     try
                     {
-                        string sql = "delete from tbl_terminalLocation where Shopid ='" + lblShopID.Text + "'";
-                        DataAccess.ExecuteSQL(sql);
+                        DataAccess.ExecuteSQL("delete from tbl_terminalLocation where Shopid = @shopid", DataAccess.P("@shopid", lblShopID.Text));
                         MessageBox.Show("successfully Data Delete !", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         terminallist();
                         tabControl1.SelectedTab = tabterminallist;
-                    
-
                     }
                     catch (Exception exp)
                     {
-                        MessageBox.Show("Sorry\r\n You have to Check the Data" + exp.Message);
+                        Logger.Show(exp, "Could not delete terminal");
                     }
                 }
             }
         }
- 
     }
 }

@@ -51,9 +51,6 @@ namespace supershop.Inventory
             CmbCustomer.DataSource = dt5;
             CmbCustomer.DisplayMember = "Name";
             CmbCustomer.Text = "Guest";
-
-         //   CmbBiller.DataSource = dt5;
-          //  CmbBiller.DisplayMember = "Name";            
         }
 
         public void BillerComboBoxDataBind()
@@ -143,41 +140,23 @@ namespace supershop.Inventory
                 DataGridViewColumn ColName = dgrvSalesItemList.Columns[0];
                 ColName.Width = 151; ;
 
-                //Load Invoice No / Receipt No for current transaction
-                string sql = "select sales_id from sales_payment order by sales_id desc";
-                DataTable dt = DataAccess.GetDataTable(sql);
-                if (dt.Rows.Count > 0)
-                {
-                    double id = Convert.ToDouble(dt.Rows[0].ItemArray[0].ToString()) + 1;
-                    txtinvoiceNo.Text = Convert.ToString(id);
-                }
-                else
-                {
-                    double id = 1;                     
-                    txtinvoiceNo.Text = Convert.ToString(id); 
-                }
+                //Load Invoice No / Receipt No for display (the real number is taken inside SaveSale)
+                ShowSales_id_increment();
                 txtBarcodeReaderBox.Text = UserInfo.invoiceNo;        
             }
             catch (Exception exLog) { Logger.Error(exLog); }
             
         }
 
-        //Show Products image
+        //Show Products list (filtered by product name / id / category)
         public void ItemList_with_images(string value, ListView _lst_items)
         {
-            //flowLayoutPanelItemList.Controls.Clear();
-            string img_directory = Application.StartupPath + @"\ITEMIMAGE\";
-            string[] files = Directory.GetFiles(img_directory, "*.png *.jpg");
             try
             {
-                string sql = " select  *  from  vw_itemdisplay_sr    where  ( product_name like '" + value + "%' and product_quantity >= 1) " +
-                " OR ( product_id like '" + value + "%'  and product_quantity >= 1) " +
-                " OR (category like '" + value + "%' and   product_quantity >= 1)  ";
-                //" ORDER BY RANDOM() LIMIT 12 "; // Sqlite  //View vw_itemdisplay_sr   purchase
-                // " ORDER BY RAND() LIMIT 12 "; // MySQL
-                //  " ORDER BY NEWID() "; // SQL server and use -- top 12 after select  
+                string sql = " select * from vw_itemdisplay_sr where product_quantity >= 1 " +
+                             " and ( product_name like @q + '%' OR product_id like @q + '%' OR category like @q + '%' ) ";
 
-                DataTable dt = DataAccess.GetDataTable(sql);
+                DataTable dt = DataAccess.GetDataTable(sql, DataAccess.P("@q", value));
                 if (dt.Rows.Count > 0)
                 {
                     _lst_items.Items.Clear();
@@ -204,26 +183,6 @@ namespace supershop.Inventory
 
                         }
                         _lst_items.Items.Add(lst);
-                        //int y = dgv_items.Rows.Add();
-                        //dgv_items.Rows[y].Cells[0].Value = dr["product_id"].ToString();
-                        //if (dr["taxapply"].ToString() == "1")
-                        //{
-                        //    dgv_items.Rows[y].Cells[1].Value = "YES";
-                        //}
-                        //else
-                        //{
-                        //    dgv_items.Rows[y].Cells[1].Value = "NO";
-                        //}
-
-                        //dgv_items.Rows[y].Cells[2].Value = dr["product_name"].ToString();
-                        //dgv_items.Rows[y].Cells[3].Value = dr["product_quantity"].ToString();
-                        //dgv_items.Rows[y].Cells[4].Value = dr["retail_price"].ToString();
-                        //dgv_items.Rows[y].Cells[5].Value = dr["discount"].ToString();
-                        //dgv_items.Rows[y].Cells[6].Value = dr["category"].ToString();
-                        //dgv_items.Rows[y].Cells[7].Value = dr["supplier"].ToString();
-
-
-
                     }
 
                     if (_lst_items.Items.Count > 0)
@@ -241,76 +200,8 @@ namespace supershop.Inventory
                     _lst_items.Visible = false;
                     _lst_items.Items.Clear();
                 }
-                //int currentImage = 0;
-
-                //for (int i = 0; i < dt.Rows.Count; i++)
-                //{
-                //    DataRow dataReader = dt.Rows[i];
-
-                //    Button b = new Button();
-                //    //Image i = Image.FromFile(img_directory + dataReader["name"]);
-                //    b.Tag = dataReader["product_id"];
-                //    b.Click += new EventHandler(b_Click);
-
-                //    string taxapply;
-                //    if (dataReader["taxapply"].ToString() == "1")
-                //    {
-                //        taxapply = "YES";
-                //    }
-                //    else
-                //    {
-                //        taxapply = "NO";
-                //    }
-
-                //    string details = dataReader["product_id"] +
-                //     "\n Name: " + dataReader["product_name"].ToString() +
-                //  //   "\n Buy price: " + dataReader["cost_price"].ToString() +
-                //     "\n Stock Qty: " + dataReader["product_quantity"].ToString() +
-                //     "\n Retail price: " + dataReader["retail_price"].ToString() +
-                //     "\n Discount: " + dataReader["discount"].ToString() +
-                //     "\n Category: " + dataReader["category"].ToString() +
-                //     "\n Supplier: " + dataReader["supplier"].ToString() +
-                //   //  "\n Branch: "  + dataReader["Shopid"].ToString() +
-                //     "\n Tax Apply: " + taxapply;
-                //    b.Name = details;                 
-                //     toolTip2.ToolTipTitle = "Item Details";  // If you want to Show tooltip please uncomment
-                //     toolTip2.SetToolTip(b, details);          //Umncomment
-
-                //    ImageList il = new ImageList();
-                //    il.ColorDepth = ColorDepth.Depth32Bit;
-                //    il.TransparentColor = Color.Transparent;
-                //    il.ImageSize = new Size(55, 45);
-                //    il.Images.Add(Image.FromFile(img_directory + dataReader["imagename"]));
-
-
-                //    b.Image = il.Images[0];
-                //    b.Margin = new Padding(3, 3, 3, 3);
-
-                //    b.Size = new Size(87, 60);
-                //    b.Text.PadRight(4);
-
-                //  //  b.Text += " " + dataReader["product_id"] + "\n ";
-                //  //   b.Text +=  dataReader["product_name"].ToString();
-                //  //  b.Text += "\n Buy: " + dataReader["cost_price"];
-                ////    b.Text += "\n Stock: " + dataReader["product_quantity"];
-                //  //  b.Text += "\n R.Price: " + dataReader["retail_price"];
-                ////    b.Text += "\n Dis: " + dataReader["discount"] + "% ";   //"Tax: " + taxapply;
-
-                //    b.Font = new Font("Arial", 9, FontStyle.Bold, GraphicsUnit.Point);
-                //    b.TextAlign = ContentAlignment.TopLeft;
-                //    b.TextImageRelation = TextImageRelation.ImageAboveText;
-                //  //  b.FlatStyle = FlatStyle.Flat;
-                //    b.FlatAppearance.BorderSize = 0;
-                //    flowLayoutPanelItemList.Controls.Add(b);
-                //    currentImage++;
-
-                //}
             }
-            catch //(Exception)
-            {
-
-                //throw;
-            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
 
@@ -318,14 +209,7 @@ namespace supershop.Inventory
         protected void b_Click(object sender, EventArgs e)
         {
             Button b = sender as Button;
-            string s;
-            s = " ID: ";
-            s += b.Tag;
-            s += "\n Name: ";
-            s += b.Name.ToString();
-
             txtBarcodeReaderBox.Text = b.Tag.ToString();       
-
         }
 
         //Barcode Reader
@@ -347,11 +231,13 @@ namespace supershop.Inventory
                     string sql = "SELECT  product_name as Name , retail_price as Price , 1.00  as QTY, (retail_price * 1.00 ) * 1.00  as 'Total' ,  " +
                             " (((retail_price * 1.00 ) * discount) / 100.00) as 'dis amt' , " +
                             " CASE     " +
-                            " WHEN taxapply = 1 THEN   (((retail_price * 1.00 )  - (((retail_price * 1.00 ) * discount) / 100.00))  * " + Taxrate + " ) / 100.00   " +
-                            " ELSE '0.00'  " +
+                            " WHEN taxapply = 1 THEN   (((retail_price * 1.00 )  - (((retail_price * 1.00 ) * discount) / 100.00))  * @taxrate ) / 100.00   " +
+                            " ELSE 0.00  " +
                             " END 'tax amt' , product_id as ID , discount , taxapply " +
-                            " FROM  purchase  where product_id = '" + txtBarcodeReaderBox.Text + "'  and product_quantity >= 1 ";
-                    DataTable dt = DataAccess.GetDataTable(sql);
+                            " FROM  purchase  where product_id = @id  and product_quantity >= 1 ";
+                    DataTable dt = DataAccess.GetDataTable(sql,
+                        DataAccess.P("@taxrate", Convert.ToDecimal(Taxrate)),
+                        DataAccess.P("@id", txtBarcodeReaderBox.Text));
 
                     string ItemsName = dt.Rows[0].ItemArray[0].ToString();
                     double Rprice = Convert.ToDouble(dt.Rows[0].ItemArray[1].ToString());
@@ -362,9 +248,6 @@ namespace supershop.Inventory
                     double Taxamt = Convert.ToDouble(dt.Rows[0].ItemArray[5].ToString());       // Total Tax amount  of this item
                     double Dis = Convert.ToDouble(dt.Rows[0].ItemArray[7].ToString());          // Discount Rate
                     double Taxapply = Convert.ToDouble(dt.Rows[0].ItemArray[8].ToString());     //  VAT/TAX/TPS/TVQ apply or not
-
-                    //Add to Item list
-                   // dgrvSalesItemList.Rows.Add(ItemsName, Rprice, Qty, Rprice, Itemid, Disamt, Taxamt, Dis, Taxapply);
 
                     //Add to Item list             
                     int n = Finditem(ItemsName);
@@ -394,17 +277,6 @@ namespace supershop.Inventory
                             double TaxamtInc = ((((Rprice * qty) - (((Rprice * qty) * disrate) / 100.00)) * Taxrate) / 100.00);
                             dgrvSalesItemList.Rows[n].Cells[6].Value = TaxamtInc;
                         }
-
-                        //dgrvSalesItemList.Rows[n].Cells[0].Value = ItemsName;
-                        //dgrvSalesItemList.Rows[n].Cells[1].Value = Rprice;
-                        //int QtyInc = Convert.ToInt32(dgrvSalesItemList.Rows[n].Cells[2].Value);
-                        //dgrvSalesItemList.Rows[n].Cells[2].Value = (QtyInc + 1);  //Qty
-                        //dgrvSalesItemList.Rows[n].Cells[3].Value = Rprice * (QtyInc + 1);   // Total price
-                        //dgrvSalesItemList.Rows[n].Cells[4].Value = Itemid;
-                        //dgrvSalesItemList.Rows[n].Cells[5].Value = Disamt;
-                        //dgrvSalesItemList.Rows[n].Cells[6].Value = Taxamt;
-                        //dgrvSalesItemList.Rows[n].Cells[7].Value = Dis;
-                        //dgrvSalesItemList.Rows[n].Cells[8].Value = Taxapply;
                     }
 
                     itemid.itemcode = Itemid;
@@ -747,131 +619,134 @@ namespace supershop.Inventory
 
         private void timer_InvoiceNoRefresh_Tick(object sender, EventArgs e)
         {
-            try
-            {
-                string sql = "select  sales_id  from sales_payment order by sales_id desc";
-                DataTable dt = DataAccess.GetDataTable(sql);
-              //  double id = Convert.ToDouble(dt.Rows[0].ItemArray[0].ToString()) + 1;
-               // txtinvoiceNo.Text = Convert.ToString(id);
-                if (dt.Rows.Count > 0)
-                {
-                    double id = Convert.ToDouble(dt.Rows[0].ItemArray[0].ToString()) + 1;
-                    txtinvoiceNo.Text = Convert.ToString(id);
-                }
-                else
-                {
-                    double id = 1;
-                    txtinvoiceNo.Text = Convert.ToString(id);
-                }
-            }
-            catch (Exception exLog) { Logger.Error(exLog); } 
+            ShowSales_id_increment();
         }
 
         #region Request to submit
-        /// //// Add sales item  //////////////Store into sales_item table /////////
-        public bool sales_item()
-        {          
-            int rows = dgrvSalesItemList.Rows.Count;
-            for (int i = 0; i < rows; i++)
-            {
-                string SalesDate = dtSalesDate.Text;
-                string trno = txtinvoiceNo.Text;
-                string itemid = dgrvSalesItemList.Rows[i].Cells[4].Value.ToString();
-                string itNam = dgrvSalesItemList.Rows[i].Cells[0].Value.ToString();
-                double qty = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[2].Value.ToString());
-                double Rprice = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[1].Value.ToString());
-                double total = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[3].Value.ToString());
-                double dis = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[7].Value.ToString());
-                double taxapply = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[8].Value.ToString());
 
-
-                // =================================Start=====  Profit calculation =============== Start ========= 
-                // Discount_amount = (Retail_price * discount) / 100                    -- 49 * 3 / 100 = 1.47
-                // Retail_priceAfterDiscount = Retail_price - Discount_amount           -- 49 - 1.47 = 47.53
-                // Profit = (Retail_priceAfterDiscount * QTY )   - (cost_price * qty);  ---( 47.53 * 1 ) - ( 45 * 1) = 2.53
-
-                string sqlprofit = "Select cost_price , discount from  purchase  where product_id  = '" + itemid + "'";
-                DataTable dt1 = DataAccess.GetDataTable(sqlprofit);
-
-                double cost_price = Convert.ToDouble(dt1.Rows[0].ItemArray[0].ToString());
-                double discount = Convert.ToDouble(dt1.Rows[0].ItemArray[1].ToString());
-
-                double Discount_amount = (Rprice * discount) / 100.00;
-                double Retail_priceAfterDiscount = Rprice - Discount_amount;
-                double Profit = Math.Round((Retail_priceAfterDiscount - cost_price), 2);
-                // =================================Start=====  Profit calculation =============== Start ========= 
-
-                string sql1 = " insert into sales_item (sales_id,itemName,Qty,RetailsPrice,Total, profit,sales_time, itemcode , discount, taxapply) " +
-                              " values ('" + trno + "', '" + itNam + "', '" + qty + "', '" + Rprice + "', '" + total + "', '" + Profit + "', " +
-                              " '" + SalesDate + "','" + itemid + "','" + dis + "','" + taxapply + "')";
-                DataAccess.ExecuteSQL(sql1);               
-
-                //update quantity Decrease from Stock Qty |  purchase Table
-                if (txtinvoiceNo.Text == "")
-                {
-                    MessageBox.Show("please check sales no ");
-                }
-                else
-                { 
-
-                    string itemids = dgrvSalesItemList.Rows[i].Cells[4].Value.ToString();
-                    double qtyupdate = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[2].Value.ToString());
-
-                    // Update Quantity
-                    string sqlupdateQty = "select product_quantity  from purchase where product_id = '" + itemids + "'";
-                    DataTable dtUqty = DataAccess.GetDataTable(sqlupdateQty);
-                    double product_quantity = Convert.ToDouble(dtUqty.Rows[0].ItemArray[0].ToString()) - qtyupdate;
-
-                    string sql =    " update purchase set " +
-                                    " product_quantity = '" + product_quantity + "'  " + 
-                                    " where product_id = '" + itemids + "' ";
-                    DataAccess.ExecuteSQL(sql);
-                }
-
-            }
-            return true;                   
-
+        /// <summary>Numeric cell / column value as double (0 for NULL or empty).</summary>
+        private static double ToDouble(object value)
+        {
+            if (value == null || value == DBNull.Value) return 0;
+            string s = value.ToString().Trim();
+            return s.Length == 0 ? 0 : Convert.ToDouble(s);
         }
 
-        /// //// Payment items Add  //////////////////////Store into Sales_payment table //////////////// 
-        public void payment_item()
+        /// <summary>
+        /// Saves the complete sale in ONE transaction: the sales_payment row, one
+        /// sales_item row per cart line, the stock decrease in purchase and the
+        /// tbl_saleInfo row.  The invoice number is taken inside the transaction
+        /// (safe when several terminals sell at the same time).
+        /// Returns the new invoice number.
+        /// </summary>
+        public long SaveSale()
         {
-            string trno = txtinvoiceNo.Text;
-
-
-            string payamount = lblTotalPayable.Text;
-            string changeamount = "0";
-            string due = "0";
-            string tax = lblTotalVAT.Text;
-            string DiscountTotal = lbloveralldiscount.Text;  // lblTotalDisCount.Text;
-            string Comment =  CmbCustomer.Text + "  " + txtNote.Text;
+            string SalesDate      = dtSalesDate.Text;
+            string payamount      = lblTotalPayable.Text;
+            string changeamount   = "0";
+            string due            = "0";
+            string tax            = lblTotalVAT.Text;
+            string DiscountTotal  = lbloveralldiscount.Text;  // item wise discount + counter discount
+            string custId         = lblCustID.Text;
+            string Comment        = CmbCustomer.Text + "  " + txtNote.Text;
             string overalldisRate = txtDiscountRate.Text;
-            string vatRate = txtVATRate.Text;
+            string vatRate        = txtVATRate.Text;
 
+            // tbl_saleInfo values
+            string warehouseNo    = CmbWarehouse.Text;
+            string Biller         = CmbBiller.Text;
+            string note           = lblCustID.Text + "  " + txtNote.Text;
+            string shippingFee    = txtShippingFee.Text.Trim();
+            string itemDisRate    = lblTotalDisCount.Text;
+            string soldBy         = lblUserID.Text;
 
-            string sql1 =   " insert into sales_payment (sales_id, payment_type, payment_amount, change_amount, due_amount, dis, vat, " +
-                            " sales_time, c_id, emp_id, comment, TrxType, Shopid, ovdisrate , vaterate ) " +
-                            " values ('"+ txtinvoiceNo.Text + "','Invoice', '" + payamount + "', '" + changeamount + "', " + 
-                            " '" + due + "', '" + DiscountTotal + "', '" + tax + "', '"+ dtSalesDate.Text + "','" + lblCustID.Text + "', " +
-                            " '" + UserInfo.UserName + "','" + Comment + "', 'Inventory', '" + UserInfo.Shopid + "', '" + overalldisRate + "' , '" + vatRate + "' )";
-            DataAccess.ExecuteSQL(sql1);            
-        }
+            long newId = 0;
+            DataAccess.RunInTransaction(delegate(DataAccess.DbTransaction tx)
+            {
+                long salesId = tx.NextSalesId();
 
+                // 1. Payment header (sales_payment)
+                tx.Execute(" insert into sales_payment (sales_id, payment_type, payment_amount, change_amount, due_amount, dis, vat, " +
+                           " sales_time, c_id, emp_id, comment, TrxType, Shopid, ovdisrate, vaterate) " +
+                           " values (@sales_id, 'Invoice', @payment_amount, @change_amount, @due_amount, @dis, @vat, " +
+                           " @sales_time, @c_id, @emp_id, @comment, 'Inventory', @Shopid, @ovdisrate, @vaterate)",
+                    DataAccess.P("@sales_id", salesId),
+                    DataAccess.P("@payment_amount", payamount),
+                    DataAccess.P("@change_amount", changeamount),
+                    DataAccess.P("@due_amount", due),
+                    DataAccess.P("@dis", DiscountTotal),
+                    DataAccess.P("@vat", tax),
+                    DataAccess.P("@sales_time", SalesDate),
+                    DataAccess.P("@c_id", custId),
+                    DataAccess.P("@emp_id", UserInfo.UserName),
+                    DataAccess.P("@comment", Comment),
+                    DataAccess.P("@Shopid", UserInfo.Shopid),
+                    DataAccess.P("@ovdisrate", overalldisRate),
+                    DataAccess.P("@vaterate", vatRate));
 
-        /// //// Add sales Info  /////////////tbl_salesInfo////// 
-        public void SaleInfo()
-        {
-            string invoiceNo    = txtinvoiceNo.Text;
-            string warehouseNo  = CmbWarehouse.Text;
-            string Biller       = CmbBiller.Text;
-            string customer     = lblCustID.Text; // CmbCustomer.Text;
-            string note         = lblCustID.Text + "  " + txtNote.Text;
-            string shippingFee  = txtShippingFee.Text.Trim();
+                // 2. One sales_item row per cart line + stock decrease
+                int rows = dgrvSalesItemList.Rows.Count;
+                for (int i = 0; i < rows; i++)
+                {
+                    string itemid   = dgrvSalesItemList.Rows[i].Cells[4].Value.ToString();
+                    string itNam    = dgrvSalesItemList.Rows[i].Cells[0].Value.ToString();
+                    double qty      = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[2].Value.ToString());
+                    double Rprice   = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[1].Value.ToString());
+                    double total    = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[3].Value.ToString());
+                    double dis      = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[7].Value.ToString());
+                    double taxapply = Convert.ToDouble(dgrvSalesItemList.Rows[i].Cells[8].Value.ToString());
 
-            string sql1 = "insert into tbl_saleInfo (InvoiceNo, WarehouseNo, Biller, Customer, Note, DisRate, TaxRate, ShippingFee, SoldBy, Datetime)  values ('";
-            sql1 += invoiceNo + "', '" + warehouseNo + "', '" + Biller + "', '" + customer + "', '" + note + "', '" + lblTotalDisCount.Text + "', '";
-            sql1 += txtVATRate.Text + "','" + shippingFee + "', '" + lblUserID.Text + "','" + dtSalesDate.Text + "')";
-            DataAccess.ExecuteSQL(sql1);
+                    // Profit calculation
+                    // Discount_amount = (Retail_price * discount) / 100          -- 49 * 3 / 100 = 1.47
+                    // Retail_priceAfterDiscount = Retail_price - Discount_amount -- 49 - 1.47 = 47.53
+                    // Profit = Retail_priceAfterDiscount - cost_price            -- 47.53 - 45 = 2.53
+                    DataTable dt1 = tx.Query("select cost_price, discount from purchase where product_id = @id",
+                                             DataAccess.P("@id", itemid));
+                    if (dt1.Rows.Count == 0)
+                        throw new Exception("Product " + itemid + " was not found in stock.");
+                    double cost_price = ToDouble(dt1.Rows[0][0]);
+                    double discount   = ToDouble(dt1.Rows[0][1]);
+
+                    double Discount_amount = (Rprice * discount) / 100.00;
+                    double Retail_priceAfterDiscount = Rprice - Discount_amount;
+                    double Profit = Math.Round((Retail_priceAfterDiscount - cost_price), 2);
+
+                    tx.Execute(" insert into sales_item (sales_id, itemName, Qty, RetailsPrice, Total, profit, sales_time, itemcode, discount, taxapply) " +
+                               " values (@sales_id, @itemName, @Qty, @RetailsPrice, @Total, @profit, @sales_time, @itemcode, @discount, @taxapply)",
+                        DataAccess.P("@sales_id", salesId),
+                        DataAccess.P("@itemName", itNam),
+                        DataAccess.P("@Qty", qty),
+                        DataAccess.P("@RetailsPrice", Rprice),
+                        DataAccess.P("@Total", total),
+                        DataAccess.P("@profit", Profit),
+                        DataAccess.P("@sales_time", SalesDate),
+                        DataAccess.P("@itemcode", itemid),
+                        DataAccess.P("@discount", dis),
+                        DataAccess.P("@taxapply", taxapply.ToString()));
+
+                    // Decrease stock quantity in purchase table
+                    tx.Execute("update purchase set product_quantity = product_quantity - @qty where product_id = @id",
+                        DataAccess.P("@qty", qty),
+                        DataAccess.P("@id", itemid));
+                }
+
+                // 3. Sale info (tbl_saleInfo)
+                tx.Execute(" insert into tbl_saleInfo (InvoiceNo, WarehouseNo, Biller, Customer, Note, DisRate, TaxRate, ShippingFee, SoldBy, Datetime) " +
+                           " values (@InvoiceNo, @WarehouseNo, @Biller, @Customer, @Note, @DisRate, @TaxRate, @ShippingFee, @SoldBy, @Datetime)",
+                    DataAccess.P("@InvoiceNo", salesId.ToString()),
+                    DataAccess.P("@WarehouseNo", warehouseNo),
+                    DataAccess.P("@Biller", Biller),
+                    DataAccess.P("@Customer", custId),
+                    DataAccess.P("@Note", note),
+                    DataAccess.P("@DisRate", itemDisRate),
+                    DataAccess.P("@TaxRate", vatRate),
+                    DataAccess.P("@ShippingFee", shippingFee),
+                    DataAccess.P("@SoldBy", soldBy),
+                    DataAccess.P("@Datetime", SalesDate));
+
+                newId = salesId;
+            });
+            return newId;
         }
         
         // Save and Complete Sales
@@ -885,10 +760,6 @@ namespace supershop.Inventory
                 {
                     MessageBox.Show("Sorry ! you have not enough product \n  Please Purchase product or Increase Product Quantity");
                 }
-                //else if (Convert.ToInt32(txtinvoiceNo.Text) >= 53)  //Please uncommet this section
-                //{
-                //    MessageBox.Show("Sorry ! Demo version has limited transaction \n Please buy it \n contact at : citkar@live.com", "Yes or No", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
-                //}
                 else if (CmbWarehouse.Text == string.Empty)
                 {
                     MessageBox.Show("Please Select WareHouse .. ");
@@ -897,21 +768,14 @@ namespace supershop.Inventory
                 else
                 {
                     try
-                    {                     
-
-                        //Save payment info into 'sales_payment' table
-                        payment_item();
-
-                        //Save Sales item into 'sales_item' table
-                        sales_item();
-
-                        //Save Sale info into 'tbl_saleInfo' table
-                        SaleInfo();
+                    {
+                        // Save payment + items + stock + sale info in one transaction
+                        long newId = SaveSale();
+                        txtinvoiceNo.Text = newId.ToString();
 
                         // 5 % Rewards Point add to customer Account for total Payable amount 
-                      //  AddCredit();
+                        // AddCredit();
 
-                       // Inventory.InvoicePrint go = new Inventory.InvoicePrint(txtinvoiceNo.Text);
                         View_Sales_invoice go = new View_Sales_invoice(txtinvoiceNo.Text);
                         go.ShowDialog();
                         
@@ -920,7 +784,7 @@ namespace supershop.Inventory
                     }
                     catch (Exception exp)
                     {
-                        MessageBox.Show(exp.Message);
+                        Logger.Show(exp, "Could not save the sale.");
                     }
                 }
             }
@@ -928,22 +792,13 @@ namespace supershop.Inventory
 
         #endregion
 
+        // Next invoice number for display only (the real number is taken inside SaveSale)
         private void ShowSales_id_increment()
         {
             try
             {
-                string sql = "select  sales_id  from sales_payment order by sales_id desc";
-                DataTable dt = DataAccess.GetDataTable(sql);     
-                if (dt.Rows.Count > 0)
-                {
-                    double id = Convert.ToDouble(dt.Rows[0].ItemArray[0].ToString()) + 1;
-                    txtinvoiceNo.Text = Convert.ToString(id);
-                }
-                else
-                {
-                    double id = 1;
-                    txtinvoiceNo.Text = Convert.ToString(id);
-                }
+                decimal id = DataAccess.GetDecimal("SELECT ISNULL(MAX(sales_id),0)+1 FROM sales_payment");
+                txtinvoiceNo.Text = Convert.ToString(Convert.ToInt64(id));
             }
             catch (Exception exLog) { Logger.Error(exLog); } 
         }
@@ -978,8 +833,12 @@ namespace supershop.Inventory
         {
             // 5 % Rewards Point add for total Payable amount 
             double CreditPoint = (Convert.ToDouble(lblTotalPayable.Text) * 5) / 100;
-            string sqlCmd = "insert into tbl_custcredit (CustID, orderID, Date, Credit, Description)  values ('" + lblCustID.Text + "', '" + txtinvoiceNo.Text + "', '" + dtSalesDate.Text + "', '" + CreditPoint + "', 'Add Rewards')";
-            DataAccess.ExecuteSQL(sqlCmd);
+            string sqlCmd = "insert into tbl_custcredit (CustID, orderID, Date, Credit, Description) values (@CustID, @orderID, @Date, @Credit, 'Add Rewards')";
+            DataAccess.ExecuteSQL(sqlCmd,
+                DataAccess.P("@CustID", lblCustID.Text),
+                DataAccess.P("@orderID", txtinvoiceNo.Text),
+                DataAccess.P("@Date", dtSalesDate.Text),
+                DataAccess.P("@Credit", CreditPoint));
         }
 
         #region customer info
@@ -992,9 +851,10 @@ namespace supershop.Inventory
         {
             try
             {
-                string sqlCmd = "Select ID from  tbl_customer  where Name  = '" + CmbCustomer.Text + "'";
-                DataTable dt1 = DataAccess.GetDataTable(sqlCmd);
-                lblCustID.Text = dt1.Rows[0].ItemArray[0].ToString();
+                string sqlCmd = "select ID from tbl_customer where Name = @name";
+                DataTable dt1 = DataAccess.GetDataTable(sqlCmd, DataAccess.P("@name", CmbCustomer.Text));
+                if (dt1.Rows.Count > 0)
+                    lblCustID.Text = dt1.Rows[0].ItemArray[0].ToString();
             }
             catch (Exception exLog) { Logger.Error(exLog); }
 

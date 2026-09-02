@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,9 +15,8 @@ namespace supershop
     public partial class Import_Items : Form
     {
         private string Excel03ConString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Extended Properties='Excel 8.0;HDR={1}'";
-       // private string Excel07ConString = "Provider=Microsoft.ACE.OLEDB.8.0;Data Source={0};Extended Properties='Excel 8.0;HDR={1}'";
         private string Excel10ConString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 8.0;HDR={1}'";
-       
+
         public Import_Items()
         {
             InitializeComponent();
@@ -34,7 +33,6 @@ namespace supershop
             conStr = string.Empty;
             switch (extension)
             {
-
                 case ".xls": //Excel 97-03
                     conStr = string.Format(Excel03ConString, filePath, header);
                     break;
@@ -43,7 +41,7 @@ namespace supershop
                     conStr = string.Format(Excel10ConString, filePath, header);
                     break;
 
-                case ".csv": //Excel 07
+                case ".csv":
                     conStr = string.Format(Excel10ConString, filePath, header);
                     break;
             }
@@ -88,7 +86,20 @@ namespace supershop
         {
             openFileDialog1.ShowDialog();
             lblRows.Text = "Total ID = " + dtgridviewImportPreview.RowCount.ToString();
-            
+        }
+
+        // One parsed spreadsheet row
+        private class ImportRow
+        {
+            public string ProductId, ProductName, Category, Supplier, ImageName, ShopId;
+            public decimal Quantity, CostPrice, RetailPrice, Discount;
+            public int TaxApply, KitchenDisplay;
+        }
+
+        private static string CellText(DataGridViewRow row, int index)
+        {
+            object v = row.Cells[index].Value;
+            return v == null ? "" : v.ToString();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -96,78 +107,101 @@ namespace supershop
             lblwaiting.Text = "Please Wait ...";
             try
             {
-                
-                int rows = dtgridviewImportPreview.Rows.Count;
-                for (int i = 0; i < rows; i++)
+                // Parse every row first so a bad cell fails before anything is written
+                List<ImportRow> items = new List<ImportRow>();
+                foreach (DataGridViewRow gr in dtgridviewImportPreview.Rows)
                 {
-                    string product_id           = dtgridviewImportPreview.Rows[i].Cells[0].Value.ToString();
-                    string product_name         = dtgridviewImportPreview.Rows[i].Cells[1].Value.ToString();
-                    double product_quantity     = Convert.ToDouble(dtgridviewImportPreview.Rows[i].Cells[2].Value.ToString());
-                    double cost_price           = Convert.ToDouble(dtgridviewImportPreview.Rows[i].Cells[3].Value.ToString());
-                    double retail_price         = Convert.ToDouble(dtgridviewImportPreview.Rows[i].Cells[4].Value.ToString());
-                    double total_cost_price     = cost_price * product_quantity;
-                    double total_retail_price   = retail_price * product_quantity;
-                    string category             = dtgridviewImportPreview.Rows[i].Cells[5].Value.ToString();
-                    string supplier             = dtgridviewImportPreview.Rows[i].Cells[6].Value.ToString();
-                    string imagename            = product_id + ".png"; // dtgridviewImportPreview.Rows[i].Cells[7].Value.ToString();
-                    double discount             = Convert.ToDouble(dtgridviewImportPreview.Rows[i].Cells[7].Value.ToString());
-                    int taxapply                = Convert.ToInt32(dtgridviewImportPreview.Rows[i].Cells[8].Value.ToString());
-                    string Shopid               = dtgridviewImportPreview.Rows[i].Cells[9].Value.ToString();
-                    int kitchendisplay          = Convert.ToInt32(dtgridviewImportPreview.Rows[i].Cells[10].Value.ToString()); 
-                 
-
-                    string sqlCmd = " insert into purchase (product_id , product_name , product_quantity , cost_price , retail_price , total_cost_price , " +
-                                    " total_retail_price , category , supplier , imagename, discount, taxapply, Shopid, status ) " +
-                                    "  values ('" + product_id + "' , '" + product_name + "', '" + product_quantity + "', '" + cost_price + "' , '" + retail_price + "' , " +
-                                    "  '" + total_cost_price + "' , '" + total_retail_price + "' , '" + category + "', '" + supplier + "', '" + imagename + "' , " +
-                                    " '" + discount + "' , '" + taxapply + "' , '" + Shopid + "', '" + kitchendisplay + "')";
-                    DataAccess.ExecuteSQL(sqlCmd);
-
-                    //Same time Purchase history insert
-                    insertpurchasehistory(product_id, product_name, product_quantity, cost_price, retail_price, category, supplier, Shopid);
-        
-
-                    //Serial image upload
-                    string path = Application.StartupPath + @"\ITEMIMAGE\";
-                    string filename = path + @"\" + picItemimage.Image;
-                    picItemimage.Image.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
-                    System.IO.File.Move(path + @"\" + picItemimage.Image , path + @"\" + imagename);
-
-                  ///  MessageBox.Show("Successfully Added ");
-                    btnSave.Enabled = false;
-                    lblmsg.Text = "Successfully Added Bulk items and purchase history record";
-                    lblwaiting.Visible = false;
+                    if (gr.IsNewRow) continue;
+                    ImportRow r = new ImportRow();
+                    r.ProductId      = CellText(gr, 0);
+                    r.ProductName    = CellText(gr, 1);
+                    r.Quantity       = Convert.ToDecimal(CellText(gr, 2));
+                    r.CostPrice      = Convert.ToDecimal(CellText(gr, 3));
+                    r.RetailPrice    = Convert.ToDecimal(CellText(gr, 4));
+                    r.Category       = CellText(gr, 5);
+                    r.Supplier       = CellText(gr, 6);
+                    r.ImageName      = r.ProductId + ".png";
+                    r.Discount       = Convert.ToDecimal(CellText(gr, 7));
+                    r.TaxApply       = Convert.ToInt32(CellText(gr, 8));
+                    r.ShopId         = CellText(gr, 9);
+                    r.KitchenDisplay = Convert.ToInt32(CellText(gr, 10));
+                    items.Add(r);
                 }
+
+                string pdate = DateTime.Now.ToString("yyyy-MM-dd");
+
+                // Whole import is one unit of work: a duplicate id anywhere rolls back every row
+                DataAccess.RunInTransaction(delegate(DataAccess.DbTransaction tx)
+                {
+                    foreach (ImportRow r in items)
+                    {
+                        tx.Execute(" insert into purchase (product_id, product_name, product_quantity, cost_price, retail_price, total_cost_price, " +
+                                   " total_retail_price, category, supplier, imagename, discount, taxapply, Shopid, status) " +
+                                   " values (@pid, @pname, @qty, @cprice, @sprice, @ctotal, @rtotal, @category, @supplier, @image, " +
+                                   " @discount, @taxapply, @shopid, @status)",
+                            DataAccess.P("@pid", r.ProductId),
+                            DataAccess.P("@pname", r.ProductName),
+                            DataAccess.P("@qty", r.Quantity),
+                            DataAccess.P("@cprice", r.CostPrice),
+                            DataAccess.P("@sprice", r.RetailPrice),
+                            DataAccess.P("@ctotal", r.CostPrice * r.Quantity),
+                            DataAccess.P("@rtotal", r.RetailPrice * r.Quantity),
+                            DataAccess.P("@category", r.Category),
+                            DataAccess.P("@supplier", r.Supplier),
+                            DataAccess.P("@image", r.ImageName),
+                            DataAccess.P("@discount", r.Discount),
+                            DataAccess.P("@taxapply", r.TaxApply),
+                            DataAccess.P("@shopid", r.ShopId),
+                            DataAccess.P("@status", r.KitchenDisplay));
+
+                        //Same time Purchase history insert
+                        tx.Execute(" insert into tbl_purchase_history (product_id, product_name, product_quantity, cost_price, retail_price, category, " +
+                                   " supplier, purchase_date, Shopid, ptype) " +
+                                   " values (@pid, @pname, @qty, @cprice, @sprice, @category, @supplier, @pdate, @shopid, 'NEW')",
+                            DataAccess.P("@pid", r.ProductId),
+                            DataAccess.P("@pname", r.ProductName),
+                            DataAccess.P("@qty", r.Quantity),
+                            DataAccess.P("@cprice", r.CostPrice),
+                            DataAccess.P("@sprice", r.RetailPrice),
+                            DataAccess.P("@category", r.Category),
+                            DataAccess.P("@supplier", r.Supplier),
+                            DataAccess.P("@pdate", pdate),
+                            DataAccess.P("@shopid", r.ShopId));
+                    }
+                });
+
+                // Placeholder image for each imported item; a file problem must not undo the committed import
+                try
+                {
+                    string path = Application.StartupPath + @"\ITEMIMAGE\";
+                    if (!Directory.Exists(path))
+                        Directory.CreateDirectory(path);
+                    foreach (ImportRow r in items)
+                    {
+                        if (picItemimage.Image != null && !File.Exists(path + r.ImageName))
+                            picItemimage.Image.Save(path + r.ImageName, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                }
+                catch (Exception exImg) { Logger.Error(exImg); }
+
+                btnSave.Enabled = false;
+                lblmsg.Text = "Successfully Added Bulk items and purchase history record";
+                lblwaiting.Visible = false;
             }
             catch (Exception exp)
             {
-                MessageBox.Show("Sorry\r\n this id already added \n Duplicate value \n  " + exp.Message);
+                Logger.Show(exp, "Sorry\r\n this id already added \n Duplicate value");
             }
-             
-
-        }
-
-        public void insertpurchasehistory(string pid, string pname, double pQty, double cprice, double sprice, string category, string supplier, string shopid)
-        {
-            string pdate =   DateTime.Now.ToString("yyyy-MM-dd");
-            string sql1 = " insert into tbl_purchase_history (product_id, product_name, product_quantity, cost_price, retail_price, category, " +
-                            " supplier, purchase_date, Shopid, ptype ) " +
-                            " values ('" + pid + "', '" + pname + "', '" + pQty + "', '" + cprice + "', '" + sprice + "', '" + category + "', " +
-                            "  '" + supplier + "', '" + pdate + "' ,'" + shopid + "', 'NEW' )";
-            DataAccess.ExecuteSQL(sql1);
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
-                // System.Diagnostics.Process.Start("Calc");
-               // SendKeys.SendWait(lblTotal.Text);
                 Process p = new Process();
                 p.StartInfo.FileName = "items.xls";
                 p.Start();
                 p.WaitForInputIdle();
-
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }

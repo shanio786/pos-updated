@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,10 +15,9 @@ namespace supershop.Expenses
     {
         public AddExpense()
         {
-            InitializeComponent();             
+            InitializeComponent();
             txtReferNo.CharacterCasing = CharacterCasing.Upper;
         }
-     
 
         private void lnkExpenses_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -28,12 +27,17 @@ namespace supershop.Expenses
             go.Show();
         }
 
+        // Loads an existing expense when lblfileID holds a numeric id
         public void Expensebind()
         {
-            string sql = " select  ID, Date , ReferenceNo as 'Refer No' , Category ,	Amount , Note ,	Createdby as 'Posted by', Attachment , fileextension from tbl_expense " +
-                            " where ID = '" + lblfileID.Text + "' ";
-            DataTable dt1 = DataAccess.GetDataTable(sql);
-           // dtStartDate.Value           = Convert.ToDateTime(dt1.Rows[0].ItemArray[1].ToString());
+            long id;
+            if (!long.TryParse(lblfileID.Text, out id)) return;
+
+            string sql = " select ID, Date, ReferenceNo as 'Refer No', Category, Amount, Note, Createdby as 'Posted by', Attachment, fileextension " +
+                         " from tbl_expense where ID = @id";
+            DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@id", id));
+            if (dt1.Rows.Count == 0) return;
+
             txtReferNo.Text             = dt1.Rows[0].ItemArray[2].ToString();
             txtAmount.Text              = dt1.Rows[0].ItemArray[4].ToString();
             txtAttachmentFileName.Text  = dt1.Rows[0].ItemArray[7].ToString();
@@ -41,7 +45,6 @@ namespace supershop.Expenses
             cmboCategory.Text           = dt1.Rows[0].ItemArray[3].ToString();
             lblFileExtension.Text       = dt1.Rows[0].ItemArray[8].ToString();
             lblcopyfile.Text            = dt1.Rows[0].ItemArray[7].ToString();
-
         }
 
         private void AddExpense_Load(object sender, EventArgs e)
@@ -50,13 +53,10 @@ namespace supershop.Expenses
             {
                 dtStartDate.Format = DateTimePickerFormat.Custom;
                 dtStartDate.CustomFormat = "yyyy-MM-dd";
-                txtAmount.Focus();               
+                txtAmount.Focus();
                 Expensebind();
-                 
             }
             catch (Exception exLog) { Logger.Error(exLog); }
- 
-          
         }
 
         private void btnaddexpense_Click(object sender, EventArgs e)
@@ -83,21 +83,29 @@ namespace supershop.Expenses
                     else
                     {
                         Filename = "";
-                    }                   
-                    string sql1 = " insert into tbl_expense (Date , ReferenceNo , Category ,	Amount ,	Attachment , fileextension, Note ,	Createdby) " +
-                                " values ('" + dtStartDate.Text + "', '" + txtReferNo.Text + "','" + cmboCategory.Text + "', '" + txtAmount.Text + "',  " +
-                                " '" + Filename + "', '" + lblFileExtension.Text + "', '" + txtNote.Text + "' , '" + UserInfo.UserName + "')";
-                    DataAccess.ExecuteSQL(sql1);
+                    }
+
+                    // tbl_expense.Date is smalldatetime, so the picker value goes in as a real date
+                    DataAccess.ExecuteSQL(" insert into tbl_expense (Date, ReferenceNo, Category, Amount, Attachment, fileextension, Note, Createdby) " +
+                                          " values (@date, @ref, @category, @amount, @file, @ext, @note, @by)",
+                        DataAccess.P("@date", dtStartDate.Value.Date),
+                        DataAccess.P("@ref", txtReferNo.Text),
+                        DataAccess.P("@category", cmboCategory.Text),
+                        DataAccess.P("@amount", Convert.ToDecimal(txtAmount.Text)),
+                        DataAccess.P("@file", Filename),
+                        DataAccess.P("@ext", lblFileExtension.Text),
+                        DataAccess.P("@note", txtNote.Text),
+                        DataAccess.P("@by", UserInfo.UserName));
 
                     if (txtAttachmentFileName.Text != string.Empty)
                     {
-                        //Attachment upload  /////////////////
+                        //Attachment upload
                         string path = Application.StartupPath + @"\ExpenseAttachment\";
-                        if (!System.IO.Directory.Exists(path))
-                            System.IO.Directory.CreateDirectory(Application.StartupPath + @"\ExpenseAttachment\");
-                        string copyfile = lblcopyfile.Text; //Source file
-                        string pastefile = path + @"\" + Filename;  //destination file
-                        System.IO.File.Copy(copyfile, pastefile);                      
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+                        string copyfile = lblcopyfile.Text;   //Source file
+                        string pastefile = path + Filename;   //destination file
+                        File.Copy(copyfile, pastefile);
                     }
 
                     MessageBox.Show("Saved Successfully", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -114,21 +122,19 @@ namespace supershop.Expenses
                         Expenses.ExpensesList go = new Expenses.ExpensesList();
                         go.MdiParent = this.ParentForm;
                         go.Show();
-                    }      
-  
+                    }
                 }
-                
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Logger.Show(ex, "Could not save expense");
             }
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
- 
+
             openFileDialog1.CheckFileExists = true;
             openFileDialog1.CheckPathExists = true;
 
@@ -138,11 +144,8 @@ namespace supershop.Expenses
             openFileDialog1.FilterIndex = 1;
             openFileDialog1.RestoreDirectory = true;
 
-            
-
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                // textBox1.Text = openFileDialog1.FileName;
                 txtAttachmentFileName.Text = openFileDialog1.SafeFileName;
                 lblcopyfile.Text = openFileDialog1.FileName;
                 lblFileExtension.Text = Path.GetExtension(openFileDialog1.FileName);
@@ -153,7 +156,6 @@ namespace supershop.Expenses
 
         private void txtAmount_KeyPress(object sender, KeyPressEventArgs e)
         {
-
             try
             {
                 bool ignoreKeyPress = false;
@@ -170,10 +172,8 @@ namespace supershop.Expenses
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
             }
             catch (Exception exLog) { Logger.Error(exLog); }
-
         }
     }
 }

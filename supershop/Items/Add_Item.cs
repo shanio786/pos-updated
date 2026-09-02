@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -35,110 +35,93 @@ namespace supershop
         #region DataBind
         private void loadData()
         {
-            string sql = "select product_id, product_name, product_quantity, cost_price , retail_price, category ,  " +
-                        " supplier, imagename , discount, Shopid , taxapply , status " + 
-                        " from purchase where product_id = '" + lblItemcode.Text + "'";
-            DataTable dt1 = DataAccess.GetDataTable(sql);
+            string sql = "select product_id, product_name, product_quantity, cost_price, retail_price, category, " +
+                         " supplier, imagename, discount, Shopid, taxapply, status " +
+                         " from purchase where product_id = @id";
+            DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@id", lblItemcode.Text));
+            if (dt1.Rows.Count == 0)
+            {
+                MessageBox.Show("Item not found: " + lblItemcode.Text);
+                return;
+            }
+            DataRow r = dt1.Rows[0];
 
-            txtProductCode.Text     = dt1.Rows[0].ItemArray[0].ToString();
-            txtProductName.Text     = dt1.Rows[0].ItemArray[1].ToString();
-            txtProductQty.Text      = dt1.Rows[0].ItemArray[2].ToString();
-            txtCostPrice.Text       = dt1.Rows[0].ItemArray[3].ToString();
-            txtSalesPrice.Text      = dt1.Rows[0].ItemArray[4].ToString();
-            ComboCategory.Text      = dt1.Rows[0].ItemArray[5].ToString();
-            cmbSupplier.Text        = dt1.Rows[0].ItemArray[6].ToString();
-            lblimagename.Text       = dt1.Rows[0].ItemArray[7].ToString();
+            txtProductCode.Text = r["product_id"].ToString();
+            txtProductName.Text = r["product_name"].ToString();
+            txtProductQty.Text  = r["product_quantity"].ToString();
+            txtCostPrice.Text   = r["cost_price"].ToString();
+            txtSalesPrice.Text  = r["retail_price"].ToString();
+            ComboCategory.Text  = r["category"].ToString();
+            cmbSupplier.Text    = r["supplier"].ToString();
+            lblimagename.Text   = r["imagename"].ToString();
 
-            string path = Application.StartupPath + @"\ITEMIMAGE\" + dt1.Rows[0].ItemArray[7].ToString() + "";
+            string path = Application.StartupPath + @"\ITEMIMAGE\" + r["imagename"].ToString();
             picItemimage.ImageLocation = path;
             picItemimage.InitialImage.Dispose();
-            
-            txtdiscount.Text = dt1.Rows[0].ItemArray[8].ToString();           
-            cmboShopid.SelectedValue = dt1.Rows[0].ItemArray[9].ToString();
-            
-            if ( dt1.Rows[0].ItemArray[10].ToString() == "1")
-            {
-                chktaxapply.Checked = true;
-            }
-            else
-            {
-                chktaxapply.Checked = false;
-            }
 
-            if (dt1.Rows[0].ItemArray[11].ToString() == "3")  // 3 = show kitchen display 
-            {
-                chkkitchenDisplay.Checked = true;
-            }
-            else
-            {
-                chkkitchenDisplay.Checked = false;
-            }
+            txtdiscount.Text = r["discount"].ToString();
+            cmboShopid.SelectedValue = r["Shopid"].ToString();
+
+            chktaxapply.Checked = (r["taxapply"].ToString() == "1");
+            chkkitchenDisplay.Checked = (r["status"].ToString() == "3");  // 3 = show on kitchen display
         }
 
         public void Bindshopbranch()
         {
-            string sql5 = "select   BranchName , Shopid from tbl_terminalLocation";
+            string sql5 = "select BranchName, Shopid from tbl_terminalLocation";
             DataTable dt5 = DataAccess.GetDataTable(sql5);
             cmboShopid.DataSource = dt5;
             cmboShopid.DisplayMember = "Branchname";
             cmboShopid.ValueMember = "Shopid";
-           
         }
 
         private void Add_Item_Load(object sender, EventArgs e)
         {
             try
             {
-                if (UserInfo.usertype == "1")
-                {
-                    lnkStocklist.Visible = true;
-                }
-                else
-                {
-                    lnkStocklist.Visible = false;
-                }
+                lnkStocklist.Visible = (UserInfo.usertype == "1");
+
                 dtpurchaseDate.Format = DateTimePickerFormat.Custom;
                 dtpurchaseDate.CustomFormat = "yyyy-MM-dd";
 
                 //Supplier Info
-                string sqlCust = "select   DISTINCT  *   from tbl_customer where PeopleType = 'Supplier'";
+                string sqlCust = "select DISTINCT * from tbl_customer where PeopleType = 'Supplier'";
                 DataTable dtCust = DataAccess.GetDataTable(sqlCust);
                 cmbSupplier.DataSource = dtCust;
                 cmbSupplier.DisplayMember = "Name";
                 cmbSupplier.Text = "Unknown";
 
                 //Category list
-                string sqlcate = "select DISTINCT   category_name from tbl_category";
+                string sqlcate = "select DISTINCT category_name from tbl_category";
                 DataTable dtcate = DataAccess.GetDataTable(sqlcate);
                 ComboCategory.DataSource = dtcate;
                 ComboCategory.DisplayMember = "category_name";
-                
+
                 Bindshopbranch();
-                //Update data | If user id has
+
+                //Update mode when an item code was passed in
                 if (lblItemcode.Text != "-")
                 {
                     loadData();
                     txtProductCode.ReadOnly = true;
                     btnSave.Text = "Update";
                     lnkDelete.Visible = true;
-                    grpboxPurchasehistory.Visible = true;                    
-                }             
-
+                    grpboxPurchasehistory.Visible = true;
+                }
             }
             catch (Exception exLog) { Logger.Error(exLog); }
-
         }
         #endregion
 
         #region Insert , Update and delete Item
-        
+
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (txtProductCode.Text == "" )
+            if (txtProductCode.Text == "")
             {
                 MessageBox.Show("Please Insert Product Code/ Item Bar-code");
                 txtProductCode.Focus();
-            } 
+            }
             else if (txtProductName.Text == "")
             {
                 MessageBox.Show("Please Insert  Product Name");
@@ -159,7 +142,6 @@ namespace supershop
                 MessageBox.Show("Please Insert Product Cost Price / Buy price ");
                 txtCostPrice.Focus();
             }
-  
             else if (txtSalesPrice.Text == "")
             {
                 MessageBox.Show("Please Insert Product  Sales Price");
@@ -186,79 +168,56 @@ namespace supershop
                 {
                     string pid = txtProductCode.Text;
                     string pname = txtProductName.Text;
-                    double quan = Convert.ToDouble(txtProductQty.Text);
-                    double cprice = Convert.ToDouble(txtCostPrice.Text);
-                    double sprice = Convert.ToDouble(txtSalesPrice.Text);
+                    decimal quan = Convert.ToDecimal(txtProductQty.Text);
+                    decimal cprice = Convert.ToDecimal(txtCostPrice.Text);
+                    decimal sprice = Convert.ToDecimal(txtSalesPrice.Text);
+                    decimal ctotalpri = quan * cprice;
+                    decimal rtotalpri = quan * sprice;
+                    decimal discount = Convert.ToDecimal(txtdiscount.Text);
+                    string category = ComboCategory.Text;
+                    string supplier = cmbSupplier.Text;
+                    string shopid = Convert.ToString(cmboShopid.SelectedValue);
 
-                    double ctotalpri = quan * cprice;
-                    double rtotalpri = quan * sprice;
-                    double discount = Convert.ToDouble(txtdiscount.Text);
+                    int taxapply = chktaxapply.Checked ? 1 : 0;                      // 1 = Tax apply
+                    int kitchenDisplaythisitem = chkkitchenDisplay.Checked ? 3 : 1;  // 3 = show on kitchen display, 1 = not
 
-                    int taxapply;
-                    if (chktaxapply.Checked)
-                    {
-                        taxapply = 1;  //1 = Tax apply
-                    }
-                    else
-                    {
-                        taxapply = 0; // 0 = Tax not apply
-                    }
-
-                    int kitchenDisplaythisitem;
-                    if (chkkitchenDisplay.Checked)
-                    {
-                        kitchenDisplaythisitem = 3; // 3 = It's show display on kitchen display
-                    }
-                    else
-                    {
-                        kitchenDisplaythisitem = 1; // 1 = it's not show on ditcken display.
-                    }
-                     //New Insert / New Entry
-                    if (lblItemcode.Text == "-")
+                    if (lblItemcode.Text == "-")  //New Insert / New Entry
                     {
                         string imageName = pid + lblFileExtension.Text;
-                        string sql1 = " insert into purchase (product_id, product_name, product_quantity, cost_price, retail_price, total_cost_price, " +
-                                        " total_retail_price, category, supplier , imagename, discount, taxapply, Shopid , status) " +
-                                        " values ('" + pid + "', '" + pname + "', '" + quan + "', '" + cprice + "', '" + sprice + "', '" + ctotalpri + "', " +
-                                        " '" + rtotalpri + "', '" + ComboCategory.Text + "', '" + cmbSupplier.Text + "' , '" + imageName + "', " +
-                                        " '" + discount + "' , '" + taxapply + "' , '" + cmboShopid.SelectedValue + "' , '"+ kitchenDisplaythisitem +"')";
-                        DataAccess.ExecuteSQL(sql1);
-                        
-                        //Add to purchase history - New item history
-                        insertpurchasehistory("NEW", quan, DateTime.Now.ToString("yyyy-MM-dd"));
-                        
-                        //picture upload  /////////////////
-                      //  if (openFileDialog1.FileName != string.Empty)
-                       // {
-                            string path = Application.StartupPath + @"\ITEMIMAGE\";
-                            System.IO.File.Delete(path + @"\" + imageName);
-                            if (!System.IO.Directory.Exists(path))
-                                System.IO.Directory.CreateDirectory(Application.StartupPath + @"\ITEMIMAGE\");
-                            string filename = path + @"\" + openFileDialog1.SafeFileName;
-                            picItemimage.Image.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
-                            System.IO.File.Move(path + @"\" + openFileDialog1.SafeFileName, path + @"\" + imageName);
-                     //   }
+                        string purchaseDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+                        // The product row and its first purchase-history row succeed or fail together
+                        DataAccess.RunInTransaction(delegate(DataAccess.DbTransaction tx)
+                        {
+                            tx.Execute(" insert into purchase (product_id, product_name, product_quantity, cost_price, retail_price, total_cost_price, " +
+                                       " total_retail_price, category, supplier, imagename, discount, taxapply, Shopid, status) " +
+                                       " values (@pid, @pname, @qty, @cprice, @sprice, @ctotal, @rtotal, @category, @supplier, @image, " +
+                                       " @discount, @taxapply, @shopid, @status)",
+                                DataAccess.P("@pid", pid),
+                                DataAccess.P("@pname", pname),
+                                DataAccess.P("@qty", quan),
+                                DataAccess.P("@cprice", cprice),
+                                DataAccess.P("@sprice", sprice),
+                                DataAccess.P("@ctotal", ctotalpri),
+                                DataAccess.P("@rtotal", rtotalpri),
+                                DataAccess.P("@category", category),
+                                DataAccess.P("@supplier", supplier),
+                                DataAccess.P("@image", imageName),
+                                DataAccess.P("@discount", discount),
+                                DataAccess.P("@taxapply", taxapply),
+                                DataAccess.P("@shopid", shopid),
+                                DataAccess.P("@status", kitchenDisplaythisitem));
+
+                            insertpurchasehistory(tx, "NEW", quan, purchaseDate);
+                        });
+
+                        SaveItemImage(imageName, null);
 
                         MessageBox.Show("Item hase been saved Successfully", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        if (UserInfo.usertype == "1")
-                        {
-                            //Stock_List go = new Stock_List();
-                            //go.MdiParent = this.ParentForm;
-                            //go.Show();
-                            //this.Close();
-                        }
-                        else
-                        {
-                           // btnItemLink.Visible = false;
-                        }
-               
-                        
                         ClearForm();
                     }
                     else  //Update
                     {
-                        
                         string imageName;
                         if (lblFileExtension.Text == "item.png") //if not select image
                         {
@@ -269,52 +228,53 @@ namespace supershop
                             imageName = lblItemcode.Text + lblFileExtension.Text;
                         }
 
-                        string sql =" update purchase set product_name = '" + txtProductName.Text + "', product_quantity= '" + txtProductQty.Text + "', " + 
-                                    " cost_price = '" + txtCostPrice.Text + "', retail_price= '" + txtSalesPrice.Text + "', total_cost_price = '" + ctotalpri + "', " +
-                                    " total_retail_price= '" + rtotalpri + "', category = '" + ComboCategory.Text + "', supplier = '" + cmbSupplier.Text + "',  " +
-                                    " imagename = '" + imageName + "' , discount   = '" + discount + "' , taxapply = '" + taxapply + "' , " +
-                                    " Shopid = '" + cmboShopid.SelectedValue + "' , status =  '" + kitchenDisplaythisitem + "' " + 
-                                    " where product_id = '" + lblItemcode.Text + "'";
-                        DataAccess.ExecuteSQL(sql);
+                        DataAccess.ExecuteSQL(" update purchase set product_name = @pname, product_quantity = @qty, cost_price = @cprice, " +
+                                              " retail_price = @sprice, total_cost_price = @ctotal, total_retail_price = @rtotal, " +
+                                              " category = @category, supplier = @supplier, imagename = @image, discount = @discount, " +
+                                              " taxapply = @taxapply, Shopid = @shopid, status = @status " +
+                                              " where product_id = @pid",
+                            DataAccess.P("@pname", pname),
+                            DataAccess.P("@qty", quan),
+                            DataAccess.P("@cprice", cprice),
+                            DataAccess.P("@sprice", sprice),
+                            DataAccess.P("@ctotal", ctotalpri),
+                            DataAccess.P("@rtotal", rtotalpri),
+                            DataAccess.P("@category", category),
+                            DataAccess.P("@supplier", supplier),
+                            DataAccess.P("@image", imageName),
+                            DataAccess.P("@discount", discount),
+                            DataAccess.P("@taxapply", taxapply),
+                            DataAccess.P("@shopid", shopid),
+                            DataAccess.P("@status", kitchenDisplaythisitem),
+                            DataAccess.P("@pid", lblItemcode.Text));
 
-                        /////////////////////////////////////////////Update image //////////////////////////////////////////////////////
-                          if (lblFileExtension.Text != "item.png") // if select image
-                          {
-                              picItemimage.InitialImage.Dispose();
-                              string path = Application.StartupPath + @"\ITEMIMAGE\";                                                 
-                              System.IO.File.Delete(path + @"\" + lblimagename.Text);
-                              if (!System.IO.Directory.Exists(path))
-                                  System.IO.Directory.CreateDirectory(Application.StartupPath + @"\ITEMIMAGE\");
-                              string filename = path + @"\" + openFileDialog1.SafeFileName;
-                              picItemimage.Image.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
-                              System.IO.File.Move(path + @"\" + openFileDialog1.SafeFileName, path + @"\" + imageName);
-                          }
-
+                        if (lblFileExtension.Text != "item.png") // a new image was selected
+                        {
+                            picItemimage.InitialImage.Dispose();
+                            SaveItemImage(imageName, lblimagename.Text);
+                        }
 
                         MessageBox.Show("Successfully Data Updated!", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        //loadData();    
-                        if (UserInfo.usertype == "1")
-                        {
-                            //Stock_List go = new Stock_List();
-                            //go.MdiParent = this.ParentForm;
-                            //go.Show();
-                            //this.Close();
-                        }
-                        else
-                        {
-                            // btnItemLink.Visible = false;
-                        }
                     }
-
-
                 }
                 catch (Exception exp)
                 {
-                    MessageBox.Show("Sorry\r\n this id already added \n" + exp.Message);
+                    Logger.Show(exp, "Could not save item (the item code may already exist)");
                 }
             }
-            //this.Hide();
+        }
 
+        // Saves the picture shown on the form as ITEMIMAGE\<imageName>, removing the previous file when given
+        private void SaveItemImage(string imageName, string oldImageName)
+        {
+            string path = Application.StartupPath + @"\ITEMIMAGE\";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            if (!string.IsNullOrEmpty(oldImageName))
+                File.Delete(path + oldImageName);
+            File.Delete(path + imageName);
+            if (picItemimage.Image != null)
+                picItemimage.Image.Save(path + imageName, System.Drawing.Imaging.ImageFormat.Png);
         }
 
         private void ClearForm()
@@ -325,30 +285,22 @@ namespace supershop
             txtCostPrice.Text = string.Empty;
             txtSalesPrice.Text = string.Empty;
         }
-              
+
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            //  openFileDialog1.InitialDirectory = @"C:\";
-            //  openFileDialog1.Title = "Browse Text Files";
 
             openFileDialog1.CheckFileExists = true;
             openFileDialog1.CheckPathExists = true;
 
             openFileDialog1.DefaultExt = ".jpg";
-            // openFileDialog1.Filter = "GIF files (*.gif)|*.gif| jpg files (*.jpg)|*.jpg| PNG files (*.png)|*.png| All files (*.*)|*.*";
             openFileDialog1.Filter = "jpg files (*.jpg)|*.jpg| PNG files (*.png)|*.png";
 
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = true;
 
-            //openFileDialog1.ReadOnlyChecked = true;
-            //openFileDialog1.ShowReadOnly = true;
-
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                // textBox1.Text = openFileDialog1.FileName;
                 picItemimage.ImageLocation = openFileDialog1.FileName;
                 lblFileExtension.Text = Path.GetExtension(openFileDialog1.FileName);
             }
@@ -360,22 +312,19 @@ namespace supershop
 
             if (result == DialogResult.Yes)
             {
-
                 if (lblItemcode.Text == "-")
                 {
-                    // MessageBox.Show("You are Not able to Update");
                     MessageBox.Show("You are Not able to Delete", "Button3 Title", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 else
                 {
                     try
                     {
-                        string sql = "delete from purchase where product_id ='" + lblItemcode.Text + "'";
-                        DataAccess.ExecuteSQL(sql);
+                        DataAccess.ExecuteSQL("delete from purchase where product_id = @pid", DataAccess.P("@pid", lblItemcode.Text));
 
                         picItemimage.InitialImage.Dispose();
                         string path = Application.StartupPath + @"\ITEMIMAGE\";
-                        System.IO.File.Delete(path + @"\" + lblimagename.Text);
+                        File.Delete(path + lblimagename.Text);
                         MessageBox.Show("Successfully Data Delete !", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                         Stock_List go = new Stock_List();
@@ -383,16 +332,15 @@ namespace supershop
                         go.Show();
                         this.Close();
                         ClearForm();
-
                     }
                     catch (Exception exp)
                     {
-                        MessageBox.Show("Sorry\r\n You have to Check the Data" + exp.Message);
+                        Logger.Show(exp, "Could not delete item");
                     }
                 }
             }
         }
-        
+
         #endregion
 
         #region   Accept Decimal Value Validation
@@ -414,8 +362,6 @@ namespace supershop
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
-
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
@@ -438,7 +384,6 @@ namespace supershop
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
@@ -462,7 +407,6 @@ namespace supershop
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
@@ -485,7 +429,6 @@ namespace supershop
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
@@ -508,7 +451,6 @@ namespace supershop
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
@@ -531,35 +473,31 @@ namespace supershop
                     ignoreKeyPress = true;
 
                 e.Handled = ignoreKeyPress;
-                //using System.Text.RegularExpressions;
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
         #endregion
-        
 
         //Check item code verfication
         private void txtProductCode_TextChanged(object sender, EventArgs e)
         {
             try
             {
-                string sqlitemcode = " select  product_id from   purchase where product_id = '" + txtProductCode.Text + "' ";
-                DataTable dtitemcode = DataAccess.GetDataTable(sqlitemcode);
+                DataTable dtitemcode = DataAccess.GetDataTable("select product_id from purchase where product_id = @id",
+                    DataAccess.P("@id", txtProductCode.Text));
                 if (dtitemcode.Rows.Count > 0)
                 {
                     lblValidmsg.ForeColor = System.Drawing.Color.Red;
-                    lblValidmsg.Text = "Duplicate item code";                    
+                    lblValidmsg.Text = "Duplicate item code";
                     if (lblItemcode.Text == "-")
                     {
                         MessageBox.Show("Warning: Duplicate item code \n Item code already used for another product", "Warning ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
                     }
                 }
                 else
                 {
                     lblValidmsg.ForeColor = System.Drawing.Color.Black;
-                    lblValidmsg.Text = "Valid code";                 
-
+                    lblValidmsg.Text = "Valid code";
                 }
             }
             catch (Exception exLog) { Logger.Error(exLog); }
@@ -589,7 +527,7 @@ namespace supershop
             go.MdiParent = this.ParentForm;
             go.Show();
         }
-      
+
         private void lnkSupplier_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             this.Hide();
@@ -598,34 +536,26 @@ namespace supershop
             go.MdiParent = this.ParentForm;
             go.Show();
         }
-               
+
         #endregion
-       
+
         #region Purchase history
-        public void insertpurchasehistory(string ptype, double pQty, string pdate)
+        // Adds one purchase-history row inside the caller's transaction
+        private void insertpurchasehistory(DataAccess.DbTransaction tx, string ptype, decimal pQty, string pdate)
         {
-            string pid = txtProductCode.Text;
-            string pname = txtProductName.Text;           
-            double cprice = Convert.ToDouble(txtCostPrice.Text);
-            double sprice = Convert.ToDouble(txtSalesPrice.Text);
-             
-
-            string sql1 = " insert into tbl_purchase_history (product_id, product_name, product_quantity, cost_price, retail_price, category, " +
-                            " supplier, purchase_date, Shopid, ptype ) " +
-                            " values ('" + pid + "', '" + pname + "', '" + pQty + "', '" + cprice + "', '" + sprice + "', '" + ComboCategory.Text + "', " +
-                            "  '" + cmbSupplier.Text + "', '"+ pdate +"' ,'" + cmboShopid.SelectedValue + "', '"+ ptype +"' )";
-            DataAccess.ExecuteSQL(sql1);
-        }
-
-        public void updatestockqty()
-        {
-            string pid      = txtProductCode.Text;
-            double StockQty =  Convert.ToDouble(txtProductQty.Text) + Convert.ToDouble(txtNewpQty.Text) ;
-            string sql = " update purchase set " +
-                                    " product_quantity = '" + StockQty + "', " +
-                                    " retail_price = '" + txtSalesPrice.Text + "' " +
-                                    " where product_id = '" + pid + "' ";
-            DataAccess.ExecuteSQL(sql);
+            tx.Execute(" insert into tbl_purchase_history (product_id, product_name, product_quantity, cost_price, retail_price, category, " +
+                       " supplier, purchase_date, Shopid, ptype) " +
+                       " values (@pid, @pname, @qty, @cprice, @sprice, @category, @supplier, @pdate, @shopid, @ptype)",
+                DataAccess.P("@pid", txtProductCode.Text),
+                DataAccess.P("@pname", txtProductName.Text),
+                DataAccess.P("@qty", pQty),
+                DataAccess.P("@cprice", Convert.ToDecimal(txtCostPrice.Text)),
+                DataAccess.P("@sprice", Convert.ToDecimal(txtSalesPrice.Text)),
+                DataAccess.P("@category", ComboCategory.Text),
+                DataAccess.P("@supplier", cmbSupplier.Text),
+                DataAccess.P("@pdate", pdate),
+                DataAccess.P("@shopid", Convert.ToString(cmboShopid.SelectedValue)),
+                DataAccess.P("@ptype", ptype));
         }
 
         private void btnPurchaseHistory_Click(object sender, EventArgs e)
@@ -639,8 +569,21 @@ namespace supershop
                 }
                 else
                 {
-                    insertpurchasehistory("OLD", Convert.ToDouble(txtNewpQty.Text), dtpurchaseDate.Text);
-                    updatestockqty();
+                    decimal newQty = Convert.ToDecimal(txtNewpQty.Text);
+                    decimal stockQty = Convert.ToDecimal(txtProductQty.Text) + newQty;
+                    decimal salesPrice = Convert.ToDecimal(txtSalesPrice.Text);
+                    string pid = txtProductCode.Text;
+                    string pdate = dtpurchaseDate.Text;
+
+                    // History row and the stock update commit together
+                    DataAccess.RunInTransaction(delegate(DataAccess.DbTransaction tx)
+                    {
+                        insertpurchasehistory(tx, "OLD", newQty, pdate);
+                        tx.Execute("update purchase set product_quantity = @qty, retail_price = @sprice where product_id = @pid",
+                            DataAccess.P("@qty", stockQty),
+                            DataAccess.P("@sprice", salesPrice),
+                            DataAccess.P("@pid", pid));
+                    });
 
                     DialogResult result = MessageBox.Show("Purchase history hase been saved Successfully. \n\n Do you want to see Purchase history?", "Yes or No", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
 
@@ -653,18 +596,13 @@ namespace supershop
                     }
                     else
                     {
-                        // MessageBox.Show("", "Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         btnPurchaseHistory.Enabled = false;
                     }
-                  
                 }
-
             }
-            catch (Exception exLog) { Logger.Error(exLog); }
+            catch (Exception exLog) { Logger.Show(exLog, "Could not save purchase history"); }
         }
 
         #endregion
-
-
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -69,18 +69,18 @@ namespace supershop.BarCode
         {
             try
             {
-                string sql5 = "select product_id , product_name , retail_price  from purchase where product_id = '" + cmbitems.Text + "' ";
-                DataTable dt5 = DataAccess.GetDataTable(sql5);
+                DataTable dt5 = DataAccess.GetDataTable("select product_id, product_name, retail_price from purchase where product_id = @id",
+                    DataAccess.P("@id", cmbitems.Text));
+                if (dt5.Rows.Count == 0) return;
                 textBoxText.Text = dt5.Rows[0].ItemArray[0].ToString();
                 txttoptext.Text = dt5.Rows[0].ItemArray[1].ToString() + "\nIngredients:";
                 txtPrice.Text =  dt5.Rows[0].ItemArray[2].ToString();
 
                 this.barCodeControl1.TopText = "\n" + txtcompany.Text + "\n ================= \n" + txttoptext.Text +  "\n\nPrice: " + txtCurrency.Text + txtPrice.Text;
                 this.barCodeControl1.SupSpace = 22;
-                this.barCodeControl1.Data = (sender as TextBox).Text;
-                this.barCodeControl1.Data2D = (sender as TextBox).Text;
-                
-
+                // sender is the combo box, so the code comes from the text box that was just filled
+                this.barCodeControl1.Data = textBoxText.Text;
+                this.barCodeControl1.Data2D = textBoxText.Text;
             }
             catch (Exception exLog) { Logger.Error(exLog); }
 
@@ -241,11 +241,9 @@ namespace supershop.BarCode
         {
             try
             {
-                string sql5 = "select    product_id  from purchase ";
-                DataTable dt5 = DataAccess.GetDataTable(sql5);
+                DataTable dt5 = DataAccess.GetDataTable("select product_id from purchase");
                 cmbitems.DataSource = dt5;
                 cmbitems.DisplayMember = "product_id";
-                 
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }

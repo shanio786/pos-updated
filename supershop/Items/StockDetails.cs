@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,7 +15,6 @@ namespace supershop.Items
         public StockDetails()
         {
             InitializeComponent();
-            
         }
 
         private void StockDetails_Load(object sender, EventArgs e)
@@ -27,15 +26,7 @@ namespace supershop.Items
                              " from purchase where product_quantity>=0 order by product_quantity";
                 DataTable dt1 = DataAccess.GetDataTable(sql);
                 datagridItemList.DataSource = dt1;
-               lblRow.Text = "Total item :" + datagridItemList.Rows.Count.ToString();
-               
-
-                //~ double totalqty = 0;
-                //~ for (int i = 0; i < datagridItemList.Rows.Count; ++i)
-                //~ {
-                //~ totalqty += Convert.ToDouble(datagridItemList.Rows[i].Cells[2].Value);
-                //~ }
-                //~ lblRow.Text  = totalqty.ToString();
+                lblRow.Text = "Total item :" + datagridItemList.Rows.Count.ToString();
             }
             catch (Exception exLog) { Logger.Error(exLog); }
         }
@@ -47,8 +38,8 @@ namespace supershop.Items
             {
                 string sql = " select  product_id as 'Item Code' , product_name as 'Item Name' , product_quantity as 'Quantity',  " +
                              " cost_price as 'Buy Price' , retail_price as 'Sales Price' , ((cost_price * product_quantity) * 1.00) as 'Total',  category as 'Category' , supplier as 'Supplier'   " +
-                             " from purchase where product_id like  '" + txtSearch.Text + "%' or product_name like '" + txtSearch.Text + "%'";
-                DataTable dt1 = DataAccess.GetDataTable(sql);
+                             " from purchase where product_id like @q + '%' or product_name like @q + '%'";
+                DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@q", txtSearch.Text));
                 datagridItemList.DataSource = dt1;
                 lblRow.Text = "Total item :" + datagridItemList.Rows.Count.ToString();
             }
@@ -66,14 +57,14 @@ namespace supershop.Items
         private void datagridItemList_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             foreach (DataGridViewRow Myrow in datagridItemList.Rows)
-            {         
-                // if less than equal 0 Red alter 
-                if (Convert.ToDouble(Myrow.Cells[2].Value) <= 0) 
+            {
+                // if less than equal 0 Red alter
+                if (Convert.ToDouble(Myrow.Cells[2].Value) <= 0)
                 {
                     Myrow.DefaultCellStyle.BackColor = Color.Red;
                     Myrow.DefaultCellStyle.ForeColor = Color.Lime;
                 }
-                // if less than  10 yellow alarming 
+                // if less than  10 yellow alarming
                 else if (Convert.ToDouble(Myrow.Cells[2].Value) < 7)
                 {
                     Myrow.DefaultCellStyle.BackColor = Color.Yellow;
@@ -95,46 +86,27 @@ namespace supershop.Items
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             //Build the CSV file data as a Comma separated string.
-            string csv = string.Empty;
+            StringBuilder csv = new StringBuilder();
 
             //Add the Header row for CSV file.
             foreach (DataGridViewColumn column in datagridItemList.Columns)
             {
-                csv += column.HeaderText + ',';
+                csv.Append(column.HeaderText).Append(',');
             }
-
-            //Add new line.
-            csv += "\r\n";
+            csv.Append("\r\n");
 
             //Adding the Rows
             foreach (DataGridViewRow row in datagridItemList.Rows)
             {
                 foreach (DataGridViewCell cell in row.Cells)
                 {
-                    //Add the Data rows.
-                    csv += cell.Value.ToString().Replace(",", ";") + ',';
+                    csv.Append(Convert.ToString(cell.Value).Replace(",", ";")).Append(',');
                 }
-
-                //Add new line.
-                csv += "\r\n";
+                csv.Append("\r\n");
             }
 
-            //Exporting to CSV.           
-            string fileName = "StockDetails_" + DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss") + ".csv";
-            string targetPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string destFile = System.IO.Path.Combine(targetPath, fileName);
-
-            // To copy a folder's contents to a new location: 
-            // Create a new target folder, if necessary. 
-            if (!System.IO.Directory.Exists(targetPath))
-            {
-                System.IO.Directory.CreateDirectory(targetPath);
-
-            }
-
-            // Get file name.
-            string name = saveFileDialog1.FileName;
-            File.WriteAllText(name, csv);
+            //Exporting to CSV.
+            File.WriteAllText(saveFileDialog1.FileName, csv.ToString());
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -154,8 +126,8 @@ namespace supershop.Items
             {
                 string sql = " select  product_id as 'Item Code' , product_name as 'Item Name' , product_quantity as 'Quantity',  " +
                              " cost_price as 'Buy Price' , retail_price as 'Sales Price' , ((cost_price * product_quantity) * 1.00) as 'Total',  category as 'Category' , supplier as 'Supplier'   " +
-                             " from purchase where category like  '" + txtSearchByCategory.Text + "%' or supplier like '" + txtSearchByCategory.Text + "%'";
-                DataTable dt1 = DataAccess.GetDataTable(sql);
+                             " from purchase where category like @q + '%' or supplier like @q + '%'";
+                DataTable dt1 = DataAccess.GetDataTable(sql, DataAccess.P("@q", txtSearchByCategory.Text));
                 datagridItemList.DataSource = dt1;
                 lblRow.Text = "Total item :" + datagridItemList.Rows.Count.ToString();
             }

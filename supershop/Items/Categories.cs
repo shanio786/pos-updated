@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -84,15 +84,14 @@ namespace supershop.Items
                         if (result == DialogResult.Yes)
                         {
 
-                            string sqldel = " delete from tbl_category     where ID = '" + rowdel.Cells[2].Value.ToString() + "'";
-                            DataAccess.ExecuteSQL(sqldel);                           
+                            DataAccess.ExecuteSQL("delete from tbl_category where ID = @id", DataAccess.P("@id", rowdel.Cells[2].Value));
                             MessageBox.Show("Deleted");
                             categorybind();
                         }
                     }
                 }
 
-                // Delete items From Gridview
+                // Edit category
                 if (e.ColumnIndex == datagridcategories.Columns["Edit"].Index && e.RowIndex >= 0)
                 {
                     foreach (DataGridViewRow row in datagridcategories.SelectedRows)
@@ -104,10 +103,9 @@ namespace supershop.Items
                         mkc.MdiParent = this.ParentForm;
                         mkc.Show();
                     }
-                }           
-
+                }
             }
-            catch (Exception exLog) { Logger.Error(exLog); }
+            catch (Exception exLog) { Logger.Show(exLog, "Could not delete category"); }
         }
     }
 }

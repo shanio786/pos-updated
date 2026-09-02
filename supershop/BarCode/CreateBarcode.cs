@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -28,13 +28,14 @@ namespace supershop
 
         private void CreateBarcode_Load(object sender, EventArgs e)
         {
-          
-
-            //Product Code Databind from Database
-            string sql5 = "select   product_id   from purchase";
-            DataTable dt5 = DataAccess.GetDataTable(sql5);
-            cmboProductCode.DataSource = dt5;
-            cmboProductCode.DisplayMember = "product_id";
+            try
+            {
+                //Product Code Databind from Database
+                DataTable dt5 = DataAccess.GetDataTable("select product_id from purchase");
+                cmboProductCode.DataSource = dt5;
+                cmboProductCode.DisplayMember = "product_id";
+            }
+            catch (Exception exLog) { Logger.Error(exLog); }
         }
 
 
@@ -303,24 +304,22 @@ namespace supershop
         {
             try
             {
-                if (rdbtnEAN13.Checked)
+                DataTable dt5 = DataAccess.GetDataTable("select product_name, retail_price from purchase where product_id = @id",
+                    DataAccess.P("@id", cmboProductCode.Text));
+                if (dt5.Rows.Count > 0)
                 {
-                    string sql5 = "select  product_name , retail_price  from purchase where product_id = '" + cmboProductCode.Text + "' ";
-                    DataTable dt5 = DataAccess.GetDataTable(sql5);
                     lblProductName.Text = dt5.Rows[0].ItemArray[0].ToString();
                     lblPrice.Text = "| " + dt5.Rows[0].ItemArray[1].ToString();
+                }
 
+                if (rdbtnEAN13.Checked)
+                {
                     txtCountryCode.Text = cmboProductCode.Text.Substring(0, 2);
                     txtManufacturerCode.Text = cmboProductCode.Text.Substring(2, 5);
                     txtProductCode.Text = cmboProductCode.Text.Substring(7, 5);
                 }
                 else if (rdbtnUPCA.Checked)
                 {
-                    string sql5 = "select  product_name , retail_price  from purchase where product_id = '" + cmboProductCode.Text + "' ";
-                    DataTable dt5 = DataAccess.GetDataTable(sql5);
-                    lblProductName.Text = dt5.Rows[0].ItemArray[0].ToString();
-                    lblPrice.Text = "| " + dt5.Rows[0].ItemArray[1].ToString();
-
                     cboProductType.Text = cmboProductCode.Text.Substring(0, 1);
                     txtCountryCode.Text = ""; // cmboProductCode.Text.Substring(0, 2);
                     txtManufacturerCode.Text = cmboProductCode.Text.Substring(1, 5);
