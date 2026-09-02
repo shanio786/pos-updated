@@ -82,7 +82,7 @@
             this.rdbsqlite.Name = "rdbsqlite";
             this.rdbsqlite.Size = new System.Drawing.Size(57, 17);
             this.rdbsqlite.TabIndex = 6;
-            this.rdbsqlite.Text = "SQLite";
+            this.rdbsqlite.Text = "Delete + reset ID counters";
             this.rdbsqlite.UseVisualStyleBackColor = true;
             // 
             // bdbMySQL

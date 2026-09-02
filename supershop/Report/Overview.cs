@@ -137,7 +137,7 @@ namespace supershop
                 //label1.Text = pr;
                // string sql3 = " Select   rollno as 'Class Roll' , stdname as 'Student Name' , SUM(point)as 'Total Marks',CAST(AVG(gpatb) AS DECIMAL(10,2)) as 'GPA' From markspostdb WHERE  classname ='" + textBox2.Text + "' and section = '" + textBox3.Text + "' and examterm = '" + textBox4.Text + "'  GROUP BY  rollno,stdname   ORDER by SUM(point) DESC ";
 
-                string sql5 = "select sales_time, SUM(profit) as Profit from sales where sales_time   like  '%" + dtyearmonth.Text + "%' GROUP BY  sales_time ";
+                string sql5 = "select sales_time, SUM(profit * Qty) as Profit from sales_item where sales_time   like  '%" + dtyearmonth.Text + "%' GROUP BY  sales_time ";
                 DataAccess.ExecuteSQL(sql5);
                 DataTable dt5 = DataAccess.GetDataTable(sql5);
                // string pro = dt5.Rows[0].ItemArray[0].ToString();

@@ -10,28 +10,16 @@ namespace supershop
     class DataAccess
     {
  
-	// Use for Adv_POS.exe.config file   you can change Database server info after compile/Debug 
-	//  static string _ConnectionString = supershop.Properties.Settings.Default.APOSSQLConnectionString;
+        // MS SQL Server is the main (and only) database of this application.
+        // The connection string is read from  Adv_POS.exe.config  (app.config while developing)
+        //   <add name="supershop.Properties.Settings.APOSSQLConnectionString" ... />
+        // so the server / database / login can be changed after install without recompiling.
+        static string _ConnectionString = supershop.Properties.Settings.Default.APOSSQLConnectionString;
 
-	//Its absolute Connection String for MS SQL Server 2008 - Upto
-	static string _ConnectionString = @"Data Source =192.168.0.111\sqlexpress2014,1433;Initial Catalog=APOSDB;User ID=admin;Password=8741760";
-        //static string _ConnectionString = @"Data Source =.\sqlexpress2014;Initial Catalog=APOSDB; Integrated Security=true;";
+        // Examples:
+        //   Windows authentication : Data Source=.\SQLEXPRESS;Initial Catalog=APOSDB;Integrated Security=True;
+        //   SQL login              : Data Source=192.168.0.10,1433;Initial Catalog=APOSDB;User ID=posuser;Password=***;
 
-
-        //"Data Source= (local) /or .\\SQLEXPRESS or your DB IP address or your SQL server name; for External database use only single dot  .\SQLEXPRESS or Data Source=.       --//(only dot)
-        //Initial Catalog= Database Name; 
-        //User ID= DB User ID;
-        //Password= DB user password";
-
-        //If your MSSQL server have window authentication (MSSQL server 2008 open without Password) please use this one 
-        //static string _ConnectionString = "Data Source=(local); Initial Catalog=APOSDB; "; 
-
-        // Connection String for  SQlite Edition
-        //static string _ConnectionString = @"Data Source=psodb.db;Version=3;New=False;Compress=True";
-        //Data Source=DemoT.db;Version=3;New=False;Compress=True;
-
-        //This is Mysql Database Access  class -- leave empty if your Mysal does not has PASSWORD       
-        // static string _ConnectionString = "server=localhost; database=aposmysqldb; uid=root; PASSWORD=";
 
         static SqlConnection _Connection = null;
         public SqlConnection conn;

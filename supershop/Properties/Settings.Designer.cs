@@ -82,7 +82,7 @@ namespace supershop.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source =.\\sqlexpress2014;Initial Catalog=APOSDB; Integrated Security=true;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=.\\SQLEXPRESS;Initial Catalog=APOSDB;Integrated Security=True;")]
         public string APOSSQLConnectionString {
             get {
                 return ((string)(this["APOSSQLConnectionString"]));

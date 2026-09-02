@@ -25,24 +25,18 @@ namespace supershop.Data_Manage
                  {
                      if (rdbsqlite.Checked == true)
                      {
-                         string sql1 =  "DELETE FROM return_item; " + 
-                                        " UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'return_item'; " + 
-                                        " DELETE FROM sales_item; " +  
-                                        " UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'sales_item'; " +
-                                        " DELETE FROM sales_payment;" +
-                                        " UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'sales_payment'; " +
-                                        " DELETE FROM tbl_saleInfo;" +
-                                        " UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'tbl_saleInfo'; " +
-                                        " DELETE FROM purchase;" +
-                                        " UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'purchase'; " +
-                                        " DELETE FROM tbl_duepayment;" +
-                                        " UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'tbl_duepayment'; " +
-                                        " DELETE FROM tbl_purchase_history; " +
-                                        " UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'tbl_purchase_history'; " +
-                                        " DELETE FROM tbl_workrecords; " +
-                                        " UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'tbl_workrecords'; ";
+                         // MS SQL Server: DELETE keeps the tables, then reset the IDENTITY counters
+                         // (equivalent of the old SQLite  "UPDATE SQLITE_SEQUENCE SET seq = 0")
+                         string sql1 =  " DELETE FROM return_item;           DBCC CHECKIDENT ('return_item',          RESEED, 0); " +
+                                        " DELETE FROM sales_item;            DBCC CHECKIDENT ('sales_item',           RESEED, 0); " +
+                                        " DELETE FROM sales_payment; " +
+                                        " DELETE FROM tbl_saleInfo;          DBCC CHECKIDENT ('tbl_saleInfo',         RESEED, 0); " +
+                                        " DELETE FROM purchase; " +
+                                        " DELETE FROM tbl_duepayment;        DBCC CHECKIDENT ('tbl_duepayment',       RESEED, 0); " +
+                                        " DELETE FROM tbl_purchase_history;  DBCC CHECKIDENT ('tbl_purchase_history', RESEED, 0); " +
+                                        " DELETE FROM tbl_workrecords;       DBCC CHECKIDENT ('tbl_workrecords',      RESEED, 0); ";
 
-                         DataTable dt1 = DataAccess.GetDataTable(sql1);                          
+                         DataAccess.ExecuteSQL(sql1);
                          MessageBox.Show("Successfully truncated !!! ", "Succeed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                      }
                      else
@@ -55,7 +49,7 @@ namespace supershop.Data_Manage
                                         " TRUNCATE TABLE tbl_duepayment; " +                                        
 	                                    " TRUNCATE TABLE tbl_purchase_history; " +
 	                                    " TRUNCATE TABLE tbl_workrecords; ";
-                         DataTable dt1 = DataAccess.GetDataTable(sql1);                          
+                         DataAccess.ExecuteSQL(sql1);                          
                          MessageBox.Show("Successfully truncated !!! ", "Succeed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                      }
                  }                        

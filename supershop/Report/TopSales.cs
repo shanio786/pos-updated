@@ -26,8 +26,8 @@ namespace supershop.Report
             try
             {                
                 // Sales Pie chart
-                string sql3 = " select   itemName  as 'Name' , SUM(Qty) as 'QTY' from sales_item where sales_time   =  '" + dtStartDate.Text + "' " +
-                              "  and status = 1 or status = 3   GROUP BY    itemName order by  Qty desc limit 6";
+                string sql3 = " select TOP 6  itemName  as 'Name' , SUM(Qty) as 'QTY' from sales_item where sales_time   =  '" + dtStartDate.Text + "' " +
+                              "  and (status = 1 or status = 3)   GROUP BY    itemName order by  SUM(Qty) desc";
                 DataAccess.ExecuteSQL(sql3);
                 DataTable dt3 = DataAccess.GetDataTable(sql3);
                 chartPieSales.DataSource = dt3;
@@ -49,9 +49,9 @@ namespace supershop.Report
             try
             {
                 // Sales Pie chart by QTY
-                string sql3 = " select   itemName  as 'Name'   , SUM(Qty)   as 'QTY' from sales_item " +
-                              " where sales_time   between  '" + dtStartDate.Text + "'  and '" + dtEndDate.Text + "'  and status = 1  or status = 3 " +
-                              " GROUP BY    itemName order by  Qty desc limit 6";
+                string sql3 = " select TOP 6  itemName  as 'Name'   , SUM(Qty)   as 'QTY' from sales_item " +
+                              " where sales_time   between  '" + dtStartDate.Text + "'  and '" + dtEndDate.Text + "'  and (status = 1  or status = 3) " +
+                              " GROUP BY    itemName order by  SUM(Qty) desc";
                 DataAccess.ExecuteSQL(sql3);
                 DataTable dt3 = DataAccess.GetDataTable(sql3);
                 chartPieSales.DataSource = dt3;
@@ -71,9 +71,9 @@ namespace supershop.Report
 
 
                 // Sales Pie chart by Sales value
-                string sqlSvalue =  " select    itemName  as 'Name'  , SUM(Total) as 'Total' from sales_item " +
-                                    "where sales_time    between  '" + dtStartDate.Text + "'  and '" + dtEndDate.Text + "'  and status = 1   or status = 3  " +
-                                    " GROUP BY    itemName order by  Total desc limit 5 ";
+                string sqlSvalue =  " select TOP 5  itemName  as 'Name'  , SUM(Total) as 'Total' from sales_item " +
+                                    "where sales_time    between  '" + dtStartDate.Text + "'  and '" + dtEndDate.Text + "'  and (status = 1   or status = 3)  " +
+                                    " GROUP BY    itemName order by  SUM(Total) desc ";
                 DataAccess.ExecuteSQL(sqlSvalue);
                 DataTable dtSvalue = DataAccess.GetDataTable(sqlSvalue);
                 chartSalesValue.DataSource = dtSvalue;
