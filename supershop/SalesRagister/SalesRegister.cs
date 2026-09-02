@@ -762,6 +762,67 @@ namespace supershop
         }
         
         // Auto Invoice.No Shows 
+        private void btnHold_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgrvSalesItemList.Rows.Count == 0)
+                {
+                    MessageBox.Show("The cart is empty.");
+                    return;
+                }
+                string label = SalesRagister.HeldSaleStore.Prompt(
+                    "Name for this held sale (customer / table):", "Hold sale", txtCustName.Text);
+                if (label == null) return;   // cancelled
+                SalesRagister.HeldSaleStore.Hold(label, lblCustID.Text, dgrvSalesItemList);
+                btnSuspend_Click(sender, e);   // clear the counter for the next customer
+                MessageBox.Show("Sale held. Use Resume to bring it back.", "Hold", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                Logger.Show(ex, "Could not hold the sale.");
+            }
+        }
+
+        private void btnResume_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (SalesRagister.HeldSalesForm f = new SalesRagister.HeldSalesForm())
+                {
+                    if (f.ShowDialog() != DialogResult.OK) return;
+                    long holdId = f.SelectedHoldId;
+                    DataTable items = SalesRagister.HeldSaleStore.Items(holdId);
+
+                    dgrvSalesItemList.Rows.Clear();
+                    foreach (DataRow r in items.Rows)
+                    {
+                        // (Name, Price, Qty, Total, Code, DisAmt, TaxAmt, DisRate, TaxApply, KitchenDisplay)
+                        dgrvSalesItemList.Rows.Add(
+                            r["itemName"], r["RetailsPrice"], r["Qty"], r["Total"], r["itemcode"],
+                            r["disamt"], r["taxamt"], r["disrate"], r["taxapply"], r["kitchendisplay"]);
+                    }
+                    dgrvSalesItemList.Visible = true;
+                    string cust = SalesRagister.HeldSaleStore.CustId(holdId);
+                    if (!string.IsNullOrEmpty(cust)) lblCustID.Text = cust;
+                    SalesRagister.HeldSaleStore.Delete(holdId);   // it is now live on the counter
+
+                    tabPageSR_Counter.Text = "Terminal";
+                    LoadTotalDiscount();
+                    LoadTotalTax();
+                    DiscountCalculation();
+                    vatcal();
+                    btnSalesCredit.Enabled = true;
+                    btnPayment.Enabled = true;
+                    btnSuspend.Enabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Show(ex, "Could not resume the held sale.");
+            }
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             ShowNextInvoiceNo();

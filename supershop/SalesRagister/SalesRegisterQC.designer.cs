@@ -65,6 +65,8 @@
             this.lblTotalDisCount = new System.Windows.Forms.Label();
             this.txtDiscountRate = new System.Windows.Forms.TextBox();
             this.btnSuspend = new System.Windows.Forms.Button();
+            this.btnHold = new System.Windows.Forms.Button();
+            this.btnResume = new System.Windows.Forms.Button();
             this.btnPayment = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.txtSearchItem = new System.Windows.Forms.TextBox();
@@ -516,6 +518,32 @@
             this.toolTip1.SetToolTip(this.btnSuspend, "Clear items\r\nShift + Del");
             this.btnSuspend.UseVisualStyleBackColor = false;
             this.btnSuspend.Click += new System.EventHandler(this.btnSuspend_Click);
+            // btnHold
+            this.btnHold.BackColor = System.Drawing.Color.SteelBlue;
+            this.btnHold.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnHold.FlatAppearance.BorderSize = 0;
+            this.btnHold.Font = new System.Drawing.Font("Trebuchet MS", 11F, System.Drawing.FontStyle.Bold);
+            this.btnHold.ForeColor = System.Drawing.Color.White;
+            this.btnHold.Location = new System.Drawing.Point(556, 522);
+            this.btnHold.Name = "btnHold";
+            this.btnHold.Size = new System.Drawing.Size(95, 56);
+            this.btnHold.TabIndex = 200;
+            this.btnHold.Text = "Hold";
+            this.btnHold.UseVisualStyleBackColor = false;
+            this.btnHold.Click += new System.EventHandler(this.btnHold_Click);
+            // btnResume
+            this.btnResume.BackColor = System.Drawing.Color.SeaGreen;
+            this.btnResume.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnResume.FlatAppearance.BorderSize = 0;
+            this.btnResume.Font = new System.Drawing.Font("Trebuchet MS", 11F, System.Drawing.FontStyle.Bold);
+            this.btnResume.ForeColor = System.Drawing.Color.White;
+            this.btnResume.Location = new System.Drawing.Point(656, 522);
+            this.btnResume.Name = "btnResume";
+            this.btnResume.Size = new System.Drawing.Size(95, 56);
+            this.btnResume.TabIndex = 201;
+            this.btnResume.Text = "Resume";
+            this.btnResume.UseVisualStyleBackColor = false;
+            this.btnResume.Click += new System.EventHandler(this.btnResume_Click);
             // 
             // btnPayment
             // 
@@ -801,6 +829,8 @@
             this.tabPageSR_Counter.Controls.Add(this.btnPayment);
             this.tabPageSR_Counter.Controls.Add(this.label5);
             this.tabPageSR_Counter.Controls.Add(this.btnSuspend);
+            this.tabPageSR_Counter.Controls.Add(this.btnHold);
+            this.tabPageSR_Counter.Controls.Add(this.btnResume);
             this.tabPageSR_Counter.Controls.Add(this.helplnk);
             this.tabPageSR_Counter.Controls.Add(this.txtSearchItem);
             this.tabPageSR_Counter.Controls.Add(this.label4);
@@ -1048,6 +1078,8 @@
         private System.Windows.Forms.Label lblTotalDisCount;
         private System.Windows.Forms.TextBox txtDiscountRate;
         private System.Windows.Forms.Button btnSuspend;
+        private System.Windows.Forms.Button btnHold;
+        private System.Windows.Forms.Button btnResume;
         private System.Windows.Forms.Button btnPayment;
         private System.Windows.Forms.TextBox txtInvoice;
         private System.Windows.Forms.ToolTip toolTip1;
