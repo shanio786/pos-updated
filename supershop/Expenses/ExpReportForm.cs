@@ -24,59 +24,21 @@ namespace supershop.Expenses
         {
             try
             {
-                ReportValue.StartDate = dtStartDate.Value.ToString("yyyy-MM-dd");
-                ReportValue.EndDate = dtEndDate.Value.ToString("yyyy-MM-dd");
-
-                DataTable dt = new DataTable();
-                dt.Columns.Add("Category", typeof(string));
-                dt.Columns.Add("Note", typeof(string));
-                dt.Columns.Add("Date", typeof(DateTime));
-                dt.Columns.Add("Amount", typeof(double));
-                dt.Columns.Add("exp_amnt", typeof(double));
-                dt.Columns.Add("exp_tamnt", typeof(double));
-                dt.Columns.Add("exp_cate_Heading", typeof(string));
-                dt.Columns.Add("exp_amnt_Heading", typeof(string));
-
-                // one query for everything: rows ordered by category, with the category total on every row
-                DataTable rows = DataAccess.GetDataTable(
-                    " SELECT e.Category, e.Note, e.[Date], e.Amount, " +
-                    "        SUM(e.Amount) OVER (PARTITION BY e.Category) AS CategoryTotal " +
-                    " FROM tbl_expense e " +
-                    " WHERE e.[Date] >= @from AND e.[Date] < DATEADD(day, 1, @to) " +
-                    " ORDER BY e.Category, e.[Date]",
-                    DataAccess.P("@from", dtStartDate.Value.Date), DataAccess.P("@to", dtEndDate.Value.Date));
-
-                string lastCategory = null;
-                foreach (DataRow src in rows.Rows)
-                {
-                    DataRow r = dt.NewRow();
-                    string category = Convert.ToString(src["Category"]);
-                    r["Note"] = Convert.ToString(src["Note"]);
-                    r["Date"] = src["Date"] == DBNull.Value ? (object)DBNull.Value : Convert.ToDateTime(src["Date"]);
-                    r["Amount"] = src["Amount"] == DBNull.Value ? 0.0 : Convert.ToDouble(src["Amount"]);
-                    if (category != lastCategory)
-                    {
-                        r["Category"] = category;
-                        r["exp_tamnt"] = src["CategoryTotal"] == DBNull.Value ? 0.0 : Convert.ToDouble(src["CategoryTotal"]);
-                        r["exp_cate_Heading"] = "Expense Type";
-                        r["exp_amnt_Heading"] = "Expense amount";
-                        lastCategory = category;
-                    }
-                    dt.Rows.Add(r);
-                }
-
-                Expenses.Expense_List exprpr = new Expenses.Expense_List();
-                exprpr.SetDataSource(dt);
-                ReportViwer rf = new ReportViwer();
-                TextObject dtFrom = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["dtFrom"];
-                dtFrom.Text = ReportValue.StartDate;
-                TextObject dtTo = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["dtTo"];
-                dtTo.Text = ReportValue.EndDate;
-                rf.Show();
-                rf.crystalReportViewer1.ReportSource = exprpr;
-                rf.crystalReportViewer1.Refresh();
+                System.DateTime from = dtStartDate.Value.Date;
+                System.DateTime to = dtEndDate.Value.Date;
+                DataTable dt = DataAccess.GetDataTable(
+                    " SELECT Category AS [Category], Note AS [Note], [Date], Amount AS [Amount] " +
+                    " FROM tbl_expense WHERE [Date] >= @from AND [Date] < DATEADD(day,1,@to) " +
+                    " ORDER BY Category, [Date]",
+                    DataAccess.P("@from", from), DataAccess.P("@to", to));
+                decimal total = DataAccess.GetDecimal(
+                    "SELECT SUM(ISNULL(Amount,0)) FROM tbl_expense WHERE [Date] >= @from AND [Date] < DATEADD(day,1,@to)",
+                    DataAccess.P("@from", from), DataAccess.P("@to", to));
+                Report.FastReport.ShowReport(
+                    "Expense Report  (" + from.ToString("yyyy-MM-dd") + " to " + to.ToString("yyyy-MM-dd") + ")",
+                    dt, "Total expenses: " + total.ToString("0.00"));
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Logger.Show(ex, "Could not build the expense report.");
             }

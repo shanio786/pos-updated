@@ -437,60 +437,26 @@ namespace supershop.User_mgt
         {
             try
             {
-               
-
-                User_mgt.PayRollReport exprpr = new User_mgt.PayRollReport();
-               
-                ReportViwer rp = new ReportViwer();
-
-                TextObject empName = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["empName"];
-                empName.Text = cbUserName.Text;
-
-                TextObject payMonth = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["payMonth"];
-                payMonth.Text = cbmonth.Text;
-
-                TextObject payYear = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["payYear"];
-                payYear.Text = txtYear.Text;
-
-                TextObject payDate = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["payDate"];
-                payDate.Text = dtDate.Value.ToShortDateString();
-
-                TextObject payBasic = (TextObject)exprpr.ReportDefinition.Sections["Section2"].ReportObjects["payBasic"];
-                payBasic.Text = txtbais.Text;
-
-                TextObject Bouns = (TextObject)exprpr.ReportDefinition.Sections["Section2"].ReportObjects["Bouns"];
-                Bouns.Text = txtBouns.Text;
-
-                TextObject Leaves = (TextObject)exprpr.ReportDefinition.Sections["Section2"].ReportObjects["Leaves"];
-                Leaves.Text = txtLeaves.Text;
-
-                TextObject deducations = (TextObject)exprpr.ReportDefinition.Sections["Section2"].ReportObjects["deducations"];
-                deducations.Text = txtDedcut.Text;
-
-                TextObject PaidAmnt = (TextObject)exprpr.ReportDefinition.Sections["Section2"].ReportObjects["PaidAmnt"];
-                PaidAmnt.Text = txtPaidAmnt.Text;
-
-                TextObject netPay = (TextObject)exprpr.ReportDefinition.Sections["Section2"].ReportObjects["netPay"];
-                netPay.Text = preValNet;
-
-                TextObject balPay = (TextObject)exprpr.ReportDefinition.Sections["Section2"].ReportObjects["txtbal"];
-                balPay.Text = txtbalamnt.Text;
-
-                TextObject tp = (TextObject)exprpr.ReportDefinition.Sections["Section2"].ReportObjects["txttp"];
-                tp.Text = preValTP;
-                TextObject ss = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["payStatus"];
-                ss.Text = txtpaystatus.Text;
-
-                rp.Show();
-                rp.crystalReportViewer1.ReportSource = exprpr;
-                rp.crystalReportViewer1.Refresh();
-
-
+                DataTable dt = new DataTable();
+                dt.Columns.Add("Item");
+                dt.Columns.Add("Amount");
+                dt.Rows.Add("Employee", cbUserName.Text);
+                dt.Rows.Add("Month / Year", cbmonth.Text + " " + txtYear.Text);
+                dt.Rows.Add("Pay date", dtDate.Value.ToShortDateString());
+                dt.Rows.Add("Status", txtpaystatus.Text);
+                dt.Rows.Add("Basic pay", txtbais.Text);
+                dt.Rows.Add("Bonus", txtBouns.Text);
+                dt.Rows.Add("Leaves", txtLeaves.Text);
+                dt.Rows.Add("Deductions", txtDedcut.Text);
+                dt.Rows.Add("Total pay", preValTP);
+                dt.Rows.Add("Net pay", preValNet);
+                dt.Rows.Add("Paid amount", txtPaidAmnt.Text);
+                dt.Rows.Add("Balance", txtbalamnt.Text);
+                Report.FastReport.ShowReport("Salary Slip  -  " + cbUserName.Text + "  (" + cbmonth.Text + " " + txtYear.Text + ")", dt);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show(this, "No Record Found.", "Query Error !!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+                Logger.Show(ex, "Could not build the salary slip.");
             }
             preValNet = "";
             preValTP = "";

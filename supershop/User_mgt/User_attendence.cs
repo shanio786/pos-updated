@@ -186,25 +186,13 @@ namespace supershop.User_mgt
                 string absentDays = DataAccess.ExecuteSQLScaler(sql, DataAccess.P("@f", dFrom), DataAccess.P("@t", dTo), DataAccess.P("@n", cbEmpMnthly.Text));
 
                 sql = " SELECT att_date ,Name, intime ,outtime ,att_status FROM userattendence where att_date >= @f and att_date <= @t and Name = @n";
-                DataSet ds = DataAccess.GetDataSet(sql, DataAccess.P("@f", dFrom), DataAccess.P("@t", dTo), DataAccess.P("@n", cbEmpMnthly.Text));
-                ds.Tables[0].TableName = "DSAttandence";
-                User_mgt.attendenceRPT exprpr = new User_mgt.attendenceRPT();
-                exprpr.SetDataSource(ds.Tables[0]);
-                ReportViwer rp = new ReportViwer();
-
-                TextObject dtF = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["dtFrom"];
-                dtF.Text = dtFrom.Value.ToShortDateString();
-                TextObject dtT = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["dtTo"];
-                dtT.Text = dtTo.Value.ToShortDateString();
-
-                TextObject prsnt = (TextObject)exprpr.ReportDefinition.Sections["Section4"].ReportObjects["Text16"];
-                prsnt.Text = presntDays;
-                TextObject absnt = (TextObject)exprpr.ReportDefinition.Sections["Section4"].ReportObjects["Text19"];
-                absnt.Text = absentDays;
-
-                rp.Show();
-                rp.crystalReportViewer1.ReportSource = exprpr;
-                rp.crystalReportViewer1.Refresh();
+DataTable ds = DataAccess.GetDataTable(
+                    " SELECT att_date AS [Date], Name AS [User Name], intime AS [In Time], outtime AS [Out Time], att_status AS [Status] " +
+                    " FROM userattendence WHERE att_date >= @f AND att_date <= @t AND Name = @n ORDER BY att_date",
+                    DataAccess.P("@f", dFrom), DataAccess.P("@t", dTo), DataAccess.P("@n", cbEmpMnthly.Text));
+                Report.FastReport.ShowReport(
+                    "Attendance  -  " + cbEmpMnthly.Text + "  (" + dFrom + " to " + dTo + ")",
+                    ds, "Present: " + presntDays, "Absent: " + absentDays);
             }
             catch (Exception)
             {

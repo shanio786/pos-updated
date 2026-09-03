@@ -63,20 +63,21 @@ namespace supershop.Report
                     (ReportValue.emp == "" ? "" : " AND sp.emp = @emp ") + shopFilter,
                     Params());
 
-                Report.SaleReport exprpr = new Report.SaleReport();
-                exprpr.SetDataSource(sales);
-                exprpr.DataDefinition.FormulaFields["due_recv"].Text = recvd.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                exprpr.DataDefinition.FormulaFields["incash2"].Text = inCash.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                exprpr.DataDefinition.FormulaFields["return"].Text = returnAmount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+// Nicely-named columns for the grid report
+                if (sales.Columns.Contains("payment_amount")) sales.Columns["payment_amount"].ColumnName = "Total";
+                if (sales.Columns.Contains("due_amount")) sales.Columns["due_amount"].ColumnName = "Due";
+                if (sales.Columns.Contains("dis")) sales.Columns["dis"].ColumnName = "Discount";
+                if (sales.Columns.Contains("vat")) sales.Columns["vat"].ColumnName = "Tax";
+                if (sales.Columns.Contains("sales_time")) sales.Columns["sales_time"].ColumnName = "Date";
+                if (sales.Columns.Contains("emp_id")) sales.Columns["emp_id"].ColumnName = "Sold by";
+                if (sales.Columns.Contains("sales_id")) sales.Columns["sales_id"].ColumnName = "Invoice";
 
-                ReportViwer rp = new ReportViwer();
-                TextObject dtFrom = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["dtFrom"];
-                dtFrom.Text = ReportValue.StartDate;
-                TextObject dtTo = (TextObject)exprpr.ReportDefinition.Sections["Section1"].ReportObjects["dtTo"];
-                dtTo.Text = ReportValue.EndDate;
-                rp.Show();
-                rp.crystalReportViewer1.ReportSource = exprpr;
-                rp.crystalReportViewer1.Refresh();
+                Report.FastReport.ShowReport(
+                    "Sales Report  (" + ReportValue.StartDate + " to " + ReportValue.EndDate + ")",
+                    sales,
+                    "Cash: " + inCash.ToString("0.00"),
+                    "Due received: " + recvd.ToString("0.00"),
+                    "Returns: " + returnAmount.ToString("0.00"));
             }
             catch (Exception ex)
             {

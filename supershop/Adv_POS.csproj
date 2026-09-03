@@ -495,6 +495,12 @@
     <Compile Include="Report\DayClose.Designer.cs">
       <DependentUpon>DayClose.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\FastReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\FastReport.Designer.cs">
+      <DependentUpon>FastReport.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\PLdialog.cs">
       <SubType>Form</SubType>
     </Compile>
