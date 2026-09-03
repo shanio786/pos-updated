@@ -608,6 +608,13 @@ namespace supershop
             go.Show();
         }
 
+        private void productPricingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Items.ProductPricing go = new Items.ProductPricing();
+            go.MdiParent = this;
+            go.Show();
+        }
+
         private void expensesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Expenses.ExpensesList go = new Expenses.ExpensesList();

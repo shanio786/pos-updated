@@ -259,15 +259,19 @@ namespace supershop
                         return;
                     }
                     //- new in 8.1 version // Default Product QTY is 1
-                    string sql = "SELECT  product_name as Name , retail_price as Price , 1.00  as QTY, (retail_price * 1.00 ) * 1.00  as 'Total' ,  " +
-                            " (((retail_price * 1.00 ) * discount) / 100.00) as 'dis amt' , " +
+                    string sql = "SELECT  product_name as Name , eff_price as Price , 1.00  as QTY, (eff_price * 1.00 ) * 1.00  as 'Total' ,  " +
+                            " (((eff_price * 1.00 ) * eff_disc) / 100.00) as 'dis amt' , " +
                             " CASE     " +
-                            " WHEN taxapply = 1 THEN   (((retail_price * 1.00 )  - (((retail_price * 1.00 ) * discount) / 100.00))  * @taxrate ) / 100.00   " +
+                            " WHEN taxapply = 1 THEN   (((eff_price * 1.00 )  - (((eff_price * 1.00 ) * eff_disc) / 100.00))  * @taxrate ) / 100.00   " +
                             " ELSE 0.00  " +
-                            " END 'taxamt' , product_id as ID , discount , taxapply, status, product_quantity  " +
-                            " FROM  purchase  where product_id = @id  and product_quantity >= 1 ";
+                            " END 'taxamt' , product_id as ID , eff_disc as discount , taxapply, status, product_quantity  " +
+                            // eff_price = wholesale price when Wholesale is ticked; eff_disc converts a flat (Rs) per-unit discount into a rate
+                            " FROM ( SELECT *, CASE WHEN ISNULL(disc_amount,0) > 0 AND eff_price > 0 THEN (disc_amount / eff_price * 100.0) ELSE ISNULL(discount,0) END AS eff_disc " +
+                            "        FROM ( SELECT *, CASE WHEN @wholesale = 1 AND ISNULL(wholesale_price,0) > 0 THEN wholesale_price ELSE retail_price END AS eff_price FROM purchase ) q ) purchase " +
+                            " where product_id = @id  and product_quantity >= 1 ";
                     DataTable dt = DataAccess.GetDataTable(sql,
                         DataAccess.P("@taxrate", Convert.ToDecimal(Taxrate)),
+                        DataAccess.P("@wholesale", chkWholesale.Checked ? 1 : 0),
                         DataAccess.P("@id", txtBarcodeReaderBox.Text));
 
                     string ItemsName    = dt.Rows[0].ItemArray[0].ToString();

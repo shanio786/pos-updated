@@ -322,6 +322,12 @@
     <Compile Include="Items\Add_Category.Designer.cs">
       <DependentUpon>Add_Category.cs</DependentUpon>
     </Compile>
+    <Compile Include="Items\ProductPricing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Items\ProductPricing.Designer.cs">
+      <DependentUpon>ProductPricing.cs</DependentUpon>
+    </Compile>
     <Compile Include="Items\Categories.cs">
       <SubType>Form</SubType>
     </Compile>

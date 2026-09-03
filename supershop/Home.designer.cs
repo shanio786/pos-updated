@@ -93,6 +93,7 @@
             this.purchaseHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.categoriesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.productPricingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.barcodeMachineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createBarcodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -734,6 +735,7 @@
             this.purchaseHistoryToolStripMenuItem,
             this.toolStripSeparator6,
             this.categoriesToolStripMenuItem,
+            this.productPricingToolStripMenuItem,
             this.toolStripSeparator10,
             this.barcodeMachineToolStripMenuItem,
             this.createBarcodeToolStripMenuItem,
@@ -799,6 +801,13 @@
             this.categoriesToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
             this.categoriesToolStripMenuItem.Text = "Categories";
             this.categoriesToolStripMenuItem.Click += new System.EventHandler(this.categoriesToolStripMenuItem_Click);
+            // 
+            // productPricingToolStripMenuItem
+            // 
+            this.productPricingToolStripMenuItem.Name = "productPricingToolStripMenuItem";
+            this.productPricingToolStripMenuItem.Size = new System.Drawing.Size(296, 22);
+            this.productPricingToolStripMenuItem.Text = "Wholesale / Flat Discount";
+            this.productPricingToolStripMenuItem.Click += new System.EventHandler(this.productPricingToolStripMenuItem_Click);
             // 
             // toolStripSeparator10
             // 
@@ -1447,6 +1456,7 @@
         private System.Windows.Forms.ToolStripMenuItem purchaseHistoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem categoriesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem productPricingToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.ToolStripMenuItem barcodeMachineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createBarcodeToolStripMenuItem;
