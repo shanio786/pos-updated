@@ -841,7 +841,6 @@
     <None Include="BarCode\BarDS.xss">
       <DependentUpon>BarDS.xsd</DependentUpon>
     </None>
-    <None Include="bin\x86\Debug\ExpenseAttachment\Nofile.pdf" />
     <None Include="Expenses\DSExpense.xsc">
       <DependentUpon>DSExpense.xsd</DependentUpon>
     </None>
@@ -948,15 +947,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Debug\itextsharp.dll" />
-    <Content Include="bin\x86\Debug\ITEMIMAGE\8940000000002.png" />
-    <Content Include="bin\x86\Debug\ITEMIMAGE\8940000000003.png" />
-    <Content Include="bin\x86\Debug\ITEMIMAGE\8940000000004.png" />
-    <Content Include="bin\x86\Debug\ITEMIMAGE\8940000000005.png" />
-    <Content Include="bin\x86\Debug\ITEMIMAGE\8940000000007.png" />
-    <Content Include="bin\x86\Debug\ITEMIMAGE\8940000000008.png" />
-    <Content Include="bin\x86\Debug\ITEMIMAGE\8940000000009.png" />
-    <Content Include="bin\x86\Debug\ITEMIMAGE\8940000000010.png" />
     <Content Include="POS.ico" />
     <Content Include="res\e-commerce-icon-icon.png" />
     <Content Include="res\ico\ico-32-24\appbar.clear.reflect.horizontal.png" />
