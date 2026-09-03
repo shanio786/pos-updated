@@ -81,5 +81,9 @@ GO
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_tbl_sale_tender_sales')
     CREATE INDEX IX_tbl_sale_tender_sales ON dbo.tbl_sale_tender (sales_id);
 GO
+/* ---- Optional per-product columns: wholesale price + flat (Rs) discount ---- */
+IF COL_LENGTH('dbo.purchase','wholesale_price') IS NULL ALTER TABLE dbo.purchase ADD wholesale_price decimal(18,2) NULL;
+IF COL_LENGTH('dbo.purchase','disc_amount')     IS NULL ALTER TABLE dbo.purchase ADD disc_amount     decimal(18,2) NULL;
+GO
 PRINT 'Feature tables ready.';
 GO

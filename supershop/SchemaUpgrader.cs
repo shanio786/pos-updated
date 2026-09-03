@@ -44,6 +44,8 @@ namespace supershop
             yield return Col("tbl_duepayment", "emp_id", "varchar(100)");
             yield return Col("return_item", "Shopid", "varchar(50)");
             yield return Col("tbl_adv_sal", "bal_amnt", "decimal(18,2)");
+            yield return Col("purchase", "wholesale_price", "decimal(18,2)");
+            yield return Col("purchase", "disc_amount", "decimal(18,2)");
 
             // ---- tables the old database may not have ----
             yield return @"IF OBJECT_ID('dbo.userattendence','U') IS NULL

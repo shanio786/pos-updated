@@ -195,6 +195,8 @@ CREATE TABLE dbo.purchase (                      -- current stock, one row per p
     logDate             datetime       NULL CONSTRAINT DF_purchase_logDate    DEFAULT (GETDATE()),
     UpdateDate          datetime       NULL CONSTRAINT DF_purchase_UpdateDate DEFAULT (GETDATE()),
     Updateby            varchar(100)   NULL,
+    wholesale_price     decimal(18,2)  NULL,     -- optional 2nd (wholesale) price
+    disc_amount         decimal(18,2)  NULL,     -- optional flat (Rs) discount per unit
     CONSTRAINT PK_purchase PRIMARY KEY CLUSTERED (product_id)
 );
 GO
