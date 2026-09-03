@@ -68,7 +68,7 @@
             this.bntSearch.Name = "bntSearch";
             this.bntSearch.Size = new System.Drawing.Size(184, 23);
             this.bntSearch.TabIndex = 7;
-            this.bntSearch.Text = "Submit";
+            this.bntSearch.Text = "Print / Preview Labels";
             this.bntSearch.UseVisualStyleBackColor = true;
             this.bntSearch.Click += new System.EventHandler(this.bntSearch_Click);
             // 

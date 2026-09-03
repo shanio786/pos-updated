@@ -34,6 +34,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.txtProductCode = new System.Windows.Forms.TextBox();
+            this.btnAutoBarcode = new System.Windows.Forms.Button();
             this.txtProductName = new System.Windows.Forms.TextBox();
             this.txtCostPrice = new System.Windows.Forms.TextBox();
             this.txtProductQty = new System.Windows.Forms.TextBox();
@@ -127,6 +128,22 @@
             this.txtProductCode.Location = new System.Drawing.Point(225, 77);
             this.txtProductCode.Name = "txtProductCode";
             this.txtProductCode.Size = new System.Drawing.Size(207, 24);
+            // 
+            // btnAutoBarcode
+            // 
+            this.btnAutoBarcode.BackColor = System.Drawing.Color.SteelBlue;
+            this.btnAutoBarcode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAutoBarcode.FlatAppearance.BorderSize = 0;
+            this.btnAutoBarcode.ForeColor = System.Drawing.Color.White;
+            this.btnAutoBarcode.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
+            this.btnAutoBarcode.Location = new System.Drawing.Point(438, 77);
+            this.btnAutoBarcode.Name = "btnAutoBarcode";
+            this.btnAutoBarcode.Size = new System.Drawing.Size(70, 24);
+            this.btnAutoBarcode.TabIndex = 400;
+            this.btnAutoBarcode.Text = "Auto";
+            this.toolTip1.SetToolTip(this.btnAutoBarcode, "Generate a barcode for a product that has none");
+            this.btnAutoBarcode.UseVisualStyleBackColor = false;
+            this.btnAutoBarcode.Click += new System.EventHandler(this.btnAutoBarcode_Click);
             this.txtProductCode.TabIndex = 0;
             this.toolTip1.SetToolTip(this.txtProductCode, "Add Number\r\nBarcode or Id number\r\n06900001372");
             this.txtProductCode.TextChanged += new System.EventHandler(this.txtProductCode_TextChanged);
@@ -528,6 +545,7 @@
             this.splitContainer1.Panel1.Controls.Add(this.label3);
             this.splitContainer1.Panel1.Controls.Add(this.chktaxapply);
             this.splitContainer1.Panel1.Controls.Add(this.txtProductCode);
+            this.splitContainer1.Panel1.Controls.Add(this.btnAutoBarcode);
             this.splitContainer1.Panel1.Controls.Add(this.label11);
             this.splitContainer1.Panel1.Controls.Add(this.txtProductName);
             this.splitContainer1.Panel1.Controls.Add(this.label10);
@@ -696,6 +714,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtProductCode;
+        private System.Windows.Forms.Button btnAutoBarcode;
         private System.Windows.Forms.TextBox txtProductName;
         private System.Windows.Forms.TextBox txtCostPrice;
         private System.Windows.Forms.TextBox txtProductQty;

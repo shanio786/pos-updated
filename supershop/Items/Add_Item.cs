@@ -344,6 +344,25 @@ namespace supershop
         #endregion
 
         #region   Accept Decimal Value Validation
+        // Generate a barcode for a product that doesn't have one (loose / own-packed items).
+        private void btnAutoBarcode_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtProductCode.ReadOnly)
+                {
+                    MessageBox.Show("This product already has a code.");
+                    return;
+                }
+                if (txtProductCode.Text.Trim().Length > 0 &&
+                    MessageBox.Show("Replace the current code with a new generated barcode?", "Auto barcode",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return;
+                txtProductCode.Text = supershop.BarCode.BarcodeService.GenerateInternalCode();
+            }
+            catch (Exception ex) { Logger.Show(ex, "Could not generate a barcode."); }
+        }
+
         private void txtProductCode_KeyPress(object sender, KeyPressEventArgs e)
         {
             try

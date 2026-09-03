@@ -173,6 +173,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoClosingMessageBox.cs" />
+    <Compile Include="BarCode\BarcodeService.cs" />
+    <Compile Include="BarCode\LabelPrinter.cs" />
     <Compile Include="BarCode\BarcodeCreator.cs">
       <SubType>Form</SubType>
     </Compile>
