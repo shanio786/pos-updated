@@ -24,7 +24,7 @@ namespace supershop.Licensing
     {
         // PUBLIC key only. The matching PRIVATE key stays with the vendor.
         // Replace this with your own key pair before shipping (see Tools/LicenseKeyGen).
-        const string PublicKeyXml = @"<RSAKeyValue><Modulus>qpwz5UwP8pN3BrEhn5aGhtnq2XMAL368xR+TbuFEH0uJdZjXUaCmAaZwlh8gID4stUYHeC+IU/jLrSqBBqiKgrW9o/p3pDiNCMHjIjmF05gG1K0b0Ek5CFPDtWdRZfCmBEvPu/1EWYAglbTGDFFhJOf3yCz/W2KWBpjsJkhCVAWeE3rJ3Ijw4vgQ2ANa1P5zGb/XIJZ0rjxbdCROokN1sA1k0vU+v0fUBdnI/2KnDNOfuan+Y0+s1VVl0a/WFogRxHwg+l0tsKVqHudnORca+aH0FUxOTB9CYbMwz4IzO99580WquFIDa04hFDPx9KpyQkiAWr2PkYBHRW3F3vLXxw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
+        const string PublicKeyXml = @"<RSAKeyValue><Modulus>hYVQJrR74iJVaZbXGvMfL9jl0Kq/n4Awiamg5f9CXaqGefTBlqYGUxpH+xlHQXvSzTje5PVwIhmYprC0edOx4SFdw6aL8tB6M8UOuz8PZtE54y+qNfXVorBzVWCJe4Mh8HiiqIxLc5Vmt8BJwWSE5P7d2gWYZtvKjIpaVaM4v4/d/Zn3Sl+Zn7zxWjjRn9z03QGBCsKYBjSc+VNr2UrYgFw/v3TeXtifgYUBlDAjstvzSdkf2lI6yTI5PCmfXxngN+eIMhFXSMoEH1q895vAaoau/37qEjDY5nN496lpmr97SUP5IdyS6jDjcOZCAAg19LlS5UCXt3JWTW/Z1yw6aw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
 
         static string LicenseFile
         {
