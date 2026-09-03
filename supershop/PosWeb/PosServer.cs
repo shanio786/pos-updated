@@ -27,16 +27,44 @@ namespace supershop.PosWeb
         static readonly JavaScriptSerializer _json = new JavaScriptSerializer();
         public static string Url { get; private set; }
 
-        /// <summary>Start the server (idempotent) and open the POS UI in the browser.</summary>
+        /// <summary>Start the server (idempotent) and open the POS UI as a clean
+        /// standalone app window (Edge/Chrome "app mode" - no tabs, no address bar,
+        /// looks like a desktop program).</summary>
         public static string Launch()
         {
             Start();
             if (!string.IsNullOrEmpty(Url))
             {
-                try { System.Diagnostics.Process.Start(Url); }
-                catch (Exception ex) { Logger.Error("PosServer open browser", ex); }
+                try { OpenAppWindow(Url); }
+                catch (Exception ex) { Logger.Error("PosServer open window", ex); try { System.Diagnostics.Process.Start(Url); } catch { } }
             }
             return Url;
+        }
+
+        /// <summary>Open the URL in a borderless app window using Edge or Chrome app mode.</summary>
+        static void OpenAppWindow(string url)
+        {
+            string pf   = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            string pf86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            string lad  = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string[] candidates =
+            {
+                Path.Combine(pf86, @"Microsoft\Edge\Application\msedge.exe"),
+                Path.Combine(pf,   @"Microsoft\Edge\Application\msedge.exe"),
+                Path.Combine(pf86, @"Google\Chrome\Application\chrome.exe"),
+                Path.Combine(pf,   @"Google\Chrome\Application\chrome.exe"),
+                Path.Combine(lad,  @"Google\Chrome\Application\chrome.exe"),
+            };
+            string args = "--app=" + url + " --window-size=1460,920 --disable-features=Translate";
+            foreach (string exe in candidates)
+            {
+                if (File.Exists(exe))
+                {
+                    System.Diagnostics.Process.Start(exe, args);
+                    return;
+                }
+            }
+            System.Diagnostics.Process.Start(url);   // fallback: default browser
         }
 
         public static void Start()
