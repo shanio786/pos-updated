@@ -302,6 +302,41 @@ namespace supershop
             go.Show();
         }
 
+        private void restoreDbToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (UserInfo.usertype != "1")
+            {
+                MessageBox.Show("Only an administrator can restore the database.");
+                return;
+            }
+            if (MessageBox.Show(
+                    "Restoring will REPLACE all current data with the backup.\n\n" +
+                    "Everyone else must be logged out. Continue?",
+                    "Restore database", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
+            try
+            {
+                using (OpenFileDialog dlg = new OpenFileDialog())
+                {
+                    dlg.Title = "Choose a backup to restore";
+                    dlg.Filter = "SQL Server backup (*.bak)|*.bak";
+                    dlg.InitialDirectory = BackupHelper.BackupFolder;
+                    if (dlg.ShowDialog() != DialogResult.OK) return;
+                    Cursor.Current = Cursors.WaitCursor;
+                    DatabaseAdmin.Restore(dlg.FileName);
+                    Cursor.Current = Cursors.Default;
+                    MessageBox.Show("Database restored. The application will now close - please open it again.",
+                        "Restore", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Application.Exit();
+                }
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                Logger.Show(ex, "Restore failed. The SQL Server service must be able to read the .bak file, and no one else may be using the database.");
+            }
+        }
+
         private void importDBBackupToolStripMenuItem_Click(object sender, EventArgs e)   // Backup database (.bak)
         {
             try

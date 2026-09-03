@@ -76,6 +76,7 @@
             this.saveBackupAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.restoreDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restoreDbToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataResetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuOn_statusMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -626,6 +627,7 @@
             this.saveBackupAsToolStripMenuItem,
             this.toolStripSeparator12,
             this.restoreDataToolStripMenuItem,
+            this.restoreDbToolStripMenuItem,
             this.dataResetToolStripMenuItem,
             this.toolStripSeparator11,
             this.toolStripMenuOn_statusMenu,
@@ -665,6 +667,13 @@
             this.restoreDataToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.restoreDataToolStripMenuItem.Text = "Backup Database (.bak)";
             this.restoreDataToolStripMenuItem.Click += new System.EventHandler(this.importDBBackupToolStripMenuItem_Click);
+            // 
+            // restoreDbToolStripMenuItem
+            // 
+            this.restoreDbToolStripMenuItem.Name = "restoreDbToolStripMenuItem";
+            this.restoreDbToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.restoreDbToolStripMenuItem.Text = "Restore Database (.bak)";
+            this.restoreDbToolStripMenuItem.Click += new System.EventHandler(this.restoreDbToolStripMenuItem_Click);
             // 
             // dataResetToolStripMenuItem
             // 
@@ -1421,6 +1430,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveBackupAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem restoreDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem restoreDbToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dataResetToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuOn_statusMenu;
