@@ -79,9 +79,11 @@ Say "Using SQL Server: $Server" Green
 Say ""
 Say "Creating database '$Database' ..." White
 $sqlText = Get-Content -Path $SqlFile -Raw
-# split on lines that contain only GO (case-insensitive)
+# normalise line endings so CRLF files split correctly (.NET $ won't span \r)
+$sqlText = $sqlText -replace "`r`n", "`n" -replace "`r", "`n"
+# split on lines that contain only GO (case-insensitive), tolerating a stray \r
 $batches = [System.Text.RegularExpressions.Regex]::Split(
-    $sqlText, "(?im)^[\t ]*GO[\t ]*;?[\t ]*$")
+    $sqlText, "(?im)^[\t ]*GO[\t ]*;?[\t ]*\r?$")
 
 $cs = "Server=$Server;Database=master;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;"
 $conn = New-Object System.Data.SqlClient.SqlConnection $cs
