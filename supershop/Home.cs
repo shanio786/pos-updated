@@ -474,6 +474,13 @@ namespace supershop
             go.Show();
         }
 
+        private void dashboardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Report.Dashboard go = new Report.Dashboard();
+            go.MdiParent = this;
+            go.Show();
+        }
+
         private void saveAsDatabaseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try

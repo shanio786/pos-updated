@@ -120,6 +120,7 @@
             this.salesReportDetailsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.profitLossReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dayCloseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dashboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.generalLedgerReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -984,6 +985,7 @@
             this.salesReportDetailsToolStripMenuItem,
             this.profitLossReportToolStripMenuItem,
             this.dayCloseToolStripMenuItem,
+            this.dashboardToolStripMenuItem,
             this.toolStripSeparator3,
             this.generalLedgerReportToolStripMenuItem,
             this.toolStripSeparator7,
@@ -1027,6 +1029,13 @@
             this.dayCloseToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.dayCloseToolStripMenuItem.Text = "Day Close / Z-Report";
             this.dayCloseToolStripMenuItem.Click += new System.EventHandler(this.dayCloseToolStripMenuItem_Click);
+            // 
+            // dashboardToolStripMenuItem
+            // 
+            this.dashboardToolStripMenuItem.Name = "dashboardToolStripMenuItem";
+            this.dashboardToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.dashboardToolStripMenuItem.Text = "Dashboard";
+            this.dashboardToolStripMenuItem.Click += new System.EventHandler(this.dashboardToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
@@ -1455,6 +1464,7 @@
         private System.Windows.Forms.ToolStripMenuItem salesReportDetailsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem profitLossReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dayCloseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dashboardToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem generalLedgerReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
