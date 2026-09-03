@@ -134,6 +134,7 @@
             this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.systemConfigurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newPosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutSoftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helplinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1140,6 +1141,15 @@
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(48, 26);
             this.helpToolStripMenuItem.Text = "Help";
+            //
+            // newPosToolStripMenuItem
+            //
+            this.newPosToolStripMenuItem.Name = "newPosToolStripMenuItem";
+            this.newPosToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(148)))), ((int)(((byte)(136)))));
+            this.newPosToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
+            this.newPosToolStripMenuItem.Size = new System.Drawing.Size(110, 26);
+            this.newPosToolStripMenuItem.Text = "★ New POS";
+            this.newPosToolStripMenuItem.Click += new System.EventHandler(this.newPosToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem1
             // 
@@ -1305,6 +1315,7 @@
             this.viewToolStripMenuItem,
             this.settingToolStripMenuItem,
             this.helpToolStripMenuItem,
+            this.newPosToolStripMenuItem,
             this.exitToolStripMenuItem2,
             this.RestoretoolStripMenu,
             this.MinimizertoolStripMenu,
@@ -1496,6 +1507,7 @@
         private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem systemConfigurationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newPosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem aboutSoftToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helplinkToolStripMenuItem;

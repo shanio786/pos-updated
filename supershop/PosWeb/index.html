@@ -1,0 +1,451 @@
+<title>Apex POS Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Roboto+Mono:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg:#e9edf2; --surface:#ffffff; --surface-2:#f5f8fa; --surface-3:#eef2f6;
+  --border:#e0e6ec; --border-strong:#cdd6df;
+  --text:#131c26; --text-dim:#5c6b79; --text-faint:#8a97a4;
+  --accent:#0d9488; --accent-strong:#0f766e; --accent-soft:#d6f2ee;
+  --amber:#c2680a; --amber-soft:#fbecd6;
+  --indigo:#4f46e5; --indigo-soft:#e5e3fb;
+  --rose:#e11d48; --rose-soft:#fbdfe6;
+  --good:#15884a;
+  --shadow:0 1px 2px rgba(16,29,41,.06),0 8px 24px rgba(16,29,41,.06);
+  --shadow-lg:0 20px 60px rgba(16,29,41,.24);
+  --r:14px; --r-sm:10px;
+}
+:root:not([data-theme="light"]) @media (prefers-color-scheme:dark){}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1219; --surface:#151f29; --surface-2:#1a2530; --surface-3:#202d3a;
+  --border:#26333f; --border-strong:#33434f;
+  --text:#e8eef4; --text-dim:#94a4b3; --text-faint:#6b7c8b;
+  --accent:#17b3a3; --accent-strong:#12a294; --accent-soft:#123733;
+  --amber:#e0913a; --amber-soft:#3a2c17;
+  --indigo:#8b83f5; --indigo-soft:#211f3d;
+  --rose:#f2597a; --rose-soft:#3a1c26;
+  --good:#3bbd76;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  --shadow-lg:0 24px 70px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --bg:#0c1219; --surface:#151f29; --surface-2:#1a2530; --surface-3:#202d3a;
+  --border:#26333f; --border-strong:#33434f;
+  --text:#e8eef4; --text-dim:#94a4b3; --text-faint:#6b7c8b;
+  --accent:#17b3a3; --accent-strong:#12a294; --accent-soft:#123733;
+  --amber:#e0913a; --amber-soft:#3a2c17;
+  --indigo:#8b83f5; --indigo-soft:#211f3d;
+  --rose:#f2597a; --rose-soft:#3a1c26;
+  --good:#3bbd76;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  --shadow-lg:0 24px 70px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:Manrope,system-ui,-apple-system,Segoe UI,sans-serif;
+  -webkit-font-smoothing:antialiased;font-size:14px;line-height:1.4;overflow:hidden}
+.mono{font-family:"Roboto Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+/* shell */
+.app{display:flex;flex-direction:column;height:100vh}
+.topbar{display:flex;align-items:center;gap:18px;padding:0 18px;height:56px;
+  background:var(--surface);border-bottom:1px solid var(--border);flex:none}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.2px;font-size:16px}
+.brand .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(145deg,var(--accent),var(--accent-strong));
+  display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:0 4px 12px rgba(13,148,136,.35)}
+.brand small{display:block;font-weight:600;font-size:11px;color:var(--text-faint);letter-spacing:.3px;margin-top:1px}
+.topnav{display:flex;gap:2px;margin-left:8px}
+.topnav a{padding:8px 13px;border-radius:9px;color:var(--text-dim);font-weight:600;font-size:13.5px;text-decoration:none}
+.topnav a.on{background:var(--accent-soft);color:var(--accent-strong)}
+.topnav a:hover:not(.on){background:var(--surface-3)}
+.spacer{flex:1}
+.chip{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:var(--surface-2);
+  border:1px solid var(--border);font-weight:600;font-size:12.5px;color:var(--text-dim)}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 22%,transparent)}
+.clock{font-weight:700}
+.iconbtn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--text-dim)}
+.iconbtn:hover{background:var(--surface-3);color:var(--text)}
+
+/* body grid */
+.work{flex:1;display:grid;grid-template-columns:1fr 384px;gap:16px;padding:16px;min-height:0}
+.pane{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);display:flex;flex-direction:column;min-height:0;box-shadow:var(--shadow)}
+
+/* left: scan + cart */
+.scanrow{padding:14px;border-bottom:1px solid var(--border);display:flex;gap:10px}
+.scan{flex:1;position:relative}
+.scan svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-faint)}
+.scan input{width:100%;height:46px;padding:0 14px 0 42px;border-radius:12px;border:1.5px solid var(--border-strong);
+  background:var(--surface-2);color:var(--text);font-size:15px;font-weight:600}
+.scan input::placeholder{color:var(--text-faint);font-weight:500}
+.scan input:focus{border-color:var(--accent);background:var(--surface);outline:none;box-shadow:0 0 0 4px var(--accent-soft)}
+.kbd{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--text-faint);
+  border:1px solid var(--border-strong);border-radius:6px;padding:2px 6px;font-weight:600}
+
+.carthead{display:grid;grid-template-columns:1fr 108px 116px 40px;gap:12px;padding:11px 18px;
+  font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text-faint);
+  border-bottom:1px solid var(--border)}
+.carthead .r{text-align:right}
+.cart{flex:1;overflow-y:auto;padding:6px}
+.line{display:grid;grid-template-columns:1fr 108px 116px 40px;gap:12px;align-items:center;
+  padding:11px 12px;border-radius:12px}
+.line+.line{margin-top:2px}
+.line:hover{background:var(--surface-2)}
+.line .nm{font-weight:700;font-size:14.5px;letter-spacing:-.1px}
+.line .meta{font-size:12px;color:var(--text-faint);font-weight:500;margin-top:2px}
+.line .meta b{color:var(--accent-strong);font-weight:700}
+.stepper{display:flex;align-items:center;justify-content:center;gap:0;background:var(--surface-3);
+  border-radius:9px;padding:3px;width:104px;margin-left:auto}
+.stepper button{width:28px;height:28px;border-radius:7px;font-size:17px;font-weight:700;color:var(--text-dim);line-height:1}
+.stepper button:hover{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.stepper .q{flex:1;text-align:center;font-weight:700;font-size:14px}
+.line .amt{text-align:right;font-weight:700;font-size:15px}
+.line .rm{width:30px;height:30px;border-radius:8px;color:var(--text-faint);display:grid;place-items:center;margin-left:auto}
+.line .rm:hover{background:var(--rose-soft);color:var(--rose)}
+.empty{flex:1;display:grid;place-items:center;color:var(--text-faint);text-align:center;gap:6px;padding:30px}
+.empty svg{opacity:.5}
+
+/* quick picks */
+.quick{border-top:1px solid var(--border);padding:12px 14px}
+.quick .qh{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text-faint);margin:0 2px 9px}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.qcard{text-align:left;padding:10px 11px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border);
+  display:flex;flex-direction:column;gap:5px;transition:transform .06s}
+.qcard:hover{border-color:var(--accent);background:var(--surface)}
+.qcard:active{transform:scale(.97)}
+.qcard .em{font-size:19px}
+.qcard .qn{font-weight:700;font-size:12.5px;line-height:1.25;letter-spacing:-.1px}
+.qcard .qp{font-size:12px;color:var(--text-dim);font-weight:700}
+
+/* right: summary */
+.sum{overflow-y:auto}
+.sum .sec{padding:15px 16px;border-bottom:1px solid var(--border)}
+.field label{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-faint);margin-bottom:6px}
+.select{position:relative}
+.select select{width:100%;height:42px;padding:0 34px 0 12px;border-radius:10px;border:1.5px solid var(--border-strong);
+  background:var(--surface-2);color:var(--text);font-weight:700;font-size:14px;appearance:none}
+.select select:focus{border-color:var(--accent);outline:none}
+.select svg{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-faint);pointer-events:none}
+.custrow{display:flex;gap:10px;align-items:end}
+.custrow .field{flex:1}
+.addc{height:42px;width:42px;border-radius:10px;background:var(--accent-soft);color:var(--accent-strong);
+  font-size:22px;font-weight:600;display:grid;place-items:center;flex:none}
+.addc:hover{background:var(--accent);color:#fff}
+
+.togs{display:flex;gap:9px}
+.tog{flex:1;display:flex;align-items:center;gap:9px;padding:10px 11px;border-radius:11px;border:1.5px solid var(--border);
+  background:var(--surface-2);font-weight:700;font-size:13px;text-align:left}
+.tog:hover{border-color:var(--border-strong)}
+.tog.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong)}
+.tog .sw{width:34px;height:20px;border-radius:999px;background:var(--border-strong);position:relative;flex:none;transition:.15s}
+.tog .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}
+.tog.on .sw{background:var(--accent)}
+.tog.on .sw::after{left:16px}
+.tog small{display:block;font-weight:500;font-size:11px;color:var(--text-faint)}
+.tog.on small{color:var(--accent-strong)}
+
+.disc{display:flex;gap:9px;align-items:center}
+.seg{display:flex;background:var(--surface-3);border-radius:9px;padding:3px}
+.seg button{padding:7px 12px;border-radius:7px;font-weight:700;font-size:13px;color:var(--text-dim)}
+.seg button.on{background:var(--surface);color:var(--accent-strong);box-shadow:var(--shadow)}
+.disc input{flex:1;height:40px;width:100%;border-radius:10px;border:1.5px solid var(--border-strong);background:var(--surface-2);
+  color:var(--text);font-weight:700;font-size:15px;text-align:right;padding:0 12px}
+.disc input:focus{border-color:var(--accent);outline:none}
+
+.tot{padding:15px 16px 6px}
+.trow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13.5px}
+.trow span{color:var(--text-dim);font-weight:600}
+.trow .v{font-weight:700;font-size:14px}
+.trow.disc-v .v{color:var(--rose)}
+.rule{height:1px;background:var(--border);margin:9px 0}
+.grand{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0 4px}
+.grand .lbl{font-weight:800;font-size:15px;letter-spacing:-.2px}
+.grand .lbl small{display:block;font-weight:600;font-size:11px;color:var(--text-faint);letter-spacing:.4px;text-transform:uppercase}
+.grand .g{font-weight:700;font-size:34px;letter-spacing:-1px;line-height:1}
+.grand .g .cur{font-size:15px;color:var(--text-dim);font-weight:600;margin-right:4px}
+
+.actions{padding:14px 16px 16px;display:grid;gap:9px}
+.charge{height:60px;border-radius:14px;background:linear-gradient(145deg,var(--accent),var(--accent-strong));color:#fff;
+  font-weight:800;font-size:17px;letter-spacing:-.2px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  box-shadow:0 8px 22px rgba(13,148,136,.4)}
+.charge:hover{filter:brightness(1.06)}
+.charge:active{transform:translateY(1px)}
+.charge .cg{font-family:"Roboto Mono",monospace;font-variant-numeric:tabular-nums;font-size:19px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.act{height:46px;border-radius:11px;font-weight:700;font-size:13.5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  border:1.5px solid var(--border);background:var(--surface-2)}
+.act small{font-size:10px;color:var(--text-faint);font-weight:600}
+.act.hold:hover{border-color:var(--amber);background:var(--amber-soft);color:var(--amber)}
+.act.split:hover{border-color:var(--indigo);background:var(--indigo-soft);color:var(--indigo)}
+.act.clear:hover{border-color:var(--rose);background:var(--rose-soft);color:var(--rose)}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(10,16,22,.55);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:50;padding:20px}
+.overlay[hidden]{display:none}
+.modal{width:min(440px,100%);background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);overflow:hidden}
+.modal h3{margin:0;padding:18px 20px 4px;font-size:19px;font-weight:800;letter-spacing:-.3px}
+.modal .sub{padding:0 20px 14px;color:var(--text-dim);font-size:13px;font-weight:500}
+.mbody{padding:4px 20px 18px}
+.due{display:flex;justify-content:space-between;align-items:center;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:13px;padding:14px 16px;margin-bottom:14px}
+.due span{color:var(--text-dim);font-weight:700;font-size:13px}
+.due b{font-family:"Roboto Mono",monospace;font-weight:700;font-size:24px;letter-spacing:-.5px}
+.tender label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-faint)}
+.tender input{width:100%;height:54px;border-radius:13px;border:1.5px solid var(--border-strong);background:var(--surface-2);
+  color:var(--text);font-family:"Roboto Mono",monospace;font-weight:700;font-size:26px;text-align:right;padding:0 16px;margin-top:6px}
+.tender input:focus{border-color:var(--accent);outline:none}
+.quicknote{display:flex;gap:7px;margin:11px 0 4px;flex-wrap:wrap}
+.quicknote button{padding:8px 13px;border-radius:9px;background:var(--surface-3);font-weight:700;font-size:13px;color:var(--text-dim)}
+.quicknote button:hover{background:var(--accent-soft);color:var(--accent-strong)}
+.change{display:flex;justify-content:space-between;align-items:center;padding:12px 4px 2px}
+.change span{color:var(--text-dim);font-weight:700;font-size:13px}
+.change b{font-family:"Roboto Mono",monospace;font-weight:700;font-size:22px;color:var(--good)}
+.mfoot{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;padding:14px 20px 20px}
+.mfoot .ghost{height:52px;border-radius:13px;border:1.5px solid var(--border-strong);font-weight:700;font-size:15px;background:var(--surface)}
+.mfoot .ghost:hover{background:var(--surface-2)}
+.mfoot .done{height:52px;border-radius:13px;background:linear-gradient(145deg,var(--accent),var(--accent-strong));color:#fff;font-weight:800;font-size:16px;box-shadow:0 8px 20px rgba(13,148,136,.38)}
+.mfoot .done:hover{filter:brightness(1.06)}
+
+/* toast */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;
+  background:var(--text);color:var(--surface);padding:13px 20px;border-radius:13px;font-weight:700;font-size:14px;
+  display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-lg);transition:.25s;z-index:60}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .tk{width:22px;height:22px;border-radius:50%;background:var(--good);display:grid;place-items:center;color:#fff}
+
+@media (max-width:920px){
+  .work{grid-template-columns:1fr}
+  .sum{max-height:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="mark">A</div><div>Apex&nbsp;POS<small>My Shop &middot; Terminal&nbsp;1</small></div></div>
+    <nav class="topnav">
+      <a class="on" href="#">Sell</a><a href="#">Products</a><a href="#">Reports</a><a href="#">Customers</a>
+    </nav>
+    <div class="spacer"></div>
+    <div class="chip"><span class="dot"></span>Online</div>
+    <div class="chip clock mono" id="clock">--:--</div>
+    <div class="chip">Cashier&nbsp;&middot;&nbsp;<b style="color:var(--text)">Admin</b></div>
+    <button class="iconbtn" id="theme" title="Toggle theme" aria-label="Toggle theme">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </header>
+
+  <div class="work">
+    <!-- LEFT -->
+    <section class="pane">
+      <div class="scanrow">
+        <div class="scan">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5v14M7 5v14M11 5v14M14 5v14M18 5v14M21 5v14" opacity=".9"/></svg>
+          <input id="scan" placeholder="Scan barcode or search product…" autocomplete="off">
+          <span class="kbd">Enter</span>
+        </div>
+      </div>
+
+      <div class="carthead"><div>Item</div><div style="text-align:center">Qty</div><div class="r">Amount</div><div></div></div>
+      <div class="cart" id="cart"></div>
+
+      <div class="quick">
+        <div class="qh">Quick add</div>
+        <div class="qgrid" id="quick"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="pane sum">
+      <div class="sec">
+        <div class="custrow">
+          <div class="field select" style="flex:1">
+            <label>Customer</label>
+            <select id="cust"><option>Walk-in Customer</option><option>Ahmed Traders (Wholesale)</option><option>Bilal Khan &mdash; 0300 1234567</option></select>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <button class="addc" title="New customer">+</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="togs">
+          <button class="tog" id="wholesale"><span class="sw"></span><span>Wholesale<small>2nd price</small></span></button>
+          <button class="tog on" id="tax"><span class="sw"></span><span>Tax<small>Apply GST</small></span></button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="field"><label>Overall discount</label>
+          <div class="disc">
+            <div class="seg"><button class="on" data-mode="pct" id="segPct">%</button><button data-mode="flat" id="segFlat">Rs</button></div>
+            <input id="disc" class="mono" value="0" inputmode="decimal">
+          </div>
+        </div>
+      </div>
+
+      <div class="tot">
+        <div class="trow"><span>Subtotal</span><span class="v mono" id="tSub">Rs 0</span></div>
+        <div class="trow disc-v"><span>Discount</span><span class="v mono" id="tDisc">– Rs 0</span></div>
+        <div class="trow"><span>Tax (GST 17%)</span><span class="v mono" id="tTax">Rs 0</span></div>
+        <div class="rule"></div>
+        <div class="grand"><div class="lbl">Total Payable<small id="tCount">0 items</small></div>
+          <div class="g mono" id="tGrand"><span class="cur">Rs</span>0</div></div>
+      </div>
+
+      <div class="actions">
+        <button class="charge" id="charge"><span>Charge</span><span class="cg" id="chargeAmt">Rs 0</span></button>
+        <div class="row3">
+          <button class="act hold">Hold<small>F4</small></button>
+          <button class="act split">Split<small>Pay</small></button>
+          <button class="act clear" id="clear">Clear<small>Esc</small></button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- payment modal -->
+<div class="overlay" id="pay" hidden>
+  <div class="modal">
+    <h3>Take payment</h3>
+    <div class="sub">Cash &middot; Terminal 1</div>
+    <div class="mbody">
+      <div class="due"><span>Amount due</span><b class="mono" id="payDue">Rs 0</b></div>
+      <div class="tender"><label>Cash received</label><input id="tender" class="mono" inputmode="decimal" value="0"></div>
+      <div class="quicknote" id="notes"></div>
+      <div class="change"><span>Change to return</span><b class="mono" id="change">Rs 0</b></div>
+    </div>
+    <div class="mfoot">
+      <button class="ghost" id="payCancel">Cancel</button>
+      <button class="done" id="payDone">Complete &amp; Print</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="tk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span><span id="toastMsg">Done</span></div>
+
+<script>
+let CATALOG=[];            // loaded live from the shop's MS SQL
+let TAX_RATE=0.17;
+let cart=[]; let discMode="pct"; let wholesale=false; let taxOn=true;
+const $=s=>document.querySelector(s), fmt=n=>"Rs "+Math.round(n).toLocaleString("en-PK");
+
+// give each product a friendly icon from its name/category
+function emojiFor(name,cat){
+  const s=((name||"")+" "+(cat||"")).toLowerCase();
+  const map=[["milk","🥛"],["biscuit","🍪"],["cooki","🍪"],["tea","🫖"],["chai","🫖"],["colgate","🪥"],["tooth","🪥"],
+    ["chips","🥔"],["lays","🥔"],["bread","🍞"],["cola","🥤"],["juice","🧃"],["drink","🥤"],["water","💧"],
+    ["soap","🧼"],["surf","🧴"],["shampoo","🧴"],["butter","🧈"],["oil","🛢️"],["ghee","🛢️"],["rice","🍚"],
+    ["flour","🌾"],["atta","🌾"],["masala","🌶️"],["spice","🌶️"],["egg","🥚"],["sugar","🧂"],["salt","🧂"],
+    ["choc","🍫"],["candy","🍬"],["coffee","☕"],["meat","🥩"],["chicken","🍗"],["fruit","🍎"],["veg","🥦"]];
+  for(const [k,e] of map) if(s.indexOf(k)>=0) return e;
+  return "📦";
+}
+function mapRow(r){
+  return {code:String(r.code), nm:r.name||String(r.code), em:emojiFor(r.name,r.category),
+    price:+r.price||0, whole:(r.whole==null?null:+r.whole), discAmt:+r.discAmt||0, discPct:+r.discPct||0,
+    tax:(+r.tax===1), qty0:+r.qty||0};
+}
+function unit(p){return (wholesale && p.whole)? p.whole : p.price;}
+
+async function add(code){
+  code=String(code).trim(); if(!code) return false;
+  let p=CATALOG.find(x=>x.code===code) ||
+        CATALOG.find(x=>x.nm.toLowerCase().includes(code.toLowerCase()));
+  if(!p){
+    try{const r=await fetch("/api/lookup?code="+encodeURIComponent(code));const j=await r.json();if(j)p=mapRow(j);}catch(e){}
+  }
+  if(!p) return false;
+  const l=cart.find(x=>x.code===p.code);
+  if(l)l.qty++; else cart.push({...p,qty:1});
+  render(); return true;
+}
+function setQty(code,d){const l=cart.find(x=>x.code===code);if(!l)return;l.qty+=d;if(l.qty<=0)cart=cart.filter(x=>x.code!==code);render();}
+function rm(code){cart=cart.filter(x=>x.code!==code);render();}
+
+function totals(){
+  let sub=0,tax=0;
+  cart.forEach(l=>{const u=unit(l);sub+=u*l.qty;});
+  const dv=+($("#disc").value||0);
+  let disc = discMode==="pct" ? sub*Math.min(dv,100)/100 : Math.min(dv,sub);
+  const taxed=sub-disc;
+  cart.forEach(l=>{if(taxOn&&l.tax){const u=unit(l);const share=sub? (u*l.qty)/sub:0;tax+=(taxed*share)*TAX_RATE;}});
+  return {sub,disc,tax,grand:taxed+tax,count:cart.reduce((a,l)=>a+l.qty,0)};
+}
+
+function render(){
+  const c=$("#cart");
+  if(!cart.length){
+    c.innerHTML=`<div class="empty"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg><div><b>Cart is empty</b><br>Scan a barcode or tap a product to begin</div></div>`;
+  }else{
+    c.innerHTML=cart.map(l=>{
+      const u=unit(l);
+      return `<div class="line">
+        <div><div class="nm">${l.nm}</div><div class="meta">${l.code} &middot; ${fmt(u)}${wholesale?' <b>WHOLESALE</b>':''}${!l.tax?' &middot; No tax':''}</div></div>
+        <div class="stepper"><button onclick="setQty('${l.code}',-1)">–</button><span class="q mono">${l.qty}</span><button onclick="setQty('${l.code}',1)">+</button></div>
+        <div class="amt mono">${fmt(u*l.qty)}</div>
+        <button class="rm" onclick="rm('${l.code}')" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>`;}).join("");
+  }
+  const t=totals();
+  $("#tSub").textContent=fmt(t.sub);
+  $("#tDisc").textContent="– "+fmt(t.disc);
+  $("#tTax").textContent=fmt(t.tax);
+  $("#tGrand").innerHTML=`<span class="cur">Rs</span>${Math.round(t.grand).toLocaleString("en-PK")}`;
+  $("#tCount").textContent=t.count+(t.count===1?" item":" items");
+  $("#chargeAmt").textContent=fmt(t.grand);
+}
+
+// quick grid (top products from the shop)
+function renderQuick(){
+  const items=CATALOG.slice(0,10);
+  $("#quick").innerHTML = items.length ? items.map(p=>`<button class="qcard" onclick="add('${p.code}')"><span class="em">${p.em}</span><span class="qn">${p.nm}</span><span class="qp mono">${fmt(p.price)}</span></button>`).join("")
+    : `<div style="color:var(--text-faint);font-size:13px;padding:6px 2px">No products yet — add products in the app to see them here.</div>`;
+}
+
+// load live data from the shop's database
+async function boot(){
+  try{const r=await fetch("/api/store");const s=await r.json();if(s){if(s.name)setShop(s.name);if(s.tax)TAX_RATE=(+s.tax)/100;}}catch(e){}
+  try{const r=await fetch("/api/products");const rows=await r.json();CATALOG=(rows||[]).map(mapRow);}catch(e){}
+  renderQuick(); render();
+}
+function setShop(name){document.querySelector(".brand small").innerHTML=name+" &middot; Terminal&nbsp;1";document.title=name+" — POS";}
+
+// scan / search
+$("#scan").addEventListener("keydown",async e=>{if(e.key==="Enter"){const v=e.target.value.trim();if(!v)return;const ok=await add(v);if(ok){e.target.value="";}else{toast("Item not found");}}});
+// disc + toggles
+$("#disc").addEventListener("input",render);
+$("#segPct").onclick=()=>{discMode="pct";$("#segPct").classList.add("on");$("#segFlat").classList.remove("on");render();};
+$("#segFlat").onclick=()=>{discMode="flat";$("#segFlat").classList.add("on");$("#segPct").classList.remove("on");render();};
+$("#wholesale").onclick=()=>{wholesale=!wholesale;$("#wholesale").classList.toggle("on",wholesale);render();};
+$("#tax").onclick=()=>{taxOn=!taxOn;$("#tax").classList.toggle("on",taxOn);render();};
+$("#clear").onclick=()=>{cart=[];$("#disc").value=0;render();toast("Sale cleared");};
+
+// payment
+const notes=[500,1000,2000,5000];
+$("#notes").innerHTML=notes.map(n=>`<button onclick="setTender(${n})">Rs ${n.toLocaleString()}</button>`).join("");
+window.setTender=v=>{$("#tender").value=v;chg();};
+function chg(){const due=totals().grand;const t=+($("#tender").value||0);$("#change").textContent=fmt(Math.max(0,t-due));}
+$("#tender").addEventListener("input",chg);
+$("#charge").onclick=()=>{if(!cart.length){toast("Cart is empty");return;}const t=totals();$("#payDue").textContent=fmt(t.grand);$("#tender").value=Math.ceil(t.grand/100)*100;chg();$("#pay").hidden=false;$("#tender").focus();$("#tender").select();};
+$("#payCancel").onclick=()=>$("#pay").hidden=true;
+$("#pay").addEventListener("click",e=>{if(e.target.id==="pay")$("#pay").hidden=true;});
+$("#payDone").onclick=()=>{$("#pay").hidden=true;cart=[];$("#disc").value=0;render();toast("Payment complete · Receipt printed");};
+
+// theme
+$("#theme").onclick=()=>{const r=document.documentElement;const dark=(r.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"))==="dark";r.setAttribute("data-theme",dark?"light":"dark");};
+
+// clock
+function tick(){const d=new Date();$("#clock").textContent=d.toLocaleTimeString("en-PK",{hour:"2-digit",minute:"2-digit"});}
+tick();setInterval(tick,1000);
+
+// toast
+let tt;function toast(m){$("#toastMsg").textContent=m;$("#toast").classList.add("show");clearTimeout(tt);tt=setTimeout(()=>$("#toast").classList.remove("show"),2000);}
+
+window.setQty=setQty;window.rm=rm;window.add=add;
+boot();   // load real products + store from MS SQL, then render
+</script>

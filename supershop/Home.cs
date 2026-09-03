@@ -618,6 +618,16 @@ namespace supershop
             go.Show();
         }
 
+        private void newPosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string url = supershop.PosWeb.PosServer.Launch();
+                toolStripStatusLabel7.Text = "New POS running at " + url;
+            }
+            catch (Exception ex) { Logger.Show(ex, "Could not start the new POS."); }
+        }
+
         private void productPricingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Items.ProductPricing go = new Items.ProductPricing();

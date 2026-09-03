@@ -220,6 +220,7 @@
     <Compile Include="DatabaseAdmin.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ThemeManager.cs" />
+    <Compile Include="PosWeb\PosServer.cs" />
     <Compile Include="BackupHelper.cs" />
     <Compile Include="ReceiptPrinter.cs" />
     <Compile Include="SchemaUpgrader.cs" />
@@ -625,6 +626,7 @@
     <Compile Include="User_mgt\WorkSheet.Designer.cs">
       <DependentUpon>WorkSheet.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="PosWeb\index.html" />
     <EmbeddedResource Include="BarCode\BarcodeCreator.resx">
       <DependentUpon>BarcodeCreator.cs</DependentUpon>
     </EmbeddedResource>
