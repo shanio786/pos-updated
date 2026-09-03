@@ -172,7 +172,7 @@
             // 
             // ItemcartPanel
             // 
-            this.ItemcartPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.ItemcartPanel.BackColor = System.Drawing.Color.White;
             this.ItemcartPanel.Controls.Add(this.dgrvSalesItemList);
             this.ItemcartPanel.Location = new System.Drawing.Point(6, 63);
             this.ItemcartPanel.Name = "ItemcartPanel";
@@ -247,7 +247,7 @@
             this.dgrvSalesItemList.AllowUserToAddRows = false;
             this.dgrvSalesItemList.AllowUserToResizeRows = false;
             this.dgrvSalesItemList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgrvSalesItemList.BackgroundColor = System.Drawing.SystemColors.Info;
+            this.dgrvSalesItemList.BackgroundColor = System.Drawing.Color.White;
             this.dgrvSalesItemList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -576,7 +576,7 @@
             this.chkWholesale.AutoSize = true;
             this.chkWholesale.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.chkWholesale.ForeColor = System.Drawing.Color.SteelBlue;
-            this.chkWholesale.Location = new System.Drawing.Point(300, 6);
+            this.chkWholesale.Location = new System.Drawing.Point(410, 8);
             this.chkWholesale.Name = "chkWholesale";
             this.chkWholesale.Size = new System.Drawing.Size(120, 19);
             this.chkWholesale.TabIndex = 305;

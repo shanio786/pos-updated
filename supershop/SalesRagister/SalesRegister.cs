@@ -33,7 +33,8 @@ namespace supershop
         public SalesRegister()
         {
             InitializeComponent();
-            lbluser.Text = UserInfo.UserName;             
+            ThemeManager.StyleGrid(dgrvSalesItemList);
+            lbluser.Text = UserInfo.UserName;
             this.tabPageSR_Payment.Parent = null; //Hide payment tab
            // tabSRcontrol.TabPages.Remove(tabPageSR_Payment);
             txtBarcodeReaderBox.Focus();
