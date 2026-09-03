@@ -1040,8 +1040,7 @@ namespace supershop
 
                     ///// // Open Print Invoice
                     parameter.autoprintid = "1";
-                    POSPrintRpt go = new POSPrintRpt(txtInvoice.Text);
-                    go.ShowDialog();
+                    ReceiptPrinter.Show(txtInvoice.Text);
 
                     dgrvSalesItemList.Rows.Clear();
                     DiscountCalculation();
@@ -1406,8 +1405,7 @@ namespace supershop
                                           dtSalesDate.Text, txtCustName.Text, f.Tenders);
                     txtInvoice.Text = newId.ToString();
                     parameter.autoprintid = "1";
-                    POSPrintRpt go = new POSPrintRpt(txtInvoice.Text);
-                    go.ShowDialog();
+                    ReceiptPrinter.Show(txtInvoice.Text);
                     dgrvSalesItemList.Rows.Clear();
                     DiscountCalculation();
                     vatcal();
@@ -1437,8 +1435,7 @@ namespace supershop
 
                     ///// // Open Print Invoice
                     parameter.autoprintid = "1";
-                    POSPrintRpt go = new POSPrintRpt(txtInvoice.Text);
-                    go.ShowDialog();
+                    ReceiptPrinter.Show(txtInvoice.Text);
 
                     //Clean Datagridview and Back to sales cart
                     dgrvSalesItemList.Rows.Clear();
@@ -1472,8 +1469,7 @@ namespace supershop
 
                     ///// // Open Print Invoice
                     parameter.autoprintid = "1";
-                    POSPrintRpt go = new POSPrintRpt(txtInvoice.Text);
-                    go.ShowDialog();
+                    ReceiptPrinter.Show(txtInvoice.Text);
 
                     dgrvSalesItemList.Rows.Clear();
                     DiscountCalculation();

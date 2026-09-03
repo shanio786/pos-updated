@@ -26,8 +26,7 @@ namespace supershop.Report
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
-            POSPrintRpt mkc = new POSPrintRpt(lblOrder.Text);
-            mkc.ShowDialog();
+            ReceiptPrinter.Show(lblOrder.Text);
         }
 
         // Mark every line of the order as served (status 1)

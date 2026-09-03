@@ -241,6 +241,7 @@
     <Compile Include="DataAccess_MSSQLServer.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="BackupHelper.cs" />
+    <Compile Include="ReceiptPrinter.cs" />
     <Compile Include="PasswordHasher.cs" />
     <Compile Include="Report\DS_SaleReport.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -73,8 +73,7 @@ namespace supershop.Report
         private void btnPrintReceipt_Click(object sender, EventArgs e)
         {
             parameter.autoprintid = "2";
-            POSPrintRpt mkc = new POSPrintRpt(lblReceiptNo.Text);
-            mkc.ShowDialog();
+            ReceiptPrinter.Show(lblReceiptNo.Text);
         }
     }
 }

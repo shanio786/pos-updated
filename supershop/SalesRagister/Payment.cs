@@ -233,8 +233,7 @@ namespace supershop
 
                     // Open Print Invoice
                     parameter.autoprintid = "1";
-                    POSPrintRpt go = new POSPrintRpt(txtInvoice.Text);
-                    go.ShowDialog();
+                    ReceiptPrinter.Show(txtInvoice.Text);
                 }
                 catch (Exception exp)
                 {
