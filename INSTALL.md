@@ -33,6 +33,17 @@ You already have this branch. On your PC either:
 
 ---
 
+## ⚡ Easy path (do steps 2 & 4 automatically)
+
+After SQL Server Express is installed, just **double-click `Setup\Setup.bat`**.
+It finds your SQL Server, creates the `APOSDB` database, and sets the app's
+connection string for you — no SSMS, no typing. Then jump to **step 3 (build)**
+and **step 5 (license)**.
+
+Prefer to do it by hand? Follow steps 2 and 4 below instead.
+
+---
+
 ## 2. Create the database
 
 1. Open **SSMS** and connect to your SQL Server (e.g. server name `.\SQLEXPRESS`).
