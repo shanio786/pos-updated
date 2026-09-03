@@ -83,12 +83,20 @@ namespace supershop
         /// existing fixed layouts are safe. Call once from a form's constructor
         /// after InitializeComponent, e.g. ThemeManager.ApplyModern(this);
         /// </summary>
+        static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Control, object> _done
+            = new System.Runtime.CompilerServices.ConditionalWeakTable<Control, object>();
+
         public static void ApplyModern(Control root)
         {
             if (!Enabled || root == null) return;
+            object seen;
+            if (_done.TryGetValue(root, out seen)) return;   // theme each form only once
+            _done.Add(root, _done);
             try { Walk(root); }
             catch (Exception ex) { Logger.Error(ex); }
         }
+
+        static readonly string UiFont = "Segoe UI";
 
         static void Walk(Control parent)
         {
@@ -98,10 +106,54 @@ namespace supershop
                 if (b != null) StyleButton(b);
 
                 DataGridView g = c as DataGridView;
-                if (g != null) StyleGrid(g);
+                if (g != null) { StyleGrid(g); }
+                else if (c is Label && IsRuleText(c.Text)) StyleRule((Label)c);
+                else ModernFont(c);   // grids keep the font StyleGrid gives them
 
                 if (c.HasChildren) Walk(c);
             }
+        }
+
+        /// <summary>
+        /// Swap a control's font FAMILY to Segoe UI, keeping its exact size and
+        /// style. This is the single biggest "modern" win - the old screens mix
+        /// Times New Roman / Trebuchet / MS Sans Serif, which reads as dated.
+        /// Size is preserved so layouts don't shift.
+        /// </summary>
+        static void ModernFont(Control c)
+        {
+            try
+            {
+                Font f = c.Font;
+                if (f == null) return;
+                if (string.Equals(f.Name, UiFont, StringComparison.OrdinalIgnoreCase)) return;
+                c.Font = new Font(UiFont, f.Size, f.Style, f.Unit);
+            }
+            catch { }
+        }
+
+        /// <summary>True for an old "======" / "------" separator label.</summary>
+        static bool IsRuleText(string t)
+        {
+            if (string.IsNullOrEmpty(t) || t.Length < 4) return false;
+            foreach (char ch in t) if (ch != '=' && ch != '-' && ch != '_') return false;
+            return true;
+        }
+
+        /// <summary>Turn a dashed-text separator label into a clean thin rule.</summary>
+        static void StyleRule(Label l)
+        {
+            try
+            {
+                int w = l.Width > 12 ? l.Width : 500;
+                l.AutoSize = false;
+                l.Text = "";
+                l.Height = 1;
+                l.Width = w;
+                l.BackColor = Color.FromArgb(214, 220, 226);
+                l.Top += 8;   // sit it on the text baseline it replaced
+            }
+            catch { }
         }
 
         /// <summary>Flat, modern button - colours and flatness only, no bounds change.</summary>

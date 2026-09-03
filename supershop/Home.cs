@@ -18,9 +18,17 @@ namespace supershop
             InitializeComponent();
             ThemeManager.ApplyShell(menuStrip1, statusStrip1);
             ThemeManager.ApplyModern(this);
+            // Theme every screen the moment it opens inside the main window,
+            // so the whole POS gets the modern look from one place.
+            this.MdiChildActivate += Home_MdiChildActivate;
             tsmIUserName.Text = UserInfo.UserName;
             toolStripStatusLabel7.Text = "User: " + UserInfo.UserName;
             userProfileToolStripMenuItem.Text = " User Profile ( " + UserInfo.UserName + ")";
+        }
+
+        private void Home_MdiChildActivate(object sender, EventArgs e)
+        {
+            ThemeManager.ApplyModern(this.ActiveMdiChild);   // idempotent - themes each screen once
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
