@@ -117,22 +117,9 @@
     <ManifestKeyFile>Adv_POS_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="CrystalDecisions.Windows.Forms, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="itextsharp, Version=5.5.8.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\itextsharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.Common, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.1404.0\lib\net40\Microsoft.ReportViewer.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cquential.Microsoft.ReportViewer.ProcessingObjectModel.10.0.40219.1\lib\net35\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
     </Reference>
     <Reference Include="MyBarcode, Version=1.0.6275.28483, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -182,12 +169,6 @@
     <Compile Include="BarCode\BarcodeCreator.designer.cs">
       <DependentUpon>BarcodeCreator.cs</DependentUpon>
     </Compile>
-    <Compile Include="BarCode\BarcodeRDLC.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BarCode\BarcodeRDLC.designer.cs">
-      <DependentUpon>BarcodeRDLC.cs</DependentUpon>
-    </Compile>
     <Compile Include="BarCode\Barcode_machine.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -207,12 +188,6 @@
     </Compile>
     <Compile Include="BarCode\Ean13.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="BarCode\NewBarcodeGen.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>NewBarcodeGen.rpt</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="BarCode\newBarcode_Generator.cs">
       <SubType>Form</SubType>
@@ -261,18 +236,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DS_SaleReport.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Report\SaleReport.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SaleReport.rpt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="User_mgt\attendenceRPT.cs">
-      <DependentUpon>attendenceRPT.rpt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <SubType>Component</SubType>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="Expenses\AddExpense.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -292,12 +255,6 @@
     </Compile>
     <Compile Include="Expenses\ExpensesList.Designer.cs">
       <DependentUpon>ExpensesList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expenses\Expense_List.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Expense_List.rpt</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Expenses\ExpReportForm.cs">
       <SubType>Form</SubType>
@@ -477,12 +434,6 @@
       <DependentUpon>Manager_Home.cs</DependentUpon>
     </Compile>
     <Compile Include="MoveForm.cs" />
-    <Compile Include="ReportViwer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ReportViwer.Designer.cs">
-      <DependentUpon>ReportViwer.cs</DependentUpon>
-    </Compile>
     <Compile Include="Report\KD_dialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -545,12 +496,6 @@
     <Compile Include="Report\ReportDialog.Designer.cs">
       <DependentUpon>ReportDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Report\SaleReportRdlc.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Report\SaleReportRdlc.Designer.cs">
-      <DependentUpon>SaleReportRdlc.cs</DependentUpon>
-    </Compile>
     <Compile Include="Report\SalesDetails.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -608,12 +553,6 @@
     <Compile Include="SalesRagister\Payment.designer.cs">
       <DependentUpon>Payment.cs</DependentUpon>
     </Compile>
-    <Compile Include="SalesRagister\POSPrintRpt.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SalesRagister\POSPrintRpt.designer.cs">
-      <DependentUpon>POSPrintRpt.cs</DependentUpon>
-    </Compile>
     <Compile Include="SalesRagister\SalesRegister.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -655,12 +594,6 @@
     <Compile Include="User_mgt\PayRoll.Designer.cs">
       <DependentUpon>PayRoll.cs</DependentUpon>
     </Compile>
-    <Compile Include="User_mgt\PayRollReport.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PayRollReport.rpt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="User_mgt\PWDGenerator.cs" />
     <Compile Include="User_mgt\UserProfile.cs">
       <SubType>Form</SubType>
@@ -695,23 +628,15 @@
     <EmbeddedResource Include="BarCode\BarcodeCreator.resx">
       <DependentUpon>BarcodeCreator.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="BarCode\BarcodeRDLC.resx">
-      <DependentUpon>BarcodeRDLC.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="BarCode\Barcode_machine.resx">
       <DependentUpon>Barcode_machine.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="BarCode\CreateBarcode.resx">
       <DependentUpon>CreateBarcode.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="BarCode\NewBarcodeGen.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>NewBarcodeGen.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="BarCode\newBarcode_Generator.resx">
       <DependentUpon>newBarcode_Generator.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="BarCode\RptBarcode.rdlc" />
     <EmbeddedResource Include="Config.resx">
       <DependentUpon>Config.cs</DependentUpon>
     </EmbeddedResource>
@@ -721,23 +646,11 @@
     <EmbeddedResource Include="Customer\Due_payment_History.resx">
       <DependentUpon>Due_payment_History.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Report\SaleReport.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>SaleReport.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="User_mgt\attendenceRPT.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>attendenceRPT.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Expenses\AddExpense.resx">
       <DependentUpon>AddExpense.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Expenses\ExpensesList.resx">
       <DependentUpon>ExpensesList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Expenses\Expense_List.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>Expense_List.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Expenses\ExpReportForm.resx">
       <DependentUpon>ExpReportForm.cs</DependentUpon>
@@ -827,9 +740,6 @@
     <EmbeddedResource Include="Manager_Home.resx">
       <DependentUpon>Manager_Home.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ReportViwer.resx">
-      <DependentUpon>ReportViwer.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Report\KD_dialog.resx">
       <DependentUpon>KD_dialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -855,10 +765,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\ReportDialog.resx">
       <DependentUpon>ReportDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Report\ReportSales.rdlc" />
-    <EmbeddedResource Include="Report\SaleReportRdlc.resx">
-      <DependentUpon>SaleReportRdlc.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\SalesDetails.resx">
       <DependentUpon>SalesDetails.cs</DependentUpon>
@@ -890,10 +796,6 @@
     <EmbeddedResource Include="SalesRagister\Payment.resx">
       <DependentUpon>Payment.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SalesRagister\POSPrintRpt.resx">
-      <DependentUpon>POSPrintRpt.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SalesRagister\RptPOS.rdlc" />
     <EmbeddedResource Include="SalesRagister\SalesRegister.resx">
       <DependentUpon>SalesRegister.cs</DependentUpon>
     </EmbeddedResource>
@@ -908,10 +810,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="User_mgt\PayRoll.resx">
       <DependentUpon>PayRoll.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="User_mgt\PayRollReport.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>PayRollReport.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="User_mgt\UserProfile.resx">
       <DependentUpon>UserProfile.cs</DependentUpon>
@@ -1042,11 +940,6 @@
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.ReportViewer.10.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft Visual Studio 2010 Report Viewer</ProductName>
-      <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
       <Visible>False</Visible>

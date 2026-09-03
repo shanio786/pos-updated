@@ -15,7 +15,6 @@ namespace supershop
     ///   FastReceipt = true|false   (default true)   - use the fast printer
     ///   ReceiptWidthMm = 80                          - paper width in mm
     ///   ReceiptPreview = false|true                  - show a preview instead of printing
-    /// When FastReceipt is false it falls back to the old POSPrintRpt (ReportViewer).
     /// </summary>
     public static class ReceiptPrinter
     {
@@ -27,23 +26,13 @@ namespace supershop
 
         public static void Show(string salesId)
         {
-            bool fast = Cfg("FastReceipt", "true").Trim().ToLowerInvariant() != "false";
-            if (!fast)
-            {
-                POSPrintRpt r = new POSPrintRpt(salesId);
-                r.ShowDialog();
-                return;
-            }
             try
             {
                 new ReceiptDocument(salesId).Run();
             }
             catch (Exception ex)
             {
-                Logger.Error("FastReceipt", ex);
-                // fall back so a sale is never left without a receipt option
-                POSPrintRpt r = new POSPrintRpt(salesId);
-                r.ShowDialog();
+                Logger.Show(ex, "Could not print the receipt.");
             }
         }
 
