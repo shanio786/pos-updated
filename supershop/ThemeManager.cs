@@ -76,6 +76,56 @@ namespace supershop
             catch (Exception ex) { Logger.Error(ex); }
         }
 
+        /// <summary>
+        /// Walk a whole form and give it a modern flat look WITHOUT moving or
+        /// resizing anything: flat buttons with hover, styled grids, hand cursor.
+        /// Font family/size and every control's bounds are left untouched, so
+        /// existing fixed layouts are safe. Call once from a form's constructor
+        /// after InitializeComponent, e.g. ThemeManager.ApplyModern(this);
+        /// </summary>
+        public static void ApplyModern(Control root)
+        {
+            if (!Enabled || root == null) return;
+            try { Walk(root); }
+            catch (Exception ex) { Logger.Error(ex); }
+        }
+
+        static void Walk(Control parent)
+        {
+            foreach (Control c in parent.Controls)
+            {
+                Button b = c as Button;
+                if (b != null) StyleButton(b);
+
+                DataGridView g = c as DataGridView;
+                if (g != null) StyleGrid(g);
+
+                if (c.HasChildren) Walk(c);
+            }
+        }
+
+        /// <summary>Flat, modern button - colours and flatness only, no bounds change.</summary>
+        static void StyleButton(Button b)
+        {
+            b.FlatStyle = FlatStyle.Flat;
+            b.FlatAppearance.BorderSize = 0;
+            b.UseVisualStyleBackColor = false;
+
+            // plain grey system buttons get the accent; already-coloured ones keep their colour
+            if (b.BackColor == SystemColors.Control || b.BackColor == SystemColors.ButtonFace || b.BackColor.IsEmpty)
+            {
+                b.BackColor = Accent;
+                b.ForeColor = Color.White;
+            }
+            try
+            {
+                b.FlatAppearance.MouseOverBackColor = ControlPaint.Light(b.BackColor, 0.15f);
+                b.FlatAppearance.MouseDownBackColor = ControlPaint.Dark(b.BackColor, 0.05f);
+            }
+            catch { }
+            b.Cursor = Cursors.Hand;
+        }
+
         /// <summary>Professional colour table used by the flat renderer.</summary>
         private sealed class ModernColors : ProfessionalColorTable
         {
