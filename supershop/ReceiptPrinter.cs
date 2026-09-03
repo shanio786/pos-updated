@@ -117,71 +117,88 @@ namespace supershop
             {
                 Graphics g = e.Graphics;
                 g.PageUnit = GraphicsUnit.Point;
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
-                float left = 4;
-                float right = _widthMm / 25.4f * 72f - 4;   // page width in points
+                float left = 6;
+                float right = _widthMm / 25.4f * 72f - 6;   // page width in points
                 float width = right - left;
-                float y = 4;
+                float y = 6;
 
-                using (Font big = new Font("Segoe UI", 10, FontStyle.Bold))
-                using (Font norm = new Font("Consolas", 8, FontStyle.Regular))
-                using (Font bold = new Font("Consolas", 8, FontStyle.Bold))
+                using (Font shopF = new Font("Segoe UI Semibold", 13, FontStyle.Bold))
+                using (Font small = new Font("Segoe UI", 6.8f, FontStyle.Regular))
+                using (Font label = new Font("Segoe UI", 6.5f, FontStyle.Regular))
+                using (Font norm = new Font("Consolas", 8f, FontStyle.Regular))
+                using (Font bold = new Font("Consolas", 8f, FontStyle.Bold))
+                using (Font totF = new Font("Consolas", 11f, FontStyle.Bold))
                 {
                     DataRow h = _dt.Rows[0];
 
                     if (_row == 0)   // header only on first page
                     {
-                        y = Center(g, S(h, "CompanyName"), big, left, width, y);
-                        y = Center(g, S(h, "Branchname"), norm, left, width, y);
-                        y = Center(g, S(h, "Location"), norm, left, width, y);
-                        string ph = S(h, "Phone"); if (ph != "") y = Center(g, "Tel: " + ph, norm, left, width, y);
-                        string web = S(h, "Web"); if (web != "") y = Center(g, web, norm, left, width, y);
-                        string vat = S(h, "VATRegiNo"); if (vat != "") y = Center(g, "VAT: " + vat, norm, left, width, y);
-                        y += 2; y = Line(g, left, right, y);
+                        y += 2;
+                        y = Center(g, S(h, "CompanyName"), shopF, left, width, y) + 1;
+                        string br = S(h, "Branchname"); if (br != "") y = Center(g, br, small, left, width, y);
+                        string loc = S(h, "Location"); if (loc != "") y = CenterWrap(g, loc, small, left, width, y);
+                        string ph = S(h, "Phone"); if (ph != "") y = Center(g, "Tel: " + ph, small, left, width, y);
+                        string web = S(h, "Web"); if (web != "") y = Center(g, web, small, left, width, y);
+                        string vat = S(h, "VATRegiNo"); if (vat != "") y = Center(g, "VAT Reg: " + vat, small, left, width, y);
 
-                        y = LeftRight(g, "Invoice: " + S(h, "sales_id"), S(h, "sales_time"), norm, left, right, y);
-                        y = LeftRight(g, "Cashier: " + S(h, "emp_id"), S(h, "payment_type"), norm, left, right, y);
-                        string cn = S(h, "CustName"); if (cn != "") y = LeftRight(g, "Customer: " + cn, S(h, "CustPhone"), norm, left, right, y);
-                        y = Line(g, left, right, y);
+                        y += 4;
+                        y = Center(g, "SALES RECEIPT", label, left, width, y);
+                        y = Rule(g, left, right, y, true);
 
-                        y = Row3(g, "Item", "Qty", "Amount", bold, left, right, y);
-                        y = Line(g, left, right, y);
+                        y = LeftRight(g, "Invoice #" + S(h, "sales_id"), S(h, "sales_time"), norm, left, right, y);
+                        y = LeftRight(g, "Cashier: " + S(h, "emp_id"), S(h, "payment_type"), small, left, right, y);
+                        string cn = S(h, "CustName"); if (cn != "" && cn != "Walk-in Customer") y = LeftRight(g, "Customer: " + cn, S(h, "CustPhone"), small, left, right, y);
+
+                        y = Rule(g, left, right, y, false);
+                        y = Row3(g, "ITEM", "QTY x PRICE", "AMOUNT", label, left, right, y);
+                        y = Rule(g, left, right, y, false);
                     }
 
-                    // item lines (paginate if the page fills)
                     decimal subtotal = 0;
                     for (int i = 0; i < _dt.Rows.Count; i++) subtotal += D(_dt.Rows[i]["Total"]);
 
                     while (_row < _dt.Rows.Count)
                     {
-                        if (y > e.PageBounds.Height - 90) { e.HasMorePages = true; return; }
+                        if (y > e.PageBounds.Height - 110) { e.HasMorePages = true; return; }
                         DataRow r = _dt.Rows[_row];
                         string name = S(r, "itemName");
                         if (S(r, "taxapply") == "1") name += " *";
                         string qtyPrice = D(r["Qty"]).ToString("0.##") + " x " + D(r["RetailsPrice"]).ToString("0.00");
-                        y = Row3(g, name, qtyPrice, D(r["Total"]).ToString("0.00"), norm, left, right, y);
+                        y = Row3(g, name, qtyPrice, D(r["Total"]).ToString("0.00"), norm, left, right, y) + 1;
                         _row++;
                     }
 
                     // totals
-                    y = Line(g, left, right, y);
+                    y = Rule(g, left, right, y, false);
                     y = LeftRight(g, "Subtotal", subtotal.ToString("0.00"), norm, left, right, y);
                     decimal dis = D(h["dis"]); if (dis != 0) y = LeftRight(g, "Discount", "-" + dis.ToString("0.00"), norm, left, right, y);
                     decimal vatv = D(h["vat"]); if (vatv != 0) y = LeftRight(g, "Tax", vatv.ToString("0.00"), norm, left, right, y);
-                    y = LeftRight(g, "TOTAL", D(h["payment_amount"]).ToString("0.00"), bold, left, right, y);
+
+                    // emphasised TOTAL between two rules (portable, no fill)
+                    decimal total = D(h["payment_amount"]);
+                    y = Rule(g, left, right, y, true);
+                    g.DrawString("TOTAL", totF, Brushes.Black, left, y, NoWrap);
+                    string tt = total.ToString("0.00");
+                    g.DrawString(tt, totF, Brushes.Black, right - TextW(g, tt, totF), y, NoWrap);
+                    y += TextH(g, tt, totF);
+                    y = Rule(g, left, right, y, true);
 
                     if (_tenders.Rows.Count > 0)
                         foreach (DataRow t in _tenders.Rows)
                             y = LeftRight(g, "  " + t["method"], D(t["amount"]).ToString("0.00"), norm, left, right, y);
 
                     decimal chg = D(h["change_amount"]); if (chg != 0) y = LeftRight(g, "Change", chg.ToString("0.00"), norm, left, right, y);
-                    decimal due = D(h["due_amount"]); if (due != 0) y = LeftRight(g, "Due", due.ToString("0.00"), bold, left, right, y);
+                    decimal due = D(h["due_amount"]); if (due != 0) y = LeftRight(g, "Balance Due", due.ToString("0.00"), bold, left, right, y);
 
-                    y = Line(g, left, right, y);
-                    string foot = S(h, "Footermsg"); if (foot != "") y = Center(g, foot, norm, left, width, y);
-                    y = Center(g, "* = taxable", norm, left, width, y);
-                    y = Center(g, DateTime.Now.ToString("yyyy-MM-dd HH:mm"), norm, left, width, y);
+                    y = Rule(g, left, right, y, true);
+                    string foot = S(h, "Footermsg"); if (foot != "") y = CenterWrap(g, foot, small, left, width, y) + 2;
+                    y = Center(g, "* taxable item", small, left, width, y);
+                    y = Center(g, "Served " + DateTime.Now.ToString("dd MMM yyyy  hh:mm tt"), small, left, width, y);
+                    y += 3;
+                    y = Center(g, "T H A N K   Y O U", label, left, width, y);
                     e.HasMorePages = false;
                 }
             }
@@ -193,6 +210,19 @@ namespace supershop
 
             float TextW(Graphics g, string t, Font f) { return g.MeasureString(t, f, PointF.Empty, NoWrap).Width; }
             float TextH(Graphics g, string t, Font f) { return g.MeasureString(t, f, PointF.Empty, NoWrap).Height; }
+            float CenterWrap(Graphics g, string text, Font f, float left, float width, float y)
+            {
+                foreach (string ln in Wrap(g, text, f, width)) y = Center(g, ln, f, left, width, y);
+                return y;
+            }
+
+            float Rule(Graphics g, float left, float right, float y, bool strong)
+            {
+                y += 2;
+                using (Pen p = new Pen(strong ? Color.Black : Color.FromArgb(160, 160, 160), strong ? 0.8f : 0.4f))
+                    g.DrawLine(p, left, y, right, y);
+                return y + 4;
+            }
 
             float Center(Graphics g, string text, Font f, float left, float width, float y)
             {
