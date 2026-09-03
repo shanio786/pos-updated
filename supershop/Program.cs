@@ -34,6 +34,16 @@ namespace supershop
                 catch (Exception ex) { Logger.Error("create folder " + folder, ex); }
             }
 
+            // License check (offline, machine-locked)
+            if (!supershop.Licensing.LicenseManager.IsActivated())
+            {
+                using (supershop.Licensing.LicenseForm lf = new supershop.Licensing.LicenseForm())
+                {
+                    lf.ShowDialog();
+                    if (!lf.Activated) return;   // not activated -> do not start
+                }
+            }
+
             string dbError;
             if (!DataAccess.TestConnection(out dbError))
             {

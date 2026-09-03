@@ -14,3 +14,7 @@ packages/*/
 # Visual Studio temp
 *.cache
 *.tmp
+
+# Never commit license private keys
+private_key.xml
+Tools/LicenseKeyGen/private_key.xml
