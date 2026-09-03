@@ -244,6 +244,7 @@
     <Compile Include="DataAccess_MSSQLServer.cs" />
     <Compile Include="DatabaseAdmin.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="ThemeManager.cs" />
     <Compile Include="BackupHelper.cs" />
     <Compile Include="ReceiptPrinter.cs" />
     <Compile Include="SchemaUpgrader.cs" />

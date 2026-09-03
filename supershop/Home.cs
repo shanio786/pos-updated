@@ -16,6 +16,7 @@ namespace supershop
         public Home()
         {
             InitializeComponent();
+            ThemeManager.ApplyShell(menuStrip1, statusStrip1);
             tsmIUserName.Text = UserInfo.UserName;
             toolStripStatusLabel7.Text = "User: " + UserInfo.UserName;
             userProfileToolStripMenuItem.Text = " User Profile ( " + UserInfo.UserName + ")";
