@@ -243,6 +243,21 @@ namespace supershop
                     // Default tax rate 
                     double Taxrate = Convert.ToDouble(vatdisvalue.vat);
 
+                    // Weighing-scale barcode (price/weight embedded) - handled first, if enabled
+                    if (supershop.BarCode.WeightBarcode.TryAdd(txtBarcodeReaderBox.Text, dgrvSalesItemList, Taxrate))
+                    {
+                        dgrvSalesItemList.Columns[4].Visible = false;
+                        dgrvSalesItemList.Columns[5].Visible = false;
+                        dgrvSalesItemList.Columns[6].Visible = false;
+                        dgrvSalesItemList.Columns[7].Visible = false;
+                        dgrvSalesItemList.Columns[9].Visible = false;
+                        txtBarcodeReaderBox.Text = "";
+                        txtBarcodeReaderBox.Focus();
+                        btnSuspend.Enabled = true; btnPayment.Enabled = true; btnSalesCredit.Enabled = true; btnPrintDirect.Enabled = true;
+                        DiscountCalculation();
+                        vatcal();
+                        return;
+                    }
                     //- new in 8.1 version // Default Product QTY is 1
                     string sql = "SELECT  product_name as Name , retail_price as Price , 1.00  as QTY, (retail_price * 1.00 ) * 1.00  as 'Total' ,  " +
                             " (((retail_price * 1.00 ) * discount) / 100.00) as 'dis amt' , " +
