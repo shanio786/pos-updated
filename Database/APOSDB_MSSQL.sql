@@ -493,6 +493,29 @@ IF NOT EXISTS (SELECT 1 FROM dbo.tbl_category)
 GO
 
 /* ---- Optional feature tables (Day close, Hold sale, Split payment) ---- */
+
+/* ---- Day close / Z-report -------------------------------------------- */
+IF OBJECT_ID(N'dbo.tbl_dayclose', N'U') IS NULL
+CREATE TABLE dbo.tbl_dayclose (
+    id             bigint IDENTITY(1,1) NOT NULL,
+    Shopid         varchar(50)   NULL,
+    close_date     varchar(50)   NOT NULL,        -- 'yyyy-MM-dd'
+    opening_cash   decimal(18,2) NULL,
+    cash_sales     decimal(18,2) NULL,
+    card_sales     decimal(18,2) NULL,
+    other_sales    decimal(18,2) NULL,
+    returns_total  decimal(18,2) NULL,
+    expenses_total decimal(18,2) NULL,
+    due_received   decimal(18,2) NULL,
+    expected_cash  decimal(18,2) NULL,
+    counted_cash   decimal(18,2) NULL,
+    difference     decimal(18,2) NULL,
+    closed_by      varchar(100)  NULL,
+    closed_at      datetime      NULL CONSTRAINT DF_tbl_dayclose_closedat DEFAULT (GETDATE()),
+    note           varchar(450)  NULL,
+    CONSTRAINT PK_tbl_dayclose PRIMARY KEY CLUSTERED (id)
+);
+GO
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_tbl_dayclose_shop_date')
     CREATE INDEX IX_tbl_dayclose_shop_date ON dbo.tbl_dayclose (Shopid, close_date);
 GO
@@ -545,8 +568,6 @@ CREATE TABLE dbo.tbl_sale_tender (
 GO
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_tbl_sale_tender_sales')
     CREATE INDEX IX_tbl_sale_tender_sales ON dbo.tbl_sale_tender (sales_id);
-GO
-PRINT 'Feature tables ready.';
 GO
 
 PRINT 'APOSDB schema ready.';
