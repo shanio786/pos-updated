@@ -64,6 +64,7 @@
             this.lblTotalVAT = new System.Windows.Forms.Label();
             this.lblTotalDisCount = new System.Windows.Forms.Label();
             this.txtDiscountRate = new System.Windows.Forms.TextBox();
+            this.btnFlatDisc = new System.Windows.Forms.Button();
             this.btnSuspend = new System.Windows.Forms.Button();
             this.btnHold = new System.Windows.Forms.Button();
             this.btnResume = new System.Windows.Forms.Button();
@@ -271,6 +272,7 @@
             this.panel3.Controls.Add(this.lblTotalVAT);
             this.panel3.Controls.Add(this.lblTotalDisCount);
             this.panel3.Controls.Add(this.txtDiscountRate);
+            this.panel3.Controls.Add(this.btnFlatDisc);
             this.panel3.Location = new System.Drawing.Point(6, 327);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(544, 189);
@@ -496,6 +498,21 @@
             this.txtDiscountRate.Location = new System.Drawing.Point(404, 41);
             this.txtDiscountRate.Name = "txtDiscountRate";
             this.txtDiscountRate.Size = new System.Drawing.Size(36, 14);
+            // 
+            // btnFlatDisc
+            // 
+            this.btnFlatDisc.BackColor = System.Drawing.Color.SteelBlue;
+            this.btnFlatDisc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnFlatDisc.FlatAppearance.BorderSize = 0;
+            this.btnFlatDisc.ForeColor = System.Drawing.Color.White;
+            this.btnFlatDisc.Font = new System.Drawing.Font("Segoe UI", 7.5F, System.Drawing.FontStyle.Bold);
+            this.btnFlatDisc.Location = new System.Drawing.Point(445, 36);
+            this.btnFlatDisc.Name = "btnFlatDisc";
+            this.btnFlatDisc.Size = new System.Drawing.Size(92, 22);
+            this.btnFlatDisc.TabIndex = 300;
+            this.btnFlatDisc.Text = "Flat Off (Rs)";
+            this.btnFlatDisc.UseVisualStyleBackColor = false;
+            this.btnFlatDisc.Click += new System.EventHandler(this.btnFlatDisc_Click);
             this.txtDiscountRate.TabIndex = 2;
             this.txtDiscountRate.Text = "0";
             this.toolTip1.SetToolTip(this.txtDiscountRate, "Insert Over all Discount Rate.\r\nDiscount Rate Apply with Sub total");
@@ -1092,6 +1109,7 @@
         private System.Windows.Forms.Label lblTotalVAT;
         private System.Windows.Forms.Label lblTotalDisCount;
         private System.Windows.Forms.TextBox txtDiscountRate;
+        private System.Windows.Forms.Button btnFlatDisc;
         private System.Windows.Forms.Button btnSuspend;
         private System.Windows.Forms.Button btnHold;
         private System.Windows.Forms.Button btnResume;

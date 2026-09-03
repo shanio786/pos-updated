@@ -988,6 +988,33 @@ namespace supershop
             }
         }
         //  Discount
+        // Flat (fixed rupee) counter discount, in addition to the per-item percentage
+        // discounts. Overwrites any percentage counter discount currently applied.
+        private void btnFlatDisc_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgrvSalesItemList.Rows.Count == 0) { MessageBox.Show("Please add at least one item."); return; }
+                double total = ToDouble(lblTotal.Text);
+                double itemDisc = ToDouble(lblTotalDisCount.Text);
+                double maxFlat = System.Math.Round(total - itemDisc, 2);
+                string input = SalesRagister.HeldSaleStore.Prompt(
+                    "Flat discount amount in Rs (max " + maxFlat.ToString("0.00") + "):", "Flat discount", "0");
+                if (input == null) return;
+                double flat;
+                if (!double.TryParse(input, out flat) || flat < 0) { MessageBox.Show("Enter a valid amount."); return; }
+                if (flat > maxFlat) flat = maxFlat;
+                txtDiscountRate.Text = "0";   // clear any % counter discount (fires a recompute)
+                double overall = System.Math.Round(itemDisc + flat, 2);
+                double subtotalAfter = System.Math.Round(total - overall, 2);
+                double payable = System.Math.Round(subtotalAfter + ToDouble(lblTotalVAT.Text), 2);
+                lbloveralldiscount.Text = overall.ToString();
+                lblsubtotal.Text = subtotalAfter.ToString();
+                lblTotalPayable.Text = payable.ToString();
+            }
+            catch (Exception ex) { Logger.Show(ex, "Could not apply the flat discount."); }
+        }
+
         private void btnIncreaseDisCount_Click(object sender, EventArgs e)
         {
             try
