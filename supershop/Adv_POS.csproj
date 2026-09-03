@@ -242,6 +242,7 @@
     <Compile Include="Logger.cs" />
     <Compile Include="BackupHelper.cs" />
     <Compile Include="ReceiptPrinter.cs" />
+    <Compile Include="SchemaUpgrader.cs" />
     <Compile Include="Licensing\LicenseManager.cs" />
     <Compile Include="Licensing\LicenseForm.cs">
       <SubType>Form</SubType>

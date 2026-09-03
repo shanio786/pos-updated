@@ -54,6 +54,9 @@ namespace supershop
                 return;
             }
 
+            // Auto-upgrade an older database so it works with this version
+            try { SchemaUpgrader.EnsureSchema(); } catch (Exception ex) { Logger.Error("EnsureSchema", ex); }
+
             Application.Run(new Login());
         }
     }
