@@ -89,6 +89,8 @@ namespace supershop
                 }
                 home.Show();
                 this.Hide();
+                if (usertype == "1" || usertype == "2")   // remind admins/managers to reorder
+                    try { supershop.Inventory.LowStock.AlertIfLow(); } catch (Exception exLow) { Logger.Error(exLow); }
             }
             catch (Exception ex)
             {

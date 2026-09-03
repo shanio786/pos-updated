@@ -454,6 +454,7 @@
     <Compile Include="Inventory\Add_Sales.Designer.cs">
       <DependentUpon>Add_Sales.cs</DependentUpon>
     </Compile>
+    <Compile Include="Inventory\LowStock.cs" />
     <Compile Include="Inventory\StockShortList.cs">
       <SubType>Form</SubType>
     </Compile>
