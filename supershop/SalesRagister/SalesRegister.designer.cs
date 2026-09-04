@@ -363,7 +363,7 @@
             // 
             this.lbloveralldiscount.AutoSize = true;
             this.lbloveralldiscount.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F);
-            this.lbloveralldiscount.Location = new System.Drawing.Point(472, 140);
+            this.lbloveralldiscount.Location = new System.Drawing.Point(492, 94);
             this.lbloveralldiscount.Name = "lbloveralldiscount";
             this.lbloveralldiscount.Size = new System.Drawing.Size(10, 12);
             this.lbloveralldiscount.TabIndex = 161;
@@ -374,7 +374,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F);
-            this.label3.Location = new System.Drawing.Point(388, 140);
+            this.label3.Location = new System.Drawing.Point(388, 94);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(77, 12);
             this.label3.TabIndex = 160;
@@ -509,7 +509,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(438, 42);
+            this.label13.Location = new System.Drawing.Point(426, 42);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(15, 13);
             this.label13.TabIndex = 102;
@@ -563,9 +563,9 @@
             this.btnFlatDisc.FlatAppearance.BorderSize = 0;
             this.btnFlatDisc.ForeColor = System.Drawing.Color.White;
             this.btnFlatDisc.Font = new System.Drawing.Font("Segoe UI", 7.5F, System.Drawing.FontStyle.Bold);
-            this.btnFlatDisc.Location = new System.Drawing.Point(388, 90);
+            this.btnFlatDisc.Location = new System.Drawing.Point(462, 40);
             this.btnFlatDisc.Name = "btnFlatDisc";
-            this.btnFlatDisc.Size = new System.Drawing.Size(92, 22);
+            this.btnFlatDisc.Size = new System.Drawing.Size(76, 48);
             this.btnFlatDisc.TabIndex = 300;
             this.btnFlatDisc.Text = "Flat Off (Rs)";
             this.btnFlatDisc.UseVisualStyleBackColor = false;
@@ -1028,7 +1028,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F);
-            this.label8.Location = new System.Drawing.Point(438, 67);
+            this.label8.Location = new System.Drawing.Point(426, 68);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(45, 12);
             this.label8.TabIndex = 176;
