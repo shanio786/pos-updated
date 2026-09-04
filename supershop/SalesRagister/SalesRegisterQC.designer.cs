@@ -284,7 +284,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(513, 42);
+            this.label8.Location = new System.Drawing.Point(438, 67);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(22, 13);
             this.label8.TabIndex = 163;
@@ -295,7 +295,7 @@
             this.txtRSDisc.BackColor = System.Drawing.SystemColors.Info;
             this.txtRSDisc.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtRSDisc.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.25F);
-            this.txtRSDisc.Location = new System.Drawing.Point(475, 41);
+            this.txtRSDisc.Location = new System.Drawing.Point(388, 66);
             this.txtRSDisc.Name = "txtRSDisc";
             this.txtRSDisc.Size = new System.Drawing.Size(36, 14);
             this.txtRSDisc.TabIndex = 162;
@@ -308,7 +308,7 @@
             // 
             this.lbloveralldiscount.AutoSize = true;
             this.lbloveralldiscount.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F);
-            this.lbloveralldiscount.Location = new System.Drawing.Point(482, 67);
+            this.lbloveralldiscount.Location = new System.Drawing.Point(472, 140);
             this.lbloveralldiscount.Name = "lbloveralldiscount";
             this.lbloveralldiscount.Size = new System.Drawing.Size(10, 12);
             this.lbloveralldiscount.TabIndex = 161;
@@ -319,7 +319,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F);
-            this.label3.Location = new System.Drawing.Point(402, 67);
+            this.label3.Location = new System.Drawing.Point(388, 140);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(77, 12);
             this.label3.TabIndex = 160;
@@ -454,7 +454,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(446, 41);
+            this.label13.Location = new System.Drawing.Point(438, 42);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(15, 13);
             this.label13.TabIndex = 102;
@@ -497,7 +497,7 @@
             this.txtDiscountRate.BackColor = System.Drawing.SystemColors.Info;
             this.txtDiscountRate.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtDiscountRate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.25F);
-            this.txtDiscountRate.Location = new System.Drawing.Point(404, 41);
+            this.txtDiscountRate.Location = new System.Drawing.Point(388, 40);
             this.txtDiscountRate.Name = "txtDiscountRate";
             this.txtDiscountRate.Size = new System.Drawing.Size(36, 14);
             // 
@@ -508,7 +508,7 @@
             this.btnFlatDisc.FlatAppearance.BorderSize = 0;
             this.btnFlatDisc.ForeColor = System.Drawing.Color.White;
             this.btnFlatDisc.Font = new System.Drawing.Font("Segoe UI", 7.5F, System.Drawing.FontStyle.Bold);
-            this.btnFlatDisc.Location = new System.Drawing.Point(445, 36);
+            this.btnFlatDisc.Location = new System.Drawing.Point(388, 90);
             this.btnFlatDisc.Name = "btnFlatDisc";
             this.btnFlatDisc.Size = new System.Drawing.Size(92, 22);
             this.btnFlatDisc.TabIndex = 300;
@@ -521,7 +521,7 @@
             this.chkWholesale.AutoSize = true;
             this.chkWholesale.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.chkWholesale.ForeColor = System.Drawing.Color.SteelBlue;
-            this.chkWholesale.Location = new System.Drawing.Point(410, 8);
+            this.chkWholesale.Location = new System.Drawing.Point(388, 10);
             this.chkWholesale.Name = "chkWholesale";
             this.chkWholesale.Size = new System.Drawing.Size(120, 19);
             this.chkWholesale.TabIndex = 305;
