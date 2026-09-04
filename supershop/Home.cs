@@ -67,18 +67,6 @@ namespace supershop
             }
             catch (Exception exLog) { Logger.Error(exLog); }
 
-            // Auto-open the new premium POS right after login (no extra click).
-            // Turn off with  <add key="AutoStartNewPos" value="false"/>  in app.config.
-            try
-            {
-                string flag = System.Configuration.ConfigurationManager.AppSettings["AutoStartNewPos"];
-                if (string.IsNullOrEmpty(flag) || flag.Trim().ToLowerInvariant() == "true")
-                {
-                    string url = supershop.PosWeb.PosServer.Launch();
-                    if (!string.IsNullOrEmpty(url)) toolStripStatusLabel7.Text = "New POS: " + url;
-                }
-            }
-            catch (Exception ex) { Logger.Error("AutoStartNewPos", ex); }
         }
 
         private void purchaseProductToolStripMenuItem_Click(object sender, EventArgs e)
@@ -629,16 +617,6 @@ namespace supershop
             Items.Categories go = new Items.Categories();
             go.MdiParent = this;
             go.Show();
-        }
-
-        private void newPosToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string url = supershop.PosWeb.PosServer.Launch();
-                toolStripStatusLabel7.Text = "New POS running at " + url;
-            }
-            catch (Exception ex) { Logger.Show(ex, "Could not start the new POS."); }
         }
 
         private void productPricingToolStripMenuItem_Click(object sender, EventArgs e)
