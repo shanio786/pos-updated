@@ -434,7 +434,26 @@ $("#tender").addEventListener("input",chg);
 $("#charge").onclick=()=>{if(!cart.length){toast("Cart is empty");return;}const t=totals();$("#payDue").textContent=fmt(t.grand);$("#tender").value=Math.ceil(t.grand/100)*100;chg();$("#pay").hidden=false;$("#tender").focus();$("#tender").select();};
 $("#payCancel").onclick=()=>$("#pay").hidden=true;
 $("#pay").addEventListener("click",e=>{if(e.target.id==="pay")$("#pay").hidden=true;});
-$("#payDone").onclick=()=>{$("#pay").hidden=true;cart=[];$("#disc").value=0;render();toast("Payment complete · Receipt printed");};
+$("#payDone").onclick=async()=>{
+  if(!cart.length)return;
+  const btn=$("#payDone"); btn.disabled=true; const old=btn.textContent; btn.textContent="Saving…";
+  const t=totals(); const paid=+($("#tender").value||0);
+  const body={
+    payType:"Cash", paid:paid, change:Math.max(0,paid-t.grand), due:Math.max(0,t.grand-paid),
+    discTotal:t.disc, taxTotal:t.tax,
+    ovDiscRate:(discMode==="pct"?(+($("#disc").value||0)):0), taxRate:TAX_RATE*100,
+    customerId:"", comment:"",
+    lines:cart.map(l=>({code:l.code,name:l.nm,qty:l.qty,price:unit(l),total:unit(l)*l.qty,discRate:0,tax:l.tax?1:0})),
+    tenders:[{method:"Cash",amount:paid}]
+  };
+  try{
+    const r=await fetch("/api/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const j=await r.json();
+    if(j&&j.ok){ $("#pay").hidden=true; cart=[]; $("#disc").value=0; render(); toast("Sale #"+j.salesId+" saved · Receipt printed"); }
+    else{ toast((j&&j.error)?("Not saved: "+j.error):"Could not save the sale"); }
+  }catch(e){ toast("Could not reach the server"); }
+  finally{ btn.disabled=false; btn.textContent=old; }
+};
 
 // theme
 $("#theme").onclick=()=>{const r=document.documentElement;const dark=(r.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"))==="dark";r.setAttribute("data-theme",dark?"light":"dark");};

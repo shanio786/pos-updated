@@ -115,16 +115,31 @@ namespace supershop.PosWeb
                     // read just the request line (first line) - enough for GET routing
                     string requestLine = ReadLine(ns);
                     if (string.IsNullOrEmpty(requestLine)) return;
-                    // drain the rest of the headers
+                    // read the rest of the headers, capturing Content-Length
+                    int contentLength = 0;
                     string h; int guard = 0;
-                    while (!string.IsNullOrEmpty(h = ReadLine(ns)) && guard++ < 100) { }
+                    while (!string.IsNullOrEmpty(h = ReadLine(ns)) && guard++ < 200)
+                    {
+                        int c = h.IndexOf(':');
+                        if (c > 0 && h.Substring(0, c).Trim().ToLowerInvariant() == "content-length")
+                            int.TryParse(h.Substring(c + 1).Trim(), out contentLength);
+                    }
 
                     string[] parts = requestLine.Split(' ');
+                    string method = parts.Length > 0 ? parts[0].ToUpperInvariant() : "GET";
                     string target = parts.Length > 1 ? parts[1] : "/";
                     string path = target, query = "";
                     int qi = target.IndexOf('?');
                     if (qi >= 0) { path = target.Substring(0, qi); query = target.Substring(qi + 1); }
                     path = path.ToLowerInvariant();
+
+                    if (method == "POST")
+                    {
+                        string body = ReadBody(ns, contentLength);
+                        if (path == "/api/checkout") { RespondJson(ns, Checkout(body)); return; }
+                        Respond(ns, 404, "text/plain", "Not found");
+                        return;
+                    }
 
                     if (path == "/" || path == "/index.html") { Respond(ns, 200, "text/html; charset=utf-8", LoadPage()); return; }
                     if (path == "/api/products") { RespondJson(ns, Products(Q(query, "q"))); return; }
@@ -190,6 +205,166 @@ namespace supershop.PosWeb
             List<object> rows = Rows(DataAccess.GetDataTable(sql, DataAccess.P("@code", code)));
             return rows.Count > 0 ? rows[0] : null;
         }
+
+        // ---- checkout (save the sale) ------------------------------------
+
+        static object Checkout(string body)
+        {
+            try
+            {
+                var req = _json.Deserialize<Dictionary<string, object>>(body ?? "{}");
+                object linesObj; req.TryGetValue("lines", out linesObj);
+                List<object> lines = AsList(linesObj);
+                if (lines.Count == 0)
+                    return new Dictionary<string, object> { { "ok", false }, { "error", "Cart is empty." } };
+
+                string payType   = S(req, "payType", "Cash");
+                double paid      = D(req, "paid");
+                double change    = D(req, "change");
+                double due       = D(req, "due");
+                double discTotal = D(req, "discTotal");
+                double taxTotal  = D(req, "taxTotal");
+                double ovDiscRate= D(req, "ovDiscRate");
+                double taxRate   = D(req, "taxRate");
+                string comment   = S(req, "comment", "");
+                string saleType  = due > 0 ? "CreditSale" : "CashSale";
+                string custId    = S(req, "customerId", "");
+                string salesDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                List<object> tenders = AsList(req.ContainsKey("tenders") ? req["tenders"] : null);
+                long newId = 0;
+
+                DataAccess.RunInTransaction(delegate(DataAccess.DbTransaction tx)
+                {
+                    // resolve a customer id (fall back to the walk-in customer)
+                    if (string.IsNullOrEmpty(custId))
+                    {
+                        object cid = tx.Scalar("SELECT TOP 1 ID FROM tbl_customer ORDER BY ID");
+                        custId = cid == null ? "0" : cid.ToString();
+                    }
+
+                    long salesId = tx.NextSalesId();
+                    tx.Execute(" insert into sales_payment (sales_id, payment_type, payment_amount, change_amount, due_amount, dis, vat, " +
+                               " sales_time, c_id, emp_id, comment, TrxType, Shopid, ovdisrate, vaterate, SaleType) " +
+                               " values (@sales_id, @payment_type, @payment_amount, @change_amount, @due_amount, @dis, @vat, " +
+                               " @sales_time, @c_id, @emp_id, @comment, 'POS', @Shopid, @ovdisrate, @vaterate, @SaleType)",
+                        DataAccess.P("@sales_id", salesId),
+                        DataAccess.P("@payment_type", payType),
+                        DataAccess.P("@payment_amount", paid),
+                        DataAccess.P("@change_amount", change),
+                        DataAccess.P("@due_amount", due),
+                        DataAccess.P("@dis", discTotal),
+                        DataAccess.P("@vat", taxTotal),
+                        DataAccess.P("@sales_time", salesDate),
+                        DataAccess.P("@c_id", custId),
+                        DataAccess.P("@emp_id", UserInfo.UserName),
+                        DataAccess.P("@comment", comment),
+                        DataAccess.P("@Shopid", UserInfo.Shopid),
+                        DataAccess.P("@ovdisrate", ovDiscRate),
+                        DataAccess.P("@vaterate", taxRate),
+                        DataAccess.P("@SaleType", saleType));
+
+                    foreach (object lo in lines)
+                    {
+                        var l = lo as Dictionary<string, object>;
+                        if (l == null) continue;
+                        string code = S(l, "code", "");
+                        string name = S(l, "name", "");
+                        double qty  = D(l, "qty");
+                        double price= D(l, "price");
+                        double total= D(l, "total");
+                        double dis  = D(l, "discRate");
+                        int taxApply= (int)D(l, "tax");
+
+                        double cost = 0, prodDisc = 0;
+                        DataTable dt1 = tx.Query("select cost_price, discount from purchase where product_id = @id", DataAccess.P("@id", code));
+                        if (dt1.Rows.Count > 0)
+                        {
+                            cost = ToD(dt1.Rows[0][0]);
+                            prodDisc = ToD(dt1.Rows[0][1]);
+                        }
+                        double profit = Math.Round(((price - (price * prodDisc) / 100.0) - cost) * qty, 2);
+
+                        tx.Execute(" insert into sales_item (sales_id, itemName, Qty, RetailsPrice, Total, profit, sales_time, itemcode, discount, taxapply, status) " +
+                                   " values (@sales_id, @itemName, @Qty, @RetailsPrice, @Total, @profit, @sales_time, @itemcode, @discount, @taxapply, @status)",
+                            DataAccess.P("@sales_id", salesId),
+                            DataAccess.P("@itemName", name),
+                            DataAccess.P("@Qty", qty),
+                            DataAccess.P("@RetailsPrice", price),
+                            DataAccess.P("@Total", total),
+                            DataAccess.P("@profit", profit),
+                            DataAccess.P("@sales_time", salesDate),
+                            DataAccess.P("@itemcode", code),
+                            DataAccess.P("@discount", dis),
+                            DataAccess.P("@taxapply", taxApply.ToString()),
+                            DataAccess.P("@status", 0));
+
+                        tx.Execute("update purchase set product_quantity = product_quantity - @qty where product_id = @id",
+                            DataAccess.P("@qty", qty), DataAccess.P("@id", code));
+                    }
+
+                    if (tenders.Count > 0)
+                    {
+                        foreach (object to in tenders)
+                        {
+                            var t = to as Dictionary<string, object>;
+                            if (t == null) continue;
+                            tx.Execute("insert into tbl_sale_tender (sales_id, method, amount) values (@id, @m, @a)",
+                                DataAccess.P("@id", salesId), DataAccess.P("@m", S(t, "method", "Cash")), DataAccess.P("@a", D(t, "amount")));
+                        }
+                    }
+                    else
+                    {
+                        tx.Execute("insert into tbl_sale_tender (sales_id, method, amount) values (@id, @m, @a)",
+                            DataAccess.P("@id", salesId), DataAccess.P("@m", payType), DataAccess.P("@a", paid));
+                    }
+                    newId = salesId;
+                });
+
+                // print the receipt (fast GDI thermal printer) - never block the sale on it
+                try { ReceiptPrinter.Show(newId.ToString()); } catch (Exception ex) { Logger.Error("PosServer receipt", ex); }
+
+                return new Dictionary<string, object> { { "ok", true }, { "salesId", newId } };
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("PosServer checkout", ex);
+                return new Dictionary<string, object> { { "ok", false }, { "error", ex.Message } };
+            }
+        }
+
+        static List<object> AsList(object o)
+        {
+            var list = new List<object>();
+            System.Collections.IEnumerable en = o as System.Collections.IEnumerable;
+            if (en != null && !(o is string)) foreach (object x in en) list.Add(x);
+            return list;
+        }
+
+        static string ReadBody(NetworkStream ns, int length)
+        {
+            if (length <= 0) return "";
+            byte[] buf = new byte[length];
+            int read = 0;
+            while (read < length)
+            {
+                int n = ns.Read(buf, read, length - read);
+                if (n <= 0) break;
+                read += n;
+            }
+            return Encoding.UTF8.GetString(buf, 0, read);
+        }
+
+        static string S(Dictionary<string, object> d, string k, string def)
+        {
+            object v; return (d != null && d.TryGetValue(k, out v) && v != null) ? v.ToString() : def;
+        }
+        static double D(Dictionary<string, object> d, string k)
+        {
+            object v; if (d == null || !d.TryGetValue(k, out v) || v == null) return 0;
+            try { return Convert.ToDouble(v); } catch { double r; return double.TryParse(v.ToString(), out r) ? r : 0; }
+        }
+        static double ToD(object o) { try { return o == null || o == DBNull.Value ? 0 : Convert.ToDouble(o); } catch { return 0; } }
 
         static object Store()
         {
