@@ -468,7 +468,7 @@
             // 
             this.txtVATRate.BackColor = System.Drawing.SystemColors.Info;
             this.txtVATRate.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtVATRate.Location = new System.Drawing.Point(90, 102);
+            this.txtVATRate.Location = new System.Drawing.Point(118, 102);
             this.txtVATRate.Name = "txtVATRate";
             this.txtVATRate.ReadOnly = true;
             this.txtVATRate.Size = new System.Drawing.Size(39, 13);
@@ -489,7 +489,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(120, 102);
+            this.label12.Location = new System.Drawing.Point(150, 102);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(15, 13);
             this.label12.TabIndex = 100;
