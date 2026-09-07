@@ -558,9 +558,10 @@
             this.btnHold.ForeColor = System.Drawing.Color.White;
             this.btnHold.Location = new System.Drawing.Point(556, 522);
             this.btnHold.Name = "btnHold";
-            this.btnHold.Size = new System.Drawing.Size(95, 56);
+            this.btnHold.Size = new System.Drawing.Size(118, 34);
             this.btnHold.TabIndex = 200;
             this.btnHold.Text = "Hold";
+            this.btnHold.Visible = false;
             this.btnHold.UseVisualStyleBackColor = false;
             this.btnHold.Click += new System.EventHandler(this.btnHold_Click);
             // btnResume
@@ -569,11 +570,12 @@
             this.btnResume.FlatAppearance.BorderSize = 0;
             this.btnResume.Font = new System.Drawing.Font("Trebuchet MS", 11F, System.Drawing.FontStyle.Bold);
             this.btnResume.ForeColor = System.Drawing.Color.White;
-            this.btnResume.Location = new System.Drawing.Point(656, 522);
+            this.btnResume.Location = new System.Drawing.Point(556, 522);
             this.btnResume.Name = "btnResume";
-            this.btnResume.Size = new System.Drawing.Size(95, 56);
+            this.btnResume.Size = new System.Drawing.Size(118, 34);
             this.btnResume.TabIndex = 201;
             this.btnResume.Text = "Resume";
+            this.btnResume.Visible = false;
             this.btnResume.UseVisualStyleBackColor = false;
             this.btnResume.Click += new System.EventHandler(this.btnResume_Click);
             // 
@@ -649,7 +651,7 @@
             this.txtCustName.Location = new System.Drawing.Point(563, 520);
             this.txtCustName.Multiline = true;
             this.txtCustName.Name = "txtCustName";
-            this.txtCustName.Size = new System.Drawing.Size(559, 56);
+            this.txtCustName.Size = new System.Drawing.Size(330, 56);
             this.txtCustName.TabIndex = 184;
             this.txtCustName.Text = "Done...";
             this.toolTip1.SetToolTip(this.txtCustName, "Comment/ Note");
@@ -834,9 +836,9 @@
             this.btnSplit.FlatAppearance.BorderSize = 0;
             this.btnSplit.Font = new System.Drawing.Font("Trebuchet MS", 10F, System.Drawing.FontStyle.Bold);
             this.btnSplit.ForeColor = System.Drawing.Color.White;
-            this.btnSplit.Location = new System.Drawing.Point(756, 522);
+            this.btnSplit.Location = new System.Drawing.Point(903, 520);
             this.btnSplit.Name = "btnSplit";
-            this.btnSplit.Size = new System.Drawing.Size(95, 56);
+            this.btnSplit.Size = new System.Drawing.Size(150, 56);
             this.btnSplit.TabIndex = 202;
             this.btnSplit.Text = "Split Pay";
             this.btnSplit.UseVisualStyleBackColor = false;

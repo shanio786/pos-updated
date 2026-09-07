@@ -596,9 +596,9 @@
             this.btnSuspend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSuspend.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSuspend.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.btnSuspend.Location = new System.Drawing.Point(439, 528);
+            this.btnSuspend.Location = new System.Drawing.Point(264, 528);
             this.btnSuspend.Name = "btnSuspend";
-            this.btnSuspend.Size = new System.Drawing.Size(111, 39);
+            this.btnSuspend.Size = new System.Drawing.Size(96, 40);
             this.btnSuspend.TabIndex = 153;
             this.btnSuspend.Text = "Suspend";
             this.btnSuspend.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -613,9 +613,9 @@
             this.btnHold.FlatAppearance.BorderSize = 0;
             this.btnHold.Font = new System.Drawing.Font("Trebuchet MS", 11F, System.Drawing.FontStyle.Bold);
             this.btnHold.ForeColor = System.Drawing.Color.White;
-            this.btnHold.Location = new System.Drawing.Point(556, 528);
+            this.btnHold.Location = new System.Drawing.Point(366, 528);
             this.btnHold.Name = "btnHold";
-            this.btnHold.Size = new System.Drawing.Size(111, 39);
+            this.btnHold.Size = new System.Drawing.Size(96, 40);
             this.btnHold.TabIndex = 154;
             this.btnHold.Text = "Hold";
             this.btnHold.UseVisualStyleBackColor = false;
@@ -628,9 +628,9 @@
             this.btnResume.FlatAppearance.BorderSize = 0;
             this.btnResume.Font = new System.Drawing.Font("Trebuchet MS", 11F, System.Drawing.FontStyle.Bold);
             this.btnResume.ForeColor = System.Drawing.Color.White;
-            this.btnResume.Location = new System.Drawing.Point(673, 528);
+            this.btnResume.Location = new System.Drawing.Point(468, 528);
             this.btnResume.Name = "btnResume";
-            this.btnResume.Size = new System.Drawing.Size(111, 39);
+            this.btnResume.Size = new System.Drawing.Size(96, 40);
             this.btnResume.TabIndex = 155;
             this.btnResume.Text = "Resume";
             this.btnResume.UseVisualStyleBackColor = false;
@@ -646,7 +646,7 @@
             this.btnPayment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.btnPayment.Location = new System.Drawing.Point(6, 528);
             this.btnPayment.Name = "btnPayment";
-            this.btnPayment.Size = new System.Drawing.Size(280, 39);
+            this.btnPayment.Size = new System.Drawing.Size(150, 40);
             this.btnPayment.TabIndex = 152;
             this.btnPayment.Text = "Cash";
             this.toolTip1.SetToolTip(this.btnPayment, "Press Ctrl + C to direct sales with full cash amount");
@@ -684,9 +684,9 @@
             this.btnSalesCredit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSalesCredit.Font = new System.Drawing.Font("Trebuchet MS", 10.75F, System.Drawing.FontStyle.Bold);
             this.btnSalesCredit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.btnSalesCredit.Location = new System.Drawing.Point(292, 528);
+            this.btnSalesCredit.Location = new System.Drawing.Point(162, 528);
             this.btnSalesCredit.Name = "btnSalesCredit";
-            this.btnSalesCredit.Size = new System.Drawing.Size(140, 39);
+            this.btnSalesCredit.Size = new System.Drawing.Size(96, 40);
             this.btnSalesCredit.TabIndex = 164;
             this.btnSalesCredit.Text = "Payment";
             this.toolTip1.SetToolTip(this.btnSalesCredit, "Receive Customers Payment");
