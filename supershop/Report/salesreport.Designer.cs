@@ -192,9 +192,9 @@
             this.btnSaveAs.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
             this.btnSaveAs.ForeColor = System.Drawing.Color.Black;
             this.btnSaveAs.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveAs.Image")));
-            this.btnSaveAs.Location = new System.Drawing.Point(94, 504);
+            this.btnSaveAs.Location = new System.Drawing.Point(40, 540);
             this.btnSaveAs.Name = "btnSaveAs";
-            this.btnSaveAs.Size = new System.Drawing.Size(118, 40);
+            this.btnSaveAs.Size = new System.Drawing.Size(210, 40);
             this.btnSaveAs.TabIndex = 93;
             this.btnSaveAs.Text = "Save as";
             this.btnSaveAs.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -211,9 +211,9 @@
             this.btnExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
             this.btnExport.ForeColor = System.Drawing.Color.Black;
             this.btnExport.Image = ((System.Drawing.Image)(resources.GetObject("btnExport.Image")));
-            this.btnExport.Location = new System.Drawing.Point(25, 456);
+            this.btnExport.Location = new System.Drawing.Point(40, 450);
             this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(163, 40);
+            this.btnExport.Size = new System.Drawing.Size(210, 40);
             this.btnExport.TabIndex = 92;
             this.btnExport.Text = "Export to Excel";
             this.btnExport.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -306,9 +306,9 @@
             this.btnDuelink.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
             this.btnDuelink.ForeColor = System.Drawing.Color.Black;
             this.btnDuelink.Image = ((System.Drawing.Image)(resources.GetObject("btnDuelink.Image")));
-            this.btnDuelink.Location = new System.Drawing.Point(100, 406);
+            this.btnDuelink.Location = new System.Drawing.Point(40, 405);
             this.btnDuelink.Name = "btnDuelink";
-            this.btnDuelink.Size = new System.Drawing.Size(109, 44);
+            this.btnDuelink.Size = new System.Drawing.Size(210, 40);
             this.btnDuelink.TabIndex = 86;
             this.btnDuelink.Text = "Due List";
             this.btnDuelink.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -374,9 +374,9 @@
             this.btnPrint.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
             this.btnPrint.ForeColor = System.Drawing.Color.Black;
             this.btnPrint.Image = ((System.Drawing.Image)(resources.GetObject("btnPrint.Image")));
-            this.btnPrint.Location = new System.Drawing.Point(194, 452);
+            this.btnPrint.Location = new System.Drawing.Point(40, 495);
             this.btnPrint.Name = "btnPrint";
-            this.btnPrint.Size = new System.Drawing.Size(88, 44);
+            this.btnPrint.Size = new System.Drawing.Size(210, 40);
             this.btnPrint.TabIndex = 8;
             this.btnPrint.Text = "Print";
             this.btnPrint.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;

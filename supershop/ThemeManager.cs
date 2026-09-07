@@ -108,7 +108,17 @@ namespace supershop
                 DataGridView g = c as DataGridView;
                 if (g != null) { StyleGrid(g); }
                 else if (c is Label && IsRuleText(c.Text)) StyleRule((Label)c);
-                else ModernFont(c);   // grids keep the font StyleGrid gives them
+                else
+                {
+                    ModernFont(c);   // grids keep the font StyleGrid gives them
+                    // Let caption labels grow to fit their text so nothing is clipped
+                    // on Windows fonts (a common cause of "…" / overlapping labels).
+                    Label lab = c as Label;
+                    if (lab != null && !lab.AutoSize)
+                    {
+                        try { lab.AutoSize = true; } catch { }
+                    }
+                }
 
                 if (c.HasChildren) Walk(c);
             }
