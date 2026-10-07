@@ -92,8 +92,98 @@ namespace supershop
             object seen;
             if (_done.TryGetValue(root, out seen)) return;   // theme each form only once
             _done.Add(root, _done);
-            try { Walk(root); }
+            try
+            {
+                Walk(root);
+                // After the font swap the Segoe UI face is a little taller than the
+                // old MS Sans Serif / Times faces the screens were drawn with, so an
+                // auto-sized caption label can grow just enough for its bottom edge to
+                // touch the input directly beneath it (the "line through the label"
+                // users saw on the payment panel). Lift any such caption clear of its
+                // field - safely, never crossing whatever sits above it.
+                FixCaptionOverlaps(root);
+            }
             catch (Exception ex) { Logger.Error(ex); }
+        }
+
+        /// <summary>
+        /// Walk every container and nudge caption labels up so they never overlap the
+        /// input (text box / combo / date picker) sitting right below them. It only
+        /// ever moves small caption labels, only upward, never past the control above
+        /// them, and by at most a few pixels - so it fixes the clipping the Segoe UI
+        /// font introduces without disturbing any deliberate layout.
+        /// </summary>
+        static void FixCaptionOverlaps(Control container)
+        {
+            if (container == null) return;
+            try
+            {
+                Control[] kids = new Control[container.Controls.Count];
+                container.Controls.CopyTo(kids, 0);
+
+                foreach (Control c in kids)
+                {
+                    Label lab = c as Label;
+                    // Caption-sized labels only (skip titles, banners, rule lines).
+                    if (lab == null || !lab.Visible) continue;
+                    if (lab.Height <= 0 || lab.Height > 40) continue;
+                    if (IsRuleText(lab.Text) || string.IsNullOrEmpty(lab.Text)) continue;
+
+                    Control field = NearestFieldBelow(lab, kids);
+                    if (field == null) continue;
+
+                    int overlap = lab.Bottom - field.Top;   // >0 means they touch/overlap
+                    if (overlap < 1) continue;               // already clear
+
+                    // How far may we lift? Never into the control directly above.
+                    int ceiling = NearestBottomAbove(lab, kids) + 2;      // may be <0 if nothing above
+                    int lift = overlap + 4;                               // 4px breathing room
+                    int newTop = lab.Top - lift;
+                    if (newTop < ceiling) newTop = ceiling;
+                    if (newTop < lab.Top) lab.Top = newTop;               // only ever move up
+                }
+
+                foreach (Control c in kids)
+                    if (c.HasChildren) FixCaptionOverlaps(c);
+            }
+            catch { }
+        }
+
+        /// <summary>Is this control a data-entry field a caption would sit above?</summary>
+        static bool IsField(Control c)
+        {
+            return c is TextBox || c is ComboBox || c is DateTimePicker
+                || c is MaskedTextBox || c is NumericUpDown || c is RichTextBox;
+        }
+
+        /// <summary>The input field whose top is at/just below the label and overlaps it horizontally.</summary>
+        static Control NearestFieldBelow(Label lab, Control[] siblings)
+        {
+            Control best = null;
+            foreach (Control c in siblings)
+            {
+                if (c == lab || !c.Visible || !IsField(c)) continue;
+                bool across = c.Left < lab.Right && c.Right > lab.Left;   // horizontal overlap
+                if (!across) continue;
+                if (c.Top < lab.Top - 2) continue;        // field must be at or below the caption
+                if (c.Top > lab.Bottom + 6) continue;     // and be the caption's own field, not a far one
+                if (best == null || c.Top < best.Top) best = c;
+            }
+            return best;
+        }
+
+        /// <summary>Bottom edge of the nearest control sitting directly above the label (or a low floor).</summary>
+        static int NearestBottomAbove(Label lab, Control[] siblings)
+        {
+            int bottom = -1000;   // nothing above -> free to lift
+            foreach (Control c in siblings)
+            {
+                if (c == lab || !c.Visible) continue;
+                bool across = c.Left < lab.Right && c.Right > lab.Left;   // horizontal overlap
+                if (!across) continue;
+                if (c.Bottom <= lab.Top && c.Bottom > bottom) bottom = c.Bottom;
+            }
+            return bottom;
         }
 
         static readonly string UiFont = "Segoe UI";
